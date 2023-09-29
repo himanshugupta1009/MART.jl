@@ -3,6 +3,9 @@ uuid = "190e550c-9172-4a87-9a62-958c713c3045"
 authors = ["Himanshu Gupta"]
 version = "1.0.0-DEV"
 
+[deps]
+DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
+
 [compat]
 julia = "1"
 
