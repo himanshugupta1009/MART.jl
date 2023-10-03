@@ -5,6 +5,9 @@ version = "1.0.0-DEV"
 
 [deps]
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
+GridInterpolations = "bb4c363b-b914-514b-8517-4eb369bc008a"
+HDF5 = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
+ParticleFilters = "c8b314e2-9260-5cf8-ae76-3be7461ca6d0"
 
 [compat]
 julia = "1"
