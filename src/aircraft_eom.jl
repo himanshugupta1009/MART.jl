@@ -26,11 +26,13 @@ function aircraft_dynamics!(du,u,p,t)
     for i in 1:length(u)
         du[i] = x_dot[i]
     end
+    # du[1:length(u)] = x_dot
 end
 
-function simulate(dynamics::Function, initial_state, time_interval::Array{Float64,1}, extra_parameters, save_at_value=1.0)
 
-    prob = ODEProblem(dynamics,initial_state,time_interval,extra_parameters)
+function aircraft_simulate(dynamics::Function, initial_state, time_interval, extra_parameters, save_at_value=0.1)
+
+    prob = DE.ODEProblem(dynamics,initial_state,time_interval,extra_parameters)
     sol = DE.solve(prob,saveat=save_at_value)
     aircraft_states = AircraftState[]
     for i in 1:length(sol.u)
@@ -40,8 +42,10 @@ function simulate(dynamics::Function, initial_state, time_interval::Array{Float6
 end
 
 #=
+true_model_num = 3
 control_func(u,t) = SVector(0.0,0.0,0.0)
 wind_func(u,t) = SVector(0.0,0.0,0.0)
+wind_func(u,t) = fake_wind(u,t,true_model_num)
 noise_func(t) = SVector(0.0,0.0,0.0,0.0,0.0)
-hist = simulate(aircraft_dynamics!,[100,100,1800,pi/6,0.0],[0.0,5.0],[control_func,wind_func,noise_func])
+hist = aircraft_simulate(aircraft_dynamics!,[100,100,1800,pi/6,0.0],[0.0,5.0],[control_func,wind_func,noise_func])
 =#
