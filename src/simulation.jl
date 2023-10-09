@@ -1,63 +1,39 @@
-function fake_wind(X,t,m)
+include("aircraft_eom.jl")
+include("generate_fake_data.jl")
 
-    wind_modes = [
-    [2 0 0; 0 6 0; 0 0 2],
-    [6 0 0; 0 6 0; 0 0 7],
-    [5 0 0; 0 7 0; 0 0 1],
-    [5 0 0; 0 3 0; 0 0 9],
-    [6 0 0; 0 8 0; 0 0 6],
-    [9 0 0; 0 8 0; 0 0 3],
-    [2 0 0; 0 2 0; 0 0 5]
-    ]
-
-    func_list = (cos,sin,sin,cos,cos,cos,sin)
-    @assert isinteger(m)
-
-    wind = wind_modes[m]*func_list[m](sum(X[1:3])+t)
-    return SVector{size(wind_modes[m])[1],Float64}(diag(wind))
-    # wx,wy,wz = wind[1,1],wind[2,2],wind[3,3]
-    # return (wx,wy,wz)
+struct SimulationDetails
+    control::Function
+    wind::Function
+    noise::Function
+    get_observation::Function
+    time_step::Float64
+    total_time::Float64
 end
 
-function process_noise(t)
-    # noise_covar = [2 0 0; 0 6 0; 0 0 2]
-    # noise_covar = [1  6  1  6  6;1  1  7  2  4;7  3  3  3  6;1  6  6  3  5;5  4  4  7  7]
-    noise_covar = [
-            10 0 0 0 0;
-            0 10 0 0 0;
-            0 0 10 0 0;
-            0 0 0 pi/12 0;
-            0 0 0 0 pi/12;
-    ]
-    num_state_variables = size(noise_covar)[1]
-    noise = sqrt(noise_covar)*randn(num_state_variables)
-    return SVector{num_state_variables,Float64}(noise)
-end
+function experiment_simulation(sim,start_state)
 
+    #=
+    Needed Modifications - Return s and o as a pair or matrix
+    =#
 
-function experiment_simulation(start_state,control_func,wind_func,noise_func)
-
-    total_time = 10.0
-    time_step = 0.5
+    T = sim.total_time #10.0
+    t = sim.time_step #0.5
     state_history = Array{typeof(start_state),1}([start_state])
-    observation_history = Array{SVector{5, Float64},1}()
+    state_history = Vector{Pair{Float64,typeof(start_state)}}([0.0=>start_state])
+    otype = typeof(sim.get_observation(start_state,0.0))
+    observation_history = Vector{Pair{Float64,otype}}()
     curr_state = start_state
 
-    @assert(isinteger(total_time/time_step))
-    num_steps = Int(total_time/time_step)
-    true_model_num = 5
-    modified_wind_func(u,t) = wind_func(u,t,true_model_num)
+    @assert(isinteger(T/t))
+    num_steps = Int(T/t)
 
     for i in 1:num_steps
-
-        new_states = aircraft_simulate(aircraft_dynamics!,curr_state,[0.0,time_step],(control_func,modified_wind_func,noise_func),time_step)
-        new_state = new_states[2] + process_noise()
-        observation = fake_observation(new_state,i*time_step,true_model_num)
-
-        curr_state = [new_state...]
-        push!(state_history,new_state)
-        push!(observation_history,observation)
-
+        new_states = aircraft_simulate(aircraft_dynamics,curr_state,[(i-1)*t,i*t],(sim.control,sim.wind,sim.noise),t)
+        new_state = new_states[2] + sim.noise(i*t)
+        observation = sim.get_observation(new_state,i*t)
+        curr_state = new_state
+        push!(state_history,(i*t=>new_state))
+        push!(observation_history,(i*t=>observation))
     end
 
     return state_history,observation_history
@@ -65,11 +41,13 @@ end
 
 
 #=
-
-start_state = [100.0,100.0,1800.0,pi/6,0.0]
-curr_state = [100.0,100.0,1800.0,pi/6,0.0]
-control_func(u,t) = SVector(10.0,0.0,0.0)
-
-s,o = experiment_simulation( start_state , control_func, fake_wind, process_noise)
-
+start_state = SVector(100.0,100.0,1800.0,pi/6,0.0)
+curr_state = SVector(100.0,100.0,1800.0,pi/6,0.0)
+control_func(X,t) = SVector(10.0,0.0,0.0)
+wind_func(X,t) = fake_wind(dwg,3,X,t)
+obs_func(X,t) = fake_observation(dvg,3,X,t)
+noise_func(t) = process_noise(png,t)
+no_noise_func()
+sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,0.5,20.0)
+s,o = experiment_simulation(sim_details,start_state)
 =#
