@@ -33,7 +33,7 @@ end
 #=
 T_noise_amp = SVector{7,Float64}(0.6, 0.1, 1.3, 1.1, 0.5, 0.8, 1.7)
 P_Noise_amp = SVector{7,Float64}(1.3, 2.9, 2.3, 0.6, 1.9, 0.1, 1.7)
-dvg = DummyValuesGenerator(T_noise_amp,P_Noise_amp)
+DVG = DummyValuesGenerator(T_noise_amp,P_Noise_amp)
 =#
 
 struct DummyWindGenerator{T,P}
@@ -48,7 +48,6 @@ function fake_wind(dwg,M,X,t)
 end
 
 #=
-
 W_amp = [
     [2 0 0; 0 6 0; 0 0 2],
     [6 0 0; 0 6 0; 0 0 7],
@@ -59,7 +58,7 @@ W_amp = [
     [2 0 0; 0 2 0; 0 0 5]
         ]
 func_list = (cos,sin,sin,cos,cos,cos,sin)
-dwg = DummyWindGenerator(W_amp,func_list)
+DWG = DummyWindGenerator(W_amp,func_list)
 =#
 
 struct ProcessNoiseGenerator{T}
@@ -80,5 +79,5 @@ noise_covar = [
         0 0 0 pi/12 0;
         0 0 0 0 pi/12;
 ]
-png = ProcessNoiseGenerator(noise_covar)
+PNG = ProcessNoiseGenerator(noise_covar)
 =#

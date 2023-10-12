@@ -18,7 +18,6 @@ function experiment_simulation(sim,start_state)
 
     T = sim.total_time #10.0
     t = sim.time_step #0.5
-    state_history = Array{typeof(start_state),1}([start_state])
     state_history = Vector{Pair{Float64,typeof(start_state)}}([0.0=>start_state])
     otype = typeof(sim.get_observation(start_state,0.0))
     observation_history = Vector{Pair{Float64,otype}}()
@@ -42,12 +41,13 @@ end
 
 #=
 start_state = SVector(100.0,100.0,1800.0,pi/6,0.0)
-curr_state = SVector(100.0,100.0,1800.0,pi/6,0.0)
 control_func(X,t) = SVector(10.0,0.0,0.0)
-wind_func(X,t) = fake_wind(dwg,3,X,t)
-obs_func(X,t) = fake_observation(dvg,3,X,t)
-noise_func(t) = process_noise(png,t)
-no_noise_func()
+true_model = 1
+wind_func(X,t) = fake_wind(DWG,true_model,X,t) + fake_wind(DWG,7,X,t)
+obs_func(X,t) = fake_observation(DVG,true_model,X,t) + fake_observation(DVG,7,X,t)
+obs_func(X,t) = (fake_observation(DVG,true_model,X,t) + fake_observation(DVG,7,X,t))*0.5
+noise_func(t) = process_noise(PNG,t)
+noise_func(t) = SVector(0.0,0.0,0.0,0.0,0.0)
 sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,0.5,20.0)
 s,o = experiment_simulation(sim_details,start_state)
 =#

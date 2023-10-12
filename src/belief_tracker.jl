@@ -1,67 +1,78 @@
 using Distributions
 
-function temperature_likelihood(o_temp,X,M,t)
-    Temp_Amp = [ 0.6, 0.1, 1.3, 1.1, 0.5, 0.8, 1.7 ]
-    temp_mean = Temp_Amp[M]*sin(sum(X[1:3])+t)
-    dist = Normal(temp_mean,sqrt(Temp_Amp[M]))
+struct BeliefUpdateParams{T,Q,P}
+    dvg::T
+    dwg::Q
+    png::P
+    control::Function
+    wind::Function
+end
+
+
+function temperature_likelihood(dvg,m,o_temp,X,t)
+    temp_mean = dvg.temp_noise_amp[m]*sin(sum(X[1:3])+t)
+    dist = Normal(temp_mean,sqrt(dvg.temp_noise_amp[m]))
     likelihood = pdf(dist,o_temp)
     return likelihood
 end
 
 
-function pressure_likelihood(o_pressure,X,M,t)
-    Pres_Amp = [ 1.3, 2.9, 2.3, 0.6, 1.9, 0.1, 1.7 ]
-    pres_mean = Pres_Amp[M]*cos(sum(X[1:3])+t)
-    dist = Normal(pres_mean, sqrt(Pres_Amp[M]))
+function pressure_likelihood(dvg,m,o_pressure,X,t)
+    pres_mean = dvg.press_noise_amp[m]*cos(sum(X[1:3])+t)
+    dist = Normal(pres_mean, sqrt(dvg.press_noise_amp[m]))
     likelihood = pdf(dist,o_pressure)
     return likelihood
 end
 
 
-function transition_likelihood(o_position,X,t)
-
-    process_noise_covar = [
-            30 0 0 0 0;
-            0 30 0 0 0;
-            0 0 30 0 0;
-            0 0 0 pi/12 0;
-            0 0 0 0 pi/12;
-    ]
-    dist = MvNormal(X,sqrt(process_noise_covar))
+function transition_likelihood(png,o_position,X,t)
+    dist = MvNormal(X,sqrt(png.covar_matrix))
     likelihood = pdf(dist,o_position)
     return likelihood
 end
 
-function update_belief(b0,s0,o,step_num)
+
+function update_belief(bup,b0,s0,o,time_interval)
 
     num_models = length(b0)
     b1 = Array{Float64,1}(undef,num_models)
 
-    for i in 1:num_models
-        mwf(u,t) = fake_wind(u,t,i)
-        no_noise(t) = zeros(5)
-        s1 = aircraft_simulate(aircraft_dynamics!,s0,[(step_num-1)*0.5,step_num*0.5],(control_func,mwf,no_noise),0.5)
-        l_pos = transition_likelihood(o[1:5],[s1[2]...],step_num*0.5)
-        l_temp = temperature_likelihood(o[6],o[1:5],i,step_num*0.5)
-        l_pres = pressure_likelihood(o[7],o[1:5],i,step_num*0.5)
-        b1[i] = l_temp*l_pres*l_pos*b0[i]
+    for m in 1:num_models
+        mwf(X,t) = bup.wind(bup.dwg,m,X,t)
+        no_noise(t) = zeros(size(s0))
+        s1::Array{typeof(s0),1} = aircraft_simulate(aircraft_dynamics,s0,time_interval,(bup.control,mwf,no_noise),time_interval[2]-time_interval[1])
+        l_pos::Float64 = transition_likelihood(bup.png,o[1:5],s1[2],time_interval[2])
+        l_temp = temperature_likelihood(bup.dvg,m,o[6],o[1:5],time_interval[2])
+        l_pres = pressure_likelihood(bup.dvg,m,o[7],o[1:5],time_interval[2])
+        b1[m] = l_temp*l_pres*l_pos*b0[m]
     end
 
     b1 = b1/sum(b1)
     return SVector{num_models,Float64}(b1)
 end
 
-function final_belief(s,o)
-    b0 = SVector(NTuple{7,Float64}(repeat([1/7],7)))
-    B = [b0]
-    b_curr = b0
+
+function final_belief(bup,M,s,o)
+
+    #M = number of different models
+    @assert isinteger(M)
+
+    # b0 = SVector{M,Float64}(repeat([1/M],M))
+    # b0 = SVector{M,Float64}(1/M,1/M,1/M,1/M,1/M,1/M,1/M)
+    b0 = Array{Float64,1}([1/M,1/M,1/M,1/M,1/M,1/M,1/M])
+    # b0 = SVector{M}(Array{Float64,1}([1/M,1/M,1/M,1/M,1/M,1/M,1/M]))
+    c = SVector(1,2,3)
+    B = Array{typeof(b0),1}([b0])
+    b_curr::typeof(b0) = b0
     for i in 1:length(o)
-        bp = update_belief(b_curr, s[i], o[i], i)
+        time_interval = (s[i][1],o[i][1])
+        bp = update_belief(bup,b_curr,s[i][2],o[i][2],time_interval)
         push!(B,bp)
         b_curr = bp
     end
     return B
 end
+
 
 function calculate_entropy(b)
     #=
@@ -75,3 +86,12 @@ function calculate_entropy(b)
     end
     return -sum
 end
+
+
+#=
+control_func(X,t) = SVector(10.0,0.0,0.0)
+BUP = BeliefUpdateParams(DVG,DWG,PNG,control_func,fake_wind)
+initial_b = SVector(NTuple{7,Float64}(repeat([1/7],7)))
+update_belief(BUP,initial_b,start_state,o[1][2],(0.0,o[1][1]))
+final_belief(BUP,7,s,o)
+=#
