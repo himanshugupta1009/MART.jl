@@ -36,15 +36,18 @@ function update_belief(bup,b0,s0,o,time_interval)
 
     num_models = length(b0)
     b1 = Array{Float64,1}(undef,num_models)
+    # b1 = Array{Float64,1}()
+    no_noise(t) = zeros(size(s0))
 
     for m in 1:num_models
         mwf(X,t) = bup.wind(bup.dwg,m,X,t)
-        no_noise(t) = zeros(size(s0))
         s1::Array{typeof(s0),1} = aircraft_simulate(aircraft_dynamics,s0,time_interval,(bup.control,mwf,no_noise),time_interval[2]-time_interval[1])
         l_pos::Float64 = transition_likelihood(bup.png,o[1:5],s1[2],time_interval[2])
         l_temp = temperature_likelihood(bup.dvg,m,o[6],o[1:5],time_interval[2])
         l_pres = pressure_likelihood(bup.dvg,m,o[7],o[1:5],time_interval[2])
+        println(m , " ", s1[2], " ", l_pos, " ", l_temp, " ", l_pres)
         b1[m] = l_temp*l_pres*l_pos*b0[m]
+        # push!(b1, l_temp*l_pres*l_pos*b0[m])
     end
 
     b1 = b1/sum(b1)
@@ -52,18 +55,23 @@ function update_belief(bup,b0,s0,o,time_interval)
 end
 
 
-function final_belief(bup,M,s,o)
+function initialize_belief(::Val{M}) where M
+    a = fill(1/M, M)
+    return SVector{M}(a)
+end
+
+
+function final_belief(bup,::Val{M},s,o) where M
 
     #M = number of different models
     @assert isinteger(M)
 
     # b0 = SVector{M,Float64}(repeat([1/M],M))
-    # b0 = SVector{M,Float64}(1/M,1/M,1/M,1/M,1/M,1/M,1/M)
-    b0 = Array{Float64,1}([1/M,1/M,1/M,1/M,1/M,1/M,1/M])
-    # b0 = SVector{M}(Array{Float64,1}([1/M,1/M,1/M,1/M,1/M,1/M,1/M]))
-    c = SVector(1,2,3)
+    # b0 = Array{Float64,1}([1/M,1/M,1/M,1/M,1/M,1/M,1/M])
+    # b0 = fill(1/M,M)
+    b0 = initialize_belief(Val(M))
     B = Array{typeof(b0),1}([b0])
-    b_curr::typeof(b0) = b0
+    b_curr = b0
     for i in 1:length(o)
         time_interval = (s[i][1],o[i][1])
         bp = update_belief(bup,b_curr,s[i][2],o[i][2],time_interval)
