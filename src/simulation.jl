@@ -42,7 +42,7 @@ end
 #=
 start_state = SVector(100.0,100.0,1800.0,pi/6,0.0)
 control_func(X,t) = SVector(10.0,0.0,0.0)
-true_model = 1
+true_model = 5
 wind_func(X,t) = fake_wind(DWG,true_model,X,t) + fake_wind(DWG,7,X,t)
 obs_func(X,t) = fake_observation(DVG,true_model,X,t) + fake_observation(DVG,7,X,t)
 obs_func(X,t) = (fake_observation(DVG,true_model,X,t) + fake_observation(DVG,7,X,t))*0.5
