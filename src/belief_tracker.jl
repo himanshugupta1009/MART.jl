@@ -37,7 +37,6 @@ function update_belief(bup,b0,s0,o,time_interval)
     num_models = length(b0)
     b1 = Array{Float64,1}(undef,num_models)
     # b1 = Array{Float64,1}()
-    no_noise(t) = zeros(size(s0))
 
     for m in 1:num_models
         mwf(X,t) = bup.wind(bup.dwg,m,X,t)
@@ -45,7 +44,7 @@ function update_belief(bup,b0,s0,o,time_interval)
         l_pos::Float64 = transition_likelihood(bup.png,o[1:5],s1[2],time_interval[2])
         l_temp = temperature_likelihood(bup.dvg,m,o[6],o[1:5],time_interval[2])
         l_pres = pressure_likelihood(bup.dvg,m,o[7],o[1:5],time_interval[2])
-        println(m , " ", s1[2], " ", l_pos, " ", l_temp, " ", l_pres)
+        # println(m , " ", s1[2], " ", l_pos, " ", l_temp, " ", l_pres)
         b1[m] = l_temp*l_pres*l_pos*b0[m]
         # push!(b1, l_temp*l_pres*l_pos*b0[m])
     end
@@ -101,5 +100,5 @@ control_func(X,t) = SVector(10.0,0.0,0.0)
 BUP = BeliefUpdateParams(DVG,DWG,PNG,control_func,fake_wind)
 initial_b = SVector(NTuple{7,Float64}(repeat([1/7],7)))
 update_belief(BUP,initial_b,start_state,o[1][2],(0.0,o[1][1]))
-final_belief(BUP,7,s,o)
+final_belief(BUP,Val(7),s,o)
 =#

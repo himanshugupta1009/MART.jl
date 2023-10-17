@@ -43,11 +43,12 @@ end
 start_state = SVector(100.0,100.0,1800.0,pi/6,0.0)
 control_func(X,t) = SVector(10.0,0.0,0.0)
 true_model = 5
-wind_func(X,t) = fake_wind(DWG,true_model,X,t) + fake_wind(DWG,7,X,t)
-obs_func(X,t) = fake_observation(DVG,true_model,X,t) + fake_observation(DVG,7,X,t)
-obs_func(X,t) = (fake_observation(DVG,true_model,X,t) + fake_observation(DVG,7,X,t))*0.5
+wind_func(X,t) = 1/2(fake_wind(DWG,true_model,X,t) + fake_wind(DWG,3,X,t))
+wind_func(X,t) = fake_wind(DWG,true_model,X,t)
+obs_func(X,t) = 1/2*(fake_observation(DVG,true_model,X,t) + fake_observation(DVG,3,X,t) )
+obs_func(X,t) = fake_observation(DVG,true_model,X,t)
 noise_func(t) = process_noise(PNG,t)
-noise_func(t) = SVector(0.0,0.0,0.0,0.0,0.0)
-sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,0.5,20.0)
+noise_func(t) = no_noise(t)
+sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,10.0,100.0)
 s,o = experiment_simulation(sim_details,start_state)
 =#

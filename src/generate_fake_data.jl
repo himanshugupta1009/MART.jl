@@ -1,4 +1,5 @@
 using LinearAlgebra
+using StaticArrays
 
 struct DummyValuesGenerator{T,P}
     temp_noise_amp::T
@@ -64,6 +65,8 @@ DWG = DummyWindGenerator(W_amp,func_list)
 struct ProcessNoiseGenerator{T}
     covar_matrix::T
 end
+
+no_noise(t) = SVector(0.0,0.0,0.0,0.0,0.0)
 
 function process_noise(png,t)
     num_state_variables = size(png.covar_matrix)[1]
