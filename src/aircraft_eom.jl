@@ -21,7 +21,7 @@ function aircraft_dynamics(u,p,t)
     aircraft_state = u              # [x,y,z,ψ,θ]
     control_inputs = p[1](u,t)      # Control - [Va,ψ_dot,θ_dot]
     wind_inertial = p[2](u,t)       # Wind - [wx,wy,wz]
-    noise = p[3](t)*0                 # Noise - [nx,ny,nz,nψ,nθ]
+    noise = p[3](t)                 # Noise - [nx,ny,nz,nψ,nθ]
     x_dot = AircraftEOM(aircraft_state,control_inputs,wind_inertial,noise)
     return x_dot
     # for i in 1:length(u)

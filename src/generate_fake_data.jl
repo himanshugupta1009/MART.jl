@@ -75,12 +75,18 @@ function process_noise(png,t)
 end
 
 #=
-noise_covar = [
-        30 0 0 0 0;
-        0 30 0 0 0;
-        0 0 30 0 0;
+noise_covar_5d = [
+        300 0 0 0 0;
+        0 300 0 0 0;
+        0 0 300 0 0;
         0 0 0 pi/12 0;
         0 0 0 0 pi/12;
 ]
+
+noise_covar = SMatrix{3,3}([
+        300.0 0 0;
+        0 300.0 0;
+        0 0 300.0;
+        ])
 PNG = ProcessNoiseGenerator(noise_covar)
 =#

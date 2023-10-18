@@ -26,8 +26,8 @@ end
 
 
 function transition_likelihood(png,o_position,X,t)
-    dist = MvNormal(X,sqrt(png.covar_matrix))
-    likelihood = pdf(dist,o_position)
+    dist = MvNormal(X[1:3],sqrt(png.covar_matrix))
+    likelihood = pdf(dist,o_position[1:3])
     return likelihood
 end
 
@@ -98,7 +98,7 @@ end
 #=
 control_func(X,t) = SVector(10.0,0.0,0.0)
 BUP = BeliefUpdateParams(DVG,DWG,PNG,control_func,fake_wind)
-initial_b = SVector(NTuple{7,Float64}(repeat([1/7],7)))
+initial_b = SVector(NTuple{7,Float64}(fill(1/7,7)))
 update_belief(BUP,initial_b,start_state,o[1][2],(0.0,o[1][1]))
 final_belief(BUP,Val(7),s,o)
 =#
