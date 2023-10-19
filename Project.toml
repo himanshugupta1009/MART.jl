@@ -4,6 +4,7 @@ authors = ["Himanshu Gupta"]
 version = "1.0.0-DEV"
 
 [deps]
+ComplexityMeasures = "ab4b797d-85ee-42ba-b621-05d793b346a2"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 GridInterpolations = "bb4c363b-b914-514b-8517-4eb369bc008a"

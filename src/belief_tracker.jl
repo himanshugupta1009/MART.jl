@@ -1,4 +1,5 @@
 using Distributions
+import ComplexityMeasures as CM
 
 struct BeliefUpdateParams{T,Q,P}
     dvg::T
@@ -26,7 +27,7 @@ end
 
 
 function transition_likelihood(png,o_position,X,t)
-    dist = MvNormal(X[1:3],sqrt(png.covar_matrix))
+    dist = MvNormal(X[1:3],png.covar_matrix)
     likelihood = pdf(dist,o_position[1:3])
     return likelihood
 end
@@ -87,11 +88,8 @@ function calculate_entropy(b)
     The more unimodal a distribution is, the lower its entropy will be.
     Entropy = Lack of Information
     =#
-    sum = 0.0
-    for p in b
-        sum += p*log(p)
-    end
-    return -sum
+    p = CM.Probabilities([b...])
+    return CM.entropy(CM.Shannon(),p)
 end
 
 

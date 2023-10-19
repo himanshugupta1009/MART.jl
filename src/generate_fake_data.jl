@@ -70,7 +70,7 @@ no_noise(t) = SVector(0.0,0.0,0.0,0.0,0.0)
 
 function process_noise(png,t)
     num_state_variables = size(png.covar_matrix)[1]
-    noise = sqrt(noise_covar)*randn(num_state_variables)
+    noise = sqrt(png.covar_matrix)*randn(num_state_variables)
     return SVector{num_state_variables,Float64}(noise)
 end
 
@@ -87,6 +87,12 @@ noise_covar = SMatrix{3,3}([
         300.0 0 0;
         0 300.0 0;
         0 0 300.0;
+        ])
+
+noise_covar = SMatrix{3,3}([
+        3000.0 0 0;
+        0 3000.0 0;
+        0 0 3000.0;
         ])
 PNG = ProcessNoiseGenerator(noise_covar)
 =#

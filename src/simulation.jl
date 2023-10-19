@@ -79,7 +79,7 @@ true_model = 5
 wind_func(X,t) = fake_wind(DWG,true_model,X,t)
 obs_func(X,t) = fake_observation(DVG,true_model,X,t)
 noise_func(t) = process_noise(PNG,t)
-sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,10.0,100.0)
+sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,30.0,120.0)
 s,o = experiment_simulation(sim_details,start_state);
 =#
 
