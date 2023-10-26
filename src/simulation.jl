@@ -15,7 +15,17 @@ function add_noise(state,noise)
     return s_prime
 end
 
-function experiment_simulation(sim,start_state)
+# function step(sim_obj,curr_state,time_interval)
+#     return aircraft_simulate(aircraft_dynamics,curr_state,time_interval,(sim_obj.control,sim_obj.wind,no_noise),time_interval[2]-time_interval[1])
+# end
+
+
+function step(sim_obj,curr_state,time_interval)
+    return move_straight(curr_state,time_interval)
+end
+
+
+function run_experiment(sim,start_state)
 
     #=
     Needed Modifications - Return s and o as a pair or matrix
@@ -32,7 +42,8 @@ function experiment_simulation(sim,start_state)
     num_steps = Int(T/t)
 
     for i in 1:num_steps
-        new_states = aircraft_simulate(aircraft_dynamics,curr_state,[(i-1)*t,i*t],(sim.control,sim.wind,no_noise),t)
+        # new_states = step(aircraft_dynamics,curr_state,[(i-1)*t,i*t],(sim.control,sim.wind,no_noise),t)
+        new_states = step(sim,curr_state,((i-1)*t,i*t))
         process_noise = sim.noise(i*t)
         new_state = add_noise(new_states[2], process_noise)
         observation = sim.get_observation(new_state,i*t)
@@ -56,7 +67,7 @@ obs_func(X,t) = fake_observation(DVG,true_model,X,t)
 noise_func(t) = process_noise(PNG,t)
 noise_func(t) = no_noise(t)
 sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,10.0,100.0)
-s,o = experiment_simulation(sim_details,start_state)
+s,o = run_experiment(sim_details,start_state)
 =#
 
 
@@ -67,8 +78,8 @@ true_model = 5
 wind_func(X,t) = 1/2(fake_wind(DWG,true_model,X,t) + fake_wind(DWG,3,X,t))
 obs_func(X,t) = 1/2*(fake_observation(DVG,true_model,X,t) + fake_observation(DVG,3,X,t) )
 noise_func(t) = process_noise(PNG,t)
-sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,10.0,100.0)
-s,o = experiment_simulation(sim_details,start_state);
+sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,30.0,120.0)
+s,o = run_experiment(sim_details,start_state);
 =#
 
 
@@ -79,14 +90,14 @@ true_model = 5
 wind_func(X,t) = fake_wind(DWG,true_model,X,t)
 obs_func(X,t) = fake_observation(DVG,true_model,X,t)
 noise_func(t) = process_noise(PNG,t)
-sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,30.0,120.0)
-s,o = experiment_simulation(sim_details,start_state);
+sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,30.0,30.0)
+s,o = run_experiment(sim_details,start_state);
 =#
 
 
 #=
 sim_details = SimulationDetails(control_func,wind_func,no_noise,obs_func,10.0,10.0)
-s,o = experiment_simulation(sim_details,start_state);
+s,o = run_experiment(sim_details,start_state);
 =#
 
 #=

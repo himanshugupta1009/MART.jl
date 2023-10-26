@@ -47,7 +47,7 @@ end
 true_model_num = 3
 control_func(u,t) = SVector(10.0,0.0,0.0)
 wind_func(u,t) = SVector(0.0,0.0,0.0)
-wind_func(u,t) = fake_wind(u,t,true_model_num)
+wind_func(X,t) = fake_wind(DWG,true_model,X,t)
 noise_func(t) = SVector(0.0,0.0,0.0,0.0,0.0)
 hist = aircraft_simulate(aircraft_dynamics,SVector(100,100,1800,pi/6,0.0),(0.0,5.0),(control_func,wind_func,noise_func))
 =#
