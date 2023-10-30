@@ -31,11 +31,6 @@ function fake_observation(dvg,M,X,t)
     return obs
 end
 
-#=
-T_noise_amp = SVector{7,Float64}(0.6, 0.1, 1.3, 1.1, 0.5, 0.8, 1.7)
-P_Noise_amp = SVector{7,Float64}(1.3, 2.9, 2.3, 0.6, 1.9, 0.1, 1.7)
-DVG = DummyValuesGenerator(T_noise_amp,P_Noise_amp)
-=#
 
 struct DummyWindGenerator{T,P}
     wind_amplitude::T
@@ -48,19 +43,6 @@ function fake_wind(dwg,M,X,t)
     return SVector{size(dwg.wind_amplitude[M])[1],Float64}(diag(wind))
 end
 
-#=
-W_amp = [
-    [2 0 0; 0 6 0; 0 0 2],
-    [6 0 0; 0 6 0; 0 0 7],
-    [5 0 0; 0 7 0; 0 0 1],
-    [5 0 0; 0 3 0; 0 0 9],
-    [6 0 0; 0 8 0; 0 0 6],
-    [9 0 0; 0 8 0; 0 0 3],
-    [2 0 0; 0 2 0; 0 0 5]
-        ]
-func_list = (cos,sin,sin,cos,cos,cos,sin)
-DWG = DummyWindGenerator(W_amp,func_list)
-=#
 
 struct ProcessNoiseGenerator{T}
     covar_matrix::T
@@ -74,7 +56,24 @@ function process_noise(png,t)
     return SVector{num_state_variables,Float64}(noise)
 end
 
+
 #=
+T_noise_amp = SVector{7,Float64}(0.6, 0.1, 1.3, 1.1, 0.5, 0.8, 1.7)
+P_Noise_amp = SVector{7,Float64}(1.3, 2.9, 2.3, 0.6, 1.9, 0.1, 1.7)
+DVG = DummyValuesGenerator(T_noise_amp,P_Noise_amp)
+
+W_amp = SVector{7,SMatrix}(
+    SMatrix{3,3}([2 0 0; 0 6 0; 0 0 2]),
+    SMatrix{3,3}([6 0 0; 0 6 0; 0 0 7]),
+    SMatrix{3,3}([5 0 0; 0 7 0; 0 0 1]),
+    SMatrix{3,3}([5 0 0; 0 3 0; 0 0 9]),
+    SMatrix{3,3}([6 0 0; 0 8 0; 0 0 6]),
+    SMatrix{3,3}([9 0 0; 0 8 0; 0 0 3]),
+    SMatrix{3,3}([2 0 0; 0 2 0; 0 0 5])
+        )
+func_list = (cos,sin,sin,cos,cos,cos,sin)
+DWG = DummyWindGenerator(W_amp,func_list)
+
 noise_covar_5d = [
         300 0 0 0 0;
         0 300 0 0 0;
