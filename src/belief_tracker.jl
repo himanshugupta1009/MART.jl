@@ -7,6 +7,7 @@ struct BeliefUpdateParams{T,Q,P}
     png::P
     control::Function
     wind::Function
+    step::Function
 end
 
 
@@ -41,8 +42,9 @@ function update_belief(bup,b0,s0,o,time_interval)
 
     for m in 1:num_models
         mwf(X,t) = bup.wind(bup.dwg,m,X,t)
-        s1::Array{typeof(s0),1} = aircraft_simulate(aircraft_dynamics,s0,time_interval,(bup.control,mwf,no_noise),time_interval[2]-time_interval[1])
-        l_pos::Float64 = transition_likelihood(bup.png,o[1:5],s1[2],time_interval[2])
+        # s1::Array{typeof(s0),1} = aircraft_simulate(aircraft_dynamics,s0,time_interval,(bup.control,mwf,no_noise),time_interval[2]-time_interval[1])
+        s1 = bup.step(s0,bup.control,time_interval)
+        l_pos::Float64 = transition_likelihood(bup.png,o[1:5],s1,time_interval[2])
         l_temp = temperature_likelihood(bup.dvg,m,o[6],o[1:5],time_interval[2])
         l_pres = pressure_likelihood(bup.dvg,m,o[7],o[1:5],time_interval[2])
         # println(m , " ", s1[2], " ", l_pos, " ", l_temp, " ", l_pres)
@@ -95,7 +97,7 @@ end
 
 #=
 control_func(X,t) = SVector(10.0,0.0,0.0)
-BUP = BeliefUpdateParams(DVG,DWG,PNG,control_func,fake_wind)
+BUP = BeliefUpdateParams(DVG,DWG,PNG,control_func,fake_wind,move_straight)
 initial_b = SVector(NTuple{7,Float64}(fill(1/7,7)))
 update_belief(BUP,initial_b,start_state,o[1][2],(0.0,o[1][1]))
 final_belief(BUP,Val(7),s,o)
