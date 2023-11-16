@@ -13,3 +13,15 @@ struct AircraftControl <: FieldVector{3,Float64}
     ψ_dot::Float64
     θ_dot::Float64
 end
+
+struct SphericalObstacle
+    c::Tuple{3,Float64}
+    r::Float64
+end
+
+struct ExperimentEnvironment
+    x_range::Tuple{2,Float64}
+    y_range::Tuple{2,Float64}
+    z_range::Tuple{2,Float64}
+    obstacles::Array{SphericalObstacle,1}
+end
