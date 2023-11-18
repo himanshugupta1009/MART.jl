@@ -13,7 +13,7 @@ function interpolate_value(ds1, ds2, field, t)
     return interpolated_values
 end
 
-function interpolate_using_GI
+function interpolate_using_GI()
 
     #Demo code for interpolation. Poorly written. Modify it when dataset becomes clearer.
     x_values = [i for i in 1:300]

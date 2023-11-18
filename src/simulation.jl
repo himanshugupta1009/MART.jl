@@ -12,7 +12,11 @@ struct SimulationDetails
 end
 
 function add_noise(state,noise)
-    s_prime = state + typeof(state)(vcat(noise,SVector(0.0,0.0)))
+    if(length(noise)<5)
+        s_prime = state + typeof(state)(vcat(noise,SVector(0.0,0.0)))
+    else
+        s_prime = state + typeof(state)(noise)
+    end
     return s_prime
 end
 
