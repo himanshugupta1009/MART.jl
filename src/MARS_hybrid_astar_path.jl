@@ -1,5 +1,3 @@
-include("utils.jl")
-
 using LinearAlgebra
 
 struct Location
@@ -59,8 +57,8 @@ end
 
 #Dynamics
 function holonomic_vehicle_dynamics(vehicle_state::VehicleState,delta_angle)
-    vehicle_speed = 1.0
-    time_duration = 0.5
+    vehicle_speed = 2.0
+    time_duration = 0.1
     vehicle_x = vehicle_state.x
     vehicle_y = vehicle_state.y
     vehicle_theta = vehicle_state.theta
@@ -193,7 +191,7 @@ end
 function run_again_and_again()
     ENV_LENGTH = 20.0
     ENV_BREADTH = 20.0
-    holonomic_vs = VehicleState(10.5,4.0,0.0)
+    holonomic_vs = VehicleState(10.5,4.0,pi/2)
     g = gen_random_goal(ENV_LENGTH,ENV_BREADTH,holonomic_vs)
     O = gen_random_obstacles(ENV_LENGTH,ENV_BREADTH,g,holonomic_vs,50)
     e = HAExperimentEnvironment(ENV_LENGTH,ENV_BREADTH,O)
@@ -210,4 +208,49 @@ function run_again_and_again()
         push!(p_y, i.y)
     end
     plot!(p_x,p_y,lw=4.0,linestyle = :dot)
+end
+
+using DataStructures
+function generate_tree(vehicle_start::VehicleState, MAX_DEPTH=5)
+    open = PriorityQueue{Any, Int}(Base.Order.Forward)
+    curr_depth = 0
+    open[(vehicle_start,[vehicle_start])] = curr_depth
+    all_angles = [-pi/3, -pi/6, 0.0, pi/6, pi/3]
+    all_angles = [-pi/6,  0.0, pi/6]
+    # all_angles = [0.0]
+    all_nodes = []
+    while(curr_depth<=MAX_DEPTH+1 && length(open)!=0)
+        curr_entry, curr_entry_depth = dequeue_pair!(open)
+        start_state = curr_entry[2][end]
+        for ∠ in all_angles
+            new_states = []
+            curr_state = start_state
+            for i in 1:10
+                new_state = holonomic_vehicle_dynamics(curr_state,∠/10)
+                push!(new_states,new_state)
+                curr_state = new_state
+            end
+            new_pair = (start_state,new_states)
+            open[new_pair] = curr_depth+1
+            push!(all_nodes,new_pair)
+        end
+        if(curr_entry_depth > curr_depth)
+            curr_depth +=1
+        end
+    end
+    return all_nodes
+end
+
+function plot_paths(pairs)
+
+    for p in pairs
+        p_x = [p[1].x]
+        p_y = [p[1].y]
+        for e in p[2]
+            push!(p_x, e.x)
+            push!(p_y, e.y)
+        end
+        plot!(p_x,p_y,lw=4.0,linestyle=:dot,color=:red)
+    end
+
 end
