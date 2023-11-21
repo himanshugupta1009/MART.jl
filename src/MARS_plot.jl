@@ -64,8 +64,50 @@ end
 v,vc = generate_wind_vectors()
 wind_func(X,t) = grid_wind(vc,X,t)
 
+function generate_temperature_data()
 
-function plot_wind_vectors(p,values,vectors)
+    max_x = 20.0
+    num_x = Int(max_x)
+    max_y = 20.0
+    num_y = Int(max_y)
+    num_gaussians = 100
+
+    μ_array = Vector{Tuple{Float64,Float64}}(undef,num_gaussians)
+    σ_array = Vector{Matrix{Float64}}(undef,num_gaussians)
+    gaussian_models = Vector{FullNormal}(undef,num_gaussians)
+
+    for i in 1:num_gaussians
+        mi_x = clamp(rand()*max_x, 0.0,max_x)
+        mi_y = clamp(rand()*max_y, 0.0,max_y)
+        μ_array[i] = (mi_x,mi_y)
+
+        σ = rand(2,2)*5
+        σ[1,2] = 0.0
+        σ[2,1] = 0.0
+        σ_array[i] = σ
+
+        d = MvNormal([μ_array[i]...],σ_array[i])
+        gaussian_models[i] = d
+    end
+
+    values = MMatrix{num_x,num_y,Float64}(undef)
+    for i in 1:1:num_x
+        for j in 1:1:num_y
+            p = (i-0.5,j-0.5)
+            val = 0.0
+            for k in 1:num_gaussians
+                prob = pdf(gaussian_models[k],SVector(p))
+                val+= prob
+            end
+            values[i,j] = val
+        end
+    end
+
+    return values
+
+end
+
+function plot_wind_vectors(p,values,vectors,temperature_data)
 
     # p = plot(legend=false,axis=([], false))
     n_x,n_y = size(vectors)
@@ -80,6 +122,14 @@ function plot_wind_vectors(p,values,vectors)
             yticks=[1:1:n_y...],
             size=(p_size,p_size)
             )
+
+    # heatmap_data = MMatrix{n_x,n_y,Float64}(undef)
+    # for i in 1:n_x
+    #     for j in 1:n_y
+    #         heatmap_data[i,j] = values[i,j]
+    #     end
+    # end
+    heatmap!(0:n_x,0:n_y,temperature_data,alpha=0.3)
 
     for i in 1:n_x
         for j in 1:n_y
@@ -98,6 +148,7 @@ function plot_wind_vectors(p,values,vectors)
     x_range = [floor(n_x/2)-1, floor(n_x/2)+2]
     y_range = [2,4]
     plot!(x_range,y_range,reverse(I, dims = 1), yflip=false)
+
 
     return p
 end

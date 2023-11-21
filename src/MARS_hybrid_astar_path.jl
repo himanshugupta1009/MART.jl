@@ -211,46 +211,114 @@ function run_again_and_again()
 end
 
 using DataStructures
+using Graphs
+using MetaGraphs
+
+struct TreeNode{T}
+    parent_num::Int
+    node_num::Int
+    v::VehicleState
+    path_from_parent::T
+    is_leaf::Bool
+    depth::Int
+end
+
 function generate_tree(vehicle_start::VehicleState, MAX_DEPTH=5)
-    open = PriorityQueue{Any, Int}(Base.Order.Forward)
+    open = PriorityQueue{TreeNode, Int}(Base.Order.Forward)
     curr_depth = 0
-    open[(vehicle_start,[vehicle_start])] = curr_depth
+    # open[(vehicle_start,[vehicle_start])] = curr_depth
     all_angles = [-pi/3, -pi/6, 0.0, pi/6, pi/3]
     all_angles = [-pi/6,  0.0, pi/6]
-    # all_angles = [0.0]
-    all_nodes = []
-    while(curr_depth<=MAX_DEPTH+1 && length(open)!=0)
-        curr_entry, curr_entry_depth = dequeue_pair!(open)
-        start_state = curr_entry[2][end]
-        for ∠ in all_angles
-            new_states = []
+    tree = MetaDiGraph()
+    add_vertex!(tree)
+    root_node = TreeNode(0,1,vehicle_start,nothing,false,curr_depth)
+    set_prop!(tree, nv(tree), :val, root_node)
+    open[root_node] = curr_depth
+
+    while(length(open)!=0)
+        curr_node,curr_depth = dequeue_pair!(open)
+        @assert curr_node.depth == curr_depth
+        start_state = curr_node.v
+        new_depth = curr_node.depth+1
+        if(new_depth > MAX_DEPTH)
+            break
+        end
+        is_leaf = false
+        if(new_depth == MAX_DEPTH)
+            is_leaf = true
+        end
+        for a in all_angles
             curr_state = start_state
+            new_states = [curr_state]
             for i in 1:10
-                new_state = holonomic_vehicle_dynamics(curr_state,∠/10)
+                new_state = holonomic_vehicle_dynamics(curr_state,a/10)
                 push!(new_states,new_state)
                 curr_state = new_state
             end
-            new_pair = (start_state,new_states)
-            open[new_pair] = curr_depth+1
-            push!(all_nodes,new_pair)
-        end
-        if(curr_entry_depth > curr_depth)
-            curr_depth +=1
+            add_vertex!(tree)
+            parent_num = curr_node.node_num
+            node_num = nv(tree)
+            new_node = TreeNode(parent_num,node_num,curr_state,new_states,is_leaf,new_depth)
+            set_prop!(tree, node_num, :val, new_node)
+            add_edge!(tree,parent_num,node_num)
+            open[new_node] = new_depth
         end
     end
-    return all_nodes
+    return tree
 end
 
-function plot_paths(pairs)
 
-    for p in pairs
-        p_x = [p[1].x]
-        p_y = [p[1].y]
-        for e in p[2]
-            push!(p_x, e.x)
-            push!(p_y, e.y)
+function generate_all_paths(tree)
+
+    all_paths = []
+
+    for i in 1:nv(tree)
+        n = get_prop(tree,i,:val)
+        if(n.is_leaf)
+            curr_node = n
+            path = [n.v]
+            while(curr_node.parent_num!=0)
+                pfp = curr_node.path_from_parent
+                for e in pfp[(end-1):-1:1]
+                    push!(path,e)
+                end
+                curr_node = get_prop(tree,curr_node.parent_num,:val)
+            end
+            push!(all_paths,(i,reverse(path)))
         end
-        plot!(p_x,p_y,lw=4.0,linestyle=:dot,color=:red)
+    end
+
+    return all_paths
+end
+
+import StatsBase:sample
+function sample_random_paths(all_paths,m)
+    s = sample(all_paths,m;replace=false)
+    return s
+end
+
+function plot_paths(paths,color)
+    for (index,path) in paths
+        p_x = []
+        p_y = []
+        for point in path
+            push!(p_x, point.x)
+            push!(p_y, point.y)
+        end
+        plot!(p_x,p_y,lw=4.0,linestyle=:dot,color=color)
+        # plot!(p_x,p_y,lw=4.0,linestyle=:dot)
     end
 
 end
+
+#=
+v,vc = generate_wind_vectors()
+temperature_data = generate_temperature_data()
+plot_wind_vectors(1,v,vc,temperature_data)
+veh = VehicleState(10.5,4.0,pi/2)
+t = generate_tree(veh,7)
+all_paths = generate_all_paths(t)
+random_subset = sample_random_paths(all_paths,300)
+plot_paths(random_subset,:red)
+plot!([10.0],[10.0])
+=#
