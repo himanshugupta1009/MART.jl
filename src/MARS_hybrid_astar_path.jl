@@ -318,7 +318,7 @@ plot_wind_vectors(1,v,vc,temperature_data)
 veh = VehicleState(10.5,4.0,pi/2)
 t = generate_tree(veh,7)
 all_paths = generate_all_paths(t)
-random_subset = sample_random_paths(all_paths,300)
+random_subset = sample_random_paths(all_paths,39)
 plot_paths(random_subset,:red)
 plot!([10.0],[10.0])
 =#
