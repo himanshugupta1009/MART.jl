@@ -10,7 +10,7 @@ function generate_wind_vectors()
     num_x = Int(max_x)
     max_y = 20.0
     num_y = Int(max_y)
-    num_gaussians = 5
+    num_gaussians = 1
 
     μ_array = Vector{Tuple{Float64,Float64}}(undef,num_gaussians)
     σ_array = Vector{Matrix{Float64}}(undef,num_gaussians)
@@ -135,7 +135,7 @@ function plot_wind_vectors(p,values,vectors,temperature_data)
         for j in 1:n_y
             pos_x, pos_y = i-0.5,j-0.5
             vec = vectors[i,j]
-            mag = norm(vec) * 2.5
+            mag = norm(vec) * 2.0
             quiver!([pos_x],[pos_y],quiver=([vec[1]/mag],[vec[2]/mag]), color="grey", lw=1.5)
         end
     end

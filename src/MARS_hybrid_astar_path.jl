@@ -223,6 +223,17 @@ struct TreeNode{T}
     depth::Int
 end
 
+function get_wind(x,y,vectors)
+    vector = vectors[x,y]
+    mag = norm(vector)
+    if(mag!=0)
+        n = vector/mag
+    else
+        n = vector
+    end
+    return n
+end
+
 function generate_tree(vehicle_start::VehicleState, MAX_DEPTH=5)
     open = PriorityQueue{TreeNode, Int}(Base.Order.Forward)
     curr_depth = 0
@@ -250,8 +261,60 @@ function generate_tree(vehicle_start::VehicleState, MAX_DEPTH=5)
         for a in all_angles
             curr_state = start_state
             new_states = [curr_state]
-            for i in 1:10
-                new_state = holonomic_vehicle_dynamics(curr_state,a/10)
+            num_partitions = 10
+            for i in 1:num_partitions
+                new_state = holonomic_vehicle_dynamics(curr_state,a/num_partitions)
+                push!(new_states,new_state)
+                curr_state = new_state
+            end
+            add_vertex!(tree)
+            parent_num = curr_node.node_num
+            node_num = nv(tree)
+            new_node = TreeNode(parent_num,node_num,curr_state,new_states,is_leaf,new_depth)
+            set_prop!(tree, node_num, :val, new_node)
+            add_edge!(tree,parent_num,node_num)
+            open[new_node] = new_depth
+        end
+    end
+    return tree
+end
+
+function generate_tree_with_wind(vehicle_start::VehicleState, wind_vectors, MAX_DEPTH=5)
+    open = PriorityQueue{TreeNode, Int}(Base.Order.Forward)
+    curr_depth = 0
+    # open[(vehicle_start,[vehicle_start])] = curr_depth
+    all_angles = [-pi/3, -pi/6, 0.0, pi/6, pi/3]
+    all_angles = [-pi/6,  0.0, pi/6]
+    tree = MetaDiGraph()
+    add_vertex!(tree)
+    root_node = TreeNode(0,1,vehicle_start,nothing,false,curr_depth)
+    set_prop!(tree, nv(tree), :val, root_node)
+    open[root_node] = curr_depth
+    n_x,n_y = size(wind_vectors)
+
+    while(length(open)!=0)
+        curr_node,curr_depth = dequeue_pair!(open)
+        @assert curr_node.depth == curr_depth
+        start_state = curr_node.v
+        new_depth = curr_node.depth+1
+        if(new_depth > MAX_DEPTH)
+            break
+        end
+        is_leaf = false
+        if(new_depth == MAX_DEPTH)
+            is_leaf = true
+        end
+        for a in all_angles
+            curr_state = start_state
+            new_states = [curr_state]
+            num_partitions = 10
+            for i in 1:num_partitions
+                new_state_no_wind = holonomic_vehicle_dynamics(curr_state,a/num_partitions)
+                x = Int(clamp(floor(new_state_no_wind.x),1,n_x))
+                y = Int(clamp(floor(new_state_no_wind.y),1,n_y))
+                wind = get_wind(x,y,wind_vectors)/(2*num_partitions) 
+                new_state = VehicleState(new_state_no_wind.x+wind[1],
+                            new_state_no_wind.y+wind[2],new_state_no_wind.theta)
                 push!(new_states,new_state)
                 curr_state = new_state
             end
@@ -297,7 +360,7 @@ function sample_random_paths(all_paths,m)
     return s
 end
 
-function plot_paths(paths,color)
+function plot_paths(paths,line_width,color)
     for (index,path) in paths
         p_x = []
         p_y = []
@@ -305,20 +368,72 @@ function plot_paths(paths,color)
             push!(p_x, point.x)
             push!(p_y, point.y)
         end
-        plot!(p_x,p_y,lw=4.0,linestyle=:dot,color=color)
+        plot!(p_x,p_y,lw=line_width,linestyle=:dot,color=color)
         # plot!(p_x,p_y,lw=4.0,linestyle=:dot)
     end
 
 end
 
+function generate_merged_plot(vectors,paths,colors)
+
+    n_x,n_y = size(vectors)
+    p_size = 1000
+    p = plot(
+            legend=false,
+            gridlinewidth=2.0,
+            # gridstyle=:dash,
+            axis=false,
+            gridalpha=0.1,
+            xticks=[1:1:n_x...],
+            yticks=[1:1:n_y...],
+            size=(p_size,p_size)
+            )
+
+    #=
+    Logic borrowed from this website:
+    https://stackoverflow.com/questions/50069143/how-to-plot-an-image-on-a-specific-coordinates-in-the-graph-using-plots-jl
+    =#
+    I = load("./plots/fixed_wing_uav_black.png")
+    x_range = [floor(n_x/2)-1, floor(n_x/2)+2]
+    y_range = [2,4]
+    plot!(x_range,y_range,reverse(I, dims = 1), yflip=false)
+
+    for i in 1:length(paths)
+        plot_paths(paths[i],1.0,colors[i])
+    end
+
+    rand_path_set = rand(paths)
+    index,rand_path = rand(rand_path_set)
+    p_x,p_y = [],[]
+    for point in rand_path
+        push!(p_x, point.x)
+        push!(p_y, point.y)
+    end
+    plot!(p_x,p_y,lw=8.0,linestyle=:dot,color=:darkgreen)
+    display(p);
+    return p;
+end
 #=
-v,vc = generate_wind_vectors()
-temperature_data = generate_temperature_data()
-plot_wind_vectors(1,v,vc,temperature_data)
-veh = VehicleState(10.5,4.0,pi/2)
-t = generate_tree(veh,7)
-all_paths = generate_all_paths(t)
-random_subset = sample_random_paths(all_paths,39)
-plot_paths(random_subset,:red)
+NUM_PLOTS = 9
+random_subset = nothing
+paths_all_env = []
+for i in 1:NUM_PLOTS
+    v,vc = generate_wind_vectors();
+    temperature_data = generate_temperature_data();
+    plot_wind_vectors(1,v,vc,temperature_data)
+    veh = VehicleState(10.5,4.0,pi/2)
+    t = generate_tree_with_wind(veh,vc,6);
+    all_paths = generate_all_paths(t);
+    if(random_subset == nothing)
+        random_subset = sample_random_paths(1:length(all_paths),39);
+    end
+    plot_paths(all_paths[random_subset],4.0,:red)
+    fig_name = "./plots/img"*string(i)
+    savefig(fig_name)
+    push!(paths_all_env,all_paths[random_subset])
+end
 plot!([10.0],[10.0])
+
+colors = SVector(:red,:blue,:olive,:grey,:brown,:purple,:black,:cyan,:yellow)
+generate_merged_plot(vc,paths_all_env,colors)
 =#
