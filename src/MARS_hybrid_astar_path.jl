@@ -437,7 +437,7 @@ for i in 1:NUM_PLOTS
         random_subset = sample_random_paths(1:length(all_paths),39);
     end
     plot_paths(all_paths[random_subset],4.0,:red)
-    fig_name = "./plots/img"*string(i)
+    fig_name = "./plots/img"*string(i)*".svg"
     savefig(fig_name)
     push!(paths_all_env,all_paths[random_subset])
 end
@@ -445,7 +445,7 @@ plot!([10.0],[10.0])
 
 colors = SVector(:red,:blue,:olive,:grey,:brown,:purple,:black,:cyan,:yellow)
 generate_merged_plot(vc,paths_all_env,colors)
-savefig("./plots/merged.png")
+savefig("./plots/merged.svg")
 
 Command to merge all the 9 plots and generate one single image on Ubuntu terminal:
 
@@ -454,4 +454,8 @@ Command to merge all the 9 plots and generate one single image on Ubuntu termina
     \( img7.png img8.png img9.png +append \) \
     -background none -append output.png
 
+    convert \( img1.svg img2.svg img3.svg +append \) \
+    \( img4.svg img5.svg img6.svg +append \) \
+    \( img7.svg img8.svg img9.svg +append \) \
+    -background none -append output.png
 =#
