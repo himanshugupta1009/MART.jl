@@ -312,7 +312,7 @@ function generate_tree_with_wind(vehicle_start::VehicleState, wind_vectors, MAX_
                 new_state_no_wind = holonomic_vehicle_dynamics(curr_state,a/num_partitions)
                 x = Int(clamp(floor(new_state_no_wind.x),1,n_x))
                 y = Int(clamp(floor(new_state_no_wind.y),1,n_y))
-                wind = get_wind(x,y,wind_vectors)/(2*num_partitions) 
+                wind = get_wind(x,y,wind_vectors)/(2*num_partitions)
                 new_state = VehicleState(new_state_no_wind.x+wind[1],
                             new_state_no_wind.y+wind[2],new_state_no_wind.theta)
                 push!(new_states,new_state)
@@ -365,8 +365,12 @@ function plot_paths(paths,line_width,color)
         p_x = []
         p_y = []
         for point in path
-            push!(p_x, point.x)
-            push!(p_y, point.y)
+            if( point.x<20.0 && point.x>0.0 && point.y<20.0 && point.y>0.0 )
+                push!(p_x, point.x)
+                push!(p_y, point.y)
+            else
+                break
+            end
         end
         plot!(p_x,p_y,lw=line_width,linestyle=:dot,color=color)
         # plot!(p_x,p_y,lw=4.0,linestyle=:dot)
@@ -406,13 +410,18 @@ function generate_merged_plot(vectors,paths,colors)
     index,rand_path = rand(rand_path_set)
     p_x,p_y = [],[]
     for point in rand_path
-        push!(p_x, point.x)
-        push!(p_y, point.y)
+        if( point.x<20.0 && point.x>0.0 && point.y<20.0 && point.y>0.0 )
+            push!(p_x, point.x)
+            push!(p_y, point.y)
+        else
+            break
+        end
     end
     plot!(p_x,p_y,lw=8.0,linestyle=:dot,color=:darkgreen)
     display(p);
     return p;
 end
+
 #=
 NUM_PLOTS = 9
 random_subset = nothing
@@ -436,4 +445,13 @@ plot!([10.0],[10.0])
 
 colors = SVector(:red,:blue,:olive,:grey,:brown,:purple,:black,:cyan,:yellow)
 generate_merged_plot(vc,paths_all_env,colors)
+savefig("./plots/merged.png")
+
+Command to merge all the 9 plots and generate one single image on Ubuntu terminal:
+
+    convert \( img1.png img2.png img3.png +append \) \
+    \( img4.png img5.png img6.png +append \) \
+    \( img7.png img8.png img9.png +append \) \
+    -background none -append output.png
+
 =#
