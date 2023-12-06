@@ -16,16 +16,30 @@ end
 function interpolate_using_GI()
 
     #Demo code for interpolation. Poorly written. Modify it when dataset becomes clearer.
-    x_values = [i for i in 1:300]
-    y_values = [i for i in 1:300]
-    z_values = [i for i in 1:50]
+    # x_values = [i for i in 1:300]
+    x_values = SVector{300,Int}(1:300)
+    # y_values = [i for i in 1:300]
+    y_values = SVector{300,Int}(1:300)
+    # z_values = [i for i in 1:50]
+    z_values = SVector{50,Int}(1:50)
+
     grid = GI.RectangleGrid(x_values,y_values,z_values)
 
     f1 = h5open("./dataset/ENS_MEM_01/wrfout_d01_2020-04-24_21_00_00", "r")
     s = HDF5.read(f1)
 
     temp_values = s["T"]
-    point = [1.1,2.9,3.1]
+    point = SVector(1.1,2.9,3.1)
     interpolated_temp_value = GI.interpolate(grid,temp_values,point)
 
+end
+
+function profile_interpolation(grid,value_array,point)
+    interpolated_value = GI.interpolate(grid::GI.AbstractGrid,temp_values::DenseArray,point::SVector)
+    return interpolated_value
+end
+
+function profile_interpolation2(grid,value_array,point)
+    interpolated_value = GI.interpolate(grid,temp_values,point)
+    return interpolated_value
 end
