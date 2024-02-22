@@ -83,7 +83,7 @@ initial_mdp_state = MARTBeliefMDPState(initial_uav_state,initial_belief,0.0)
 a, info = action_info(planner, initial_mdp_state);
 #a = action(planner,initial_mdp_state)
 
-s,o,a,b = run_experiment(sim_details,start_state);
+s,a,o,b = run_experiment(sim_details,start_state);
 
 b_arrays = []
 for j in 1:100

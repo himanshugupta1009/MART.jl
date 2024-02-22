@@ -10,6 +10,7 @@ function run_experiment(sim,start_state)
     num_steps = Int(T/t)
     num_models = 7
     start_time = 0.0
+    print_logs = true
 
     #Relevant Values to be stored
     state_history = Vector{Pair{Float64,typeof(start_state)}}()
@@ -44,7 +45,7 @@ function run_experiment(sim,start_state)
     #Find Initial Action
     println("Finding the Initial Action")
     initial_uav_action, info = action_info(planner, initial_mdp_state);
-    # initial_action = rand(POMDPs.actions(mart_mdp))
+    # initial_uav_action = rand(POMDPs.actions(mart_mdp))
 
     #Store Relevant Values
     push!(state_history,(start_time=>start_state))
@@ -62,7 +63,11 @@ function run_experiment(sim,start_state)
         next_time = time_interval[2]
         CTR(X,t) = curr_uav_action
 
-        println("Simulating for Time Interval : ", time_interval)
+        if(print_logs)
+            println("Current UAV State : ", curr_uav_state)
+            println("Current Belief is : ", curr_belief)
+            println("Simulating with action ", curr_uav_action," for Time Interval ", time_interval)
+        end
 
         #Simulate the UAV
         new_state_list = aircraft_simulate(aircraft_dynamics,curr_uav_state,
@@ -75,10 +80,12 @@ function run_experiment(sim,start_state)
         next_belief = update_belief(mart_mdp,curr_belief,curr_uav_state,CTR,
                         observation,time_interval)
         #Find action for the next iteration of the for loop
-        println("Finding the best UAV Action for the next interval : ")
+        if(print_logs)
+            println("Finding the best UAV Action for the next interval : ", (i*t,(i+1)*t))
+        end
         bmdp_state = MARTBeliefMDPState(next_uav_state,next_belief,next_time)
         next_uav_action, info = action_info(planner, bmdp_state);
-        # new_uav_action = rand(POMDPs.actions(mart_mdp))
+        # next_uav_action = rand(POMDPs.actions(mart_mdp))
 
         push!(state_history,(next_time=>next_uav_state))
         push!(observation_history,(next_time=>observation))
@@ -93,5 +100,17 @@ function run_experiment(sim,start_state)
 end
 
 #=
-s,o,a,b = run_experiment(sim_details,start_state);
+
+DVG,DWG,PNG = get_fake_data();
+start_state = SVector(1000.0,1000.0,1800.0,pi/6,0.0);
+control_func(X,t) = SVector(10.0,0.0,0.0);
+true_model = 5;
+wind_func(X,t) = fake_wind(DWG,true_model,X,t);
+obs_func(X,t) = fake_observation(DVG,true_model,X,t);
+noise_func(t) = process_noise(PNG,t);
+sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,
+                            10.0,100.0);
+
+s,a,o,b = run_experiment(sim_details,start_state);
+
 =#
