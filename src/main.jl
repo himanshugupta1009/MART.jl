@@ -32,7 +32,7 @@ function run_experiment(sim,start_state)
     #Initialize MCTS Solver and Planner
     mcts_solver = MCTSSolver(
                     n_iterations=100,
-                    depth=10,
+                    depth=30,
                     exploration_constant=5.0,
                     enable_tree_vis = true);
     planner = solve(mcts_solver,mart_mdp);
@@ -64,9 +64,12 @@ function run_experiment(sim,start_state)
         CTR(X,t) = curr_uav_action
 
         if(print_logs)
+            println("********************************************************")
+            println("Iteration Number ", i ," out of ",num_steps)
             println("Current UAV State : ", curr_uav_state)
             println("Current Belief is : ", curr_belief)
-            println("Simulating with action ", curr_uav_action," for Time Interval ", time_interval)
+            println("Simulating with action ", curr_uav_action," for Time \
+                                Interval ", time_interval)
         end
 
         #Simulate the UAV
@@ -81,11 +84,20 @@ function run_experiment(sim,start_state)
                         observation,time_interval)
         #Find action for the next iteration of the for loop
         if(print_logs)
-            println("Finding the best UAV Action for the next interval : ", (i*t,(i+1)*t))
+            println("Simulation Finished. Now finding the best UAV Action for \
+                    the next interval : ", (i*t,(i+1)*t))
         end
-        bmdp_state = MARTBeliefMDPState(next_uav_state,next_belief,next_time)
-        next_uav_action, info = action_info(planner, bmdp_state);
-        # next_uav_action = rand(POMDPs.actions(mart_mdp))
+        if(i<num_steps)
+            bmdp_state = MARTBeliefMDPState(next_uav_state,next_belief,next_time)
+            next_uav_action, info = action_info(planner, bmdp_state);
+            # next_uav_action = rand(POMDPs.actions(mart_mdp))
+        else
+            #=
+            Doing this to ensure that the action is not computed for the final
+            time step.
+            =#
+            next_uav_action = SVector(0.0,0.0,0.0)
+        end
 
         push!(state_history,(next_time=>next_uav_state))
         push!(observation_history,(next_time=>observation))
