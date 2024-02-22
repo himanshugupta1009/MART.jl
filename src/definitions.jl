@@ -20,8 +20,8 @@ struct SphericalObstacle
 end
 
 struct ExperimentEnvironment
-    x_range::Tuple{2,Float64}
-    y_range::Tuple{2,Float64}
-    z_range::Tuple{2,Float64}
+    x_range::Tuple{Float64,Float64}
+    y_range::Tuple{Float64,Float64}
+    z_range::Tuple{Float64,Float64}
     obstacles::Array{SphericalObstacle,1}
 end
