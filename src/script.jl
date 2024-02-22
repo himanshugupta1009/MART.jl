@@ -17,19 +17,20 @@ func_list = (cos,sin,sin,cos,cos,cos,sin)
 DWG = DummyWindGenerator(W_amp,func_list)
 
 noise_covar = SMatrix{3,3}([
-        3000.0 0 0;
-        0 3000.0 0;
-        0 0 3000.0;
+        10000.0 0 0;
+        0 10000.0 0;
+        0 0 10000.0;
         ])
 PNG = ProcessNoiseGenerator(noise_covar)
 
-start_state = SVector(100.0,100.0,1800.0,pi/6,0.0)
+start_state = SVector(1000.0,1000.0,1800.0,pi/6,0.0)
 control_func(X,t) = SVector(10.0,0.0,0.0)
 true_model = 5
 wind_func(X,t) = fake_wind(DWG,true_model,X,t)
 obs_func(X,t) = fake_observation(DVG,true_model,X,t)
 noise_func(t) = process_noise(PNG,t)
-sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,30.0,300.0)
+sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,
+                            10.0,100.0)
 
 move_straight_p1 = MoveStraight(SA[2000.0,2000.0,3000.0])
 function step(sim_obj,curr_state,time_interval)
@@ -49,5 +50,53 @@ s,o = run_experiment(sim_details,start_state);
 BUP = BeliefUpdateParams(DVG,DWG,PNG,control_func,fake_wind,move_straight_p2)
 b_p2 = final_belief(BUP,Val(7),s,o)
 
+
+
+using MCTS
+
+env = ExperimentEnvironment( (-10000.0,10000.0),(-10000.0,10000.0),
+                    (-10000.0,10000.0), SphericalObstacle[] )
+
+mart_mdp = MARTBeliefMDP(
+            env,
+            fake_observation,
+            fake_wind,
+            noise_func,
+            DVG,
+            DWG,
+            PNG,
+            10.0,
+            7
+            );
+
+mcts_solver = MCTSSolver(
+                n_iterations=100,
+                depth=10,
+                exploration_constant=5.0,
+                enable_tree_vis = true
+                );
+planner = solve(mcts_solver,mart_mdp);
+
+initial_belief = get_initial_belief(Val(7))
+initial_uav_state = start_state
+initial_mdp_state = MARTBeliefMDPState(initial_uav_state,initial_belief,0.0)
+a, info = action_info(planner, initial_mdp_state);
+#a = action(planner,initial_mdp_state)
+
+s,o,a,b = run_experiment(sim_details,start_state);
+
+b_arrays = []
+for j in 1:100
+    s,o,a,b = run_experiment(sim_details,start_state);
+    push!(b_arrays, (j=>b))
+end
+
+c = 0
+for i in 1:100
+    if(b_arrays[i][2][end][2][5] > 0.75)
+        c+=1
+    end
+end
+c
 
 =#
