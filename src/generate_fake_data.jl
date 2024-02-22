@@ -57,6 +57,33 @@ function process_noise(png,t)
 end
 
 
+function get_fake_data()
+    T_noise_amp = SVector{7,Float64}(0.6, 0.1, 1.3, 1.1, 0.5, 0.8, 1.7)
+    P_Noise_amp = SVector{7,Float64}(1.3, 2.9, 2.3, 0.6, 1.9, 0.1, 1.7)
+    DVG = DummyValuesGenerator(T_noise_amp,P_Noise_amp)
+
+    W_amp = SVector{7,SMatrix}(
+        SMatrix{3,3}([2 0 0; 0 6 0; 0 0 2]),
+        SMatrix{3,3}([6 0 0; 0 6 0; 0 0 7]),
+        SMatrix{3,3}([5 0 0; 0 7 0; 0 0 1]),
+        SMatrix{3,3}([5 0 0; 0 3 0; 0 0 9]),
+        SMatrix{3,3}([6 0 0; 0 8 0; 0 0 6]),
+        SMatrix{3,3}([9 0 0; 0 8 0; 0 0 3]),
+        SMatrix{3,3}([2 0 0; 0 2 0; 0 0 5])
+            )
+    func_list = (cos,sin,sin,cos,cos,cos,sin)
+    DWG = DummyWindGenerator(W_amp,func_list)
+
+    noise_covar = SMatrix{3,3}([
+            10000.0 0 0;
+            0 10000.0 0;
+            0 0 10000.0;
+            ])
+    PNG = ProcessNoiseGenerator(noise_covar)
+
+    return DVG,DWG,PNG
+end
+
 #=
 T_noise_amp = SVector{7,Float64}(0.6, 0.1, 1.3, 1.1, 0.5, 0.8, 1.7)
 P_Noise_amp = SVector{7,Float64}(1.3, 2.9, 2.3, 0.6, 1.9, 0.1, 1.7)
