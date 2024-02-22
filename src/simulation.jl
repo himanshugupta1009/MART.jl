@@ -1,65 +1,98 @@
-include("aircraft_eom.jl")
+include("simulator.jl")
 include("generate_fake_data.jl")
-include("straight_movement.jl")
-
-struct SimulationDetails
-    control::Function
-    wind::Function
-    noise::Function
-    get_observation::Function
-    time_step::Float64
-    total_time::Float64
-end
-
-function add_noise(state,noise)
-    if(length(noise)<5)
-        s_prime = state + typeof(state)(vcat(noise,SVector(0.0,0.0)))
-    else
-        s_prime = state + typeof(state)(noise)
-    end
-    return s_prime
-end
-
-# function step(sim_obj,curr_state,time_interval)
-#     new_states = aircraft_simulate(aircraft_dynamics,curr_state,time_interval,(sim_obj.control,sim_obj.wind,no_noise),time_interval[2]-time_interval[1])
-#     return new_states[2]
-# end
-
-
-function step(sim_obj,curr_state,time_interval)
-    new_state = move_straight(curr_state,sim_obj.control,time_interval)
-    return new_state
-end
 
 
 function run_experiment(sim,start_state)
 
-    #=
-    Needed Modifications - Return s and o as a pair or matrix
-    =#
-
     T = sim.total_time
     t = sim.time_step
-    state_history = Vector{Pair{Float64,typeof(start_state)}}([0.0=>start_state])
-    otype = typeof(sim.get_observation(start_state,0.0))
-    observation_history = Vector{Pair{Float64,otype}}()
-    curr_state = start_state
-
     @assert(isinteger(T/t))
     num_steps = Int(T/t)
+    num_models = 7
+    start_time = 0.0
 
+    #Relevant Values to be stored
+    state_history = Vector{Pair{Float64,typeof(start_state)}}()
+    otype = typeof(sim.get_observation(start_state,start_time))
+    observation_history = Vector{Pair{Float64,otype}}()
+    action_history = Vector{Pair{Float64,SVector{3,Float64}}}()
+    belief_history = Vector{Pair{Float64,SVector{num_models,Float64}}}()
+
+    #Define Belief MDP
+    env = ExperimentEnvironment( (-10000.0,10000.0),(-10000.0,10000.0),
+                        (-10000.0,10000.0), SphericalObstacle[] );
+    mart_mdp = MARTBeliefMDP(
+                env,
+                fake_observation,
+                fake_wind,
+                noise_func,
+                DVG,
+                DWG,
+                PNG,
+                t,
+                num_models);
+
+    #Initialize MCTS Solver and Planner
+    mcts_solver = MCTSSolver(
+                    n_iterations=100,
+                    depth=10,
+                    exploration_constant=5.0,
+                    enable_tree_vis = true);
+    planner = solve(mcts_solver,mart_mdp);
+
+    #Initialize BeliefMDP State
+    initial_belief = get_initial_belief(Val(num_models))
+    initial_uav_state = start_state
+    initial_mdp_state = MARTBeliefMDPState(initial_uav_state,initial_belief,
+                                    start_time)
+
+    #Find Initial Action
+    println("Finding the Initial Action : ")
+    initial_uav_action, info = action_info(planner, initial_mdp_state);
+
+    #Store Relevant Values
+    push!(state_history,(start_time=>start_state))
+    push!(action_history,(start_time=>initial_uav_action))
+    push!(belief_history,(start_time=>initial_belief))
+
+    #Initialize Values for the "for loop" below
+    curr_uav_state = initial_uav_state
+    curr_belief = initial_belief
+    curr_uav_action = initial_uav_action
+
+    #Run the experiment
     for i in 1:num_steps
-        # new_states = step(aircraft_dynamics,curr_state,[(i-1)*t,i*t],(sim.control,sim.wind,no_noise),t)
-        new_state = step(sim,curr_state,((i-1)*t,i*t))
-        process_noise = sim.noise(i*t)
-        new_state = add_noise(new_state, process_noise)
-        observation = sim.get_observation(new_state,i*t)
-        curr_state = new_state
-        push!(state_history,(i*t=>new_state))
-        push!(observation_history,(i*t=>observation))
+        time_interval = ( (i-1)*t, i*t )
+        next_time = time_interval[2]
+        CTR(X,t) = curr_uav_action
+
+        println("Simulating for time interval : ", time_interval)
+
+        #Simulate the UAV
+        new_states = aircraft_simulate(aircraft_dynamics,curr_uav_state,
+                            time_interval,(CTR,sim.wind,no_noise),t)
+        process_noise = sim.noise(next_time)
+        next_uav_state = add_noise(new_states[2], process_noise)
+        #Sample an observation from the environment
+        o = sim.get_observation(next_uav_state,next_time)
+        #Update the Belief
+        next_belief = update_belief(mart_mdp,curr_belief,curr_uav_state,CTR,o,
+                                time_interval)
+        #Find the action for next time step
+        println("Finding the best UAV Action for the next interval : ")
+        next_mdp_state = MARTBeliefMDPState(next_uav_state,next_belief,next_time)
+        next_uav_action, info = action_info(planner, next_mdp_state);
+
+        push!(state_history,(next_time=>next_uav_state))
+        push!(observation_history,(next_time=>o))
+        push!(action_history,(next_time=>next_uav_action))
+        push!(belief_history,(next_time=>next_belief))
+        curr_uav_state = next_uav_state
+        curr_belief = next_belief
+        curr_uav_action = next_uav_action
     end
 
-    return state_history,observation_history
+    return state_history,action_history,observation_history,belief_history
 end
 
 
