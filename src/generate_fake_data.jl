@@ -75,9 +75,9 @@ function get_fake_data()
     DWG = DummyWindGenerator(W_amp,func_list)
 
     noise_covar = SMatrix{3,3}([
-            10000.0 0 0;
-            0 10000.0 0;
-            0 0 10000.0;
+            30000.0 0 0;
+            0 30000.0 0;
+            0 0 30000.0;
             ])
     PNG = ProcessNoiseGenerator(noise_covar)
 
