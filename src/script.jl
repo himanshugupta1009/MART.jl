@@ -85,18 +85,71 @@ a, info = action_info(planner, initial_mdp_state);
 
 s,a,o,b = run_experiment(sim_details,start_state);
 
-b_arrays = []
-for j in 1:100
+export JULIA_NUM_THREADS=20
+Threads.nthreads()
+using Base.Threads
+num_experiments = 100
+b_arrays = Array{Any,1}(undef,num_experiments)
+@threads for j in 1:num_experiments
+    println("Running Experiment ",j)
     s,o,a,b = run_experiment(sim_details,start_state);
-    push!(b_arrays, (j=>b))
+    b_arrays[j] = (j=>b)
 end
 
+num_experiments = 100
+b_arrays = Array{Any,1}(undef,num_experiments)
+for j in 1:num_experiments
+    println("Running Experiment ",j)
+    s,o,a,b = run_experiment(sim_details,start_state);
+    b_arrays[j] = (j=>b)
+end
+
+
 c = 0
-for i in 1:100
+for i in 1:num_experiments
     if(b_arrays[i][2][end][2][5] > 0.75)
         c+=1
     end
 end
 c
 
+histogram = MVector{10,Int64}(zeros(10))
+for i in 1:num_experiments
+    prob = b_arrays[i][2][end][2][5]
+    hist_index = Int(floor(prob*10)) + 1
+    histogram[hist_index] += 1
+end
+histogram
+
+function visualize(data,label)
+
+    snapshot = plot(aspect_ratio=:equal,size=(1000,1000), dpi=300,
+        axis=([], true),
+        # xticks=0:0.1:1, yticks=0:5:100,
+        xlabel="Probability Value of True Model", ylabel="#Experiments",
+        # legend=:bottom,
+        # legend=false
+        )
+    x = collect(0.1:0.1:1.0)
+    plot!(snapshot,x,data)
+    return snapshot
+end
+=#
+
+function visualize(data,lab)
+
+    snapshot = plot(size=(1000,1000), dpi=300,
+        xticks=0.0:0.1:1, yticks=0:5:100,
+        xlabel="Inferred probability of the True Model", ylabel="#Experiments",
+        # axis=([], false),
+        # legend=:bottom,
+        # legend=false
+        )
+    x = collect(0.1:0.1:1.0)
+    plot!(snapshot,x,data,linewidth=2,color=:red,label=lab)
+    return snapshot
+end
+#=
+visualize(histogram,"MCTS")
+plot!(collect(0.1:0.1:1.0), histogram, label="Random")
 =#
