@@ -57,6 +57,7 @@ end
 
 function calculate_reward(bmdp_s,a,bmdp_sp)
 
+    #=
     initial_ent = calculate_entropy(bmdp_s.belief)
     #=
     Q: IPFT discounts final_ent by multiplying it with the discount factor γ
@@ -68,7 +69,11 @@ function calculate_reward(bmdp_s,a,bmdp_sp)
     So, use that as the measure "I".
     =#
     r = (-initial_ent) - (-final_ent)
-    return r
+    =#
+    q = bmdp_sp.belief
+    p = SVector(0.0,0.0,0.0,0.0,1.0,0.0,0.0)
+    r = SB.kldivergence(p,q)
+    return -r
 end
 
 function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
