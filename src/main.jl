@@ -44,8 +44,8 @@ function run_experiment(sim,start_state)
                             start_time)
     #Find Initial Action
     println("Finding the Initial Action")
-    # initial_uav_action, info = action_info(planner, initial_mdp_state);
-    initial_uav_action = rand(POMDPs.actions(mart_mdp))
+    initial_uav_action, info = action_info(planner, initial_mdp_state);
+    # initial_uav_action = rand(POMDPs.actions(mart_mdp))
     # initial_uav_action = MARTBeliefMDPAction(10.0,0.0,0.0)
 
     #Store Relevant Values
@@ -90,8 +90,8 @@ function run_experiment(sim,start_state)
         end
         if(i<num_steps)
             bmdp_state = MARTBeliefMDPState(next_uav_state,next_belief,next_time)
-            # next_uav_action, info = action_info(planner, bmdp_state);
-            next_uav_action = rand(POMDPs.actions(mart_mdp))
+            next_uav_action, info = action_info(planner, bmdp_state);
+            # next_uav_action = rand(POMDPs.actions(mart_mdp))
             # next_uav_action = MARTBeliefMDPAction(10.0,0.0,0.0)
         else
             #=
