@@ -121,6 +121,8 @@ for i in 1:num_experiments
 end
 histogram
 
+c,histogram
+
 function visualize(data,label)
 
     snapshot = plot(aspect_ratio=:equal,size=(1000,1000), dpi=300,
