@@ -57,7 +57,7 @@ function process_noise(png,t)
     return SVector{num_state_variables,Float64}(noise)
 end
 
-function get_fake_data()
+function get_fake_data(rng=MersenneTwister(69))
 
     num_models = 7
 
@@ -74,7 +74,7 @@ function get_fake_data()
                         ])
     wind_models = Vector{MvNormal}(undef,num_models)
     for i in 1:num_models
-        μ = SVector(floor(rand()*max_x),floor(rand()*max_y),floor(rand()*max_z))
+        μ = SVector(floor(rand(rng)*max_x),floor(rand(rng)*max_y),floor(rand(rng)*max_z))
         σ = wind_noise_covar
         gaussian_model = MvNormal(μ,σ)
         wind_models[i] = gaussian_model

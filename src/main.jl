@@ -11,6 +11,7 @@ function run_experiment(sim,start_state)
     num_models = 7
     start_time = 0.0
     print_logs = true
+    mcts_rng = MersenneTwister(7)
 
     #Relevant Values to be stored
     state_history = Vector{Pair{Float64,typeof(start_state)}}()
@@ -31,10 +32,13 @@ function run_experiment(sim,start_state)
 
     #Initialize MCTS Solver and Planner
     mcts_solver = MCTSSolver(
-                    n_iterations=100,
-                    depth=30,
-                    exploration_constant=5.0,
-                    enable_tree_vis = true);
+                    n_iterations=5000,
+                    depth=50,
+                    exploration_constant=1.0,
+                    estimate_value = 0.0,
+                    rng = mcts_rng,
+                    enable_tree_vis = true
+                    );
     planner = solve(mcts_solver,mart_mdp);
 
     #Initialize BeliefMDP State
