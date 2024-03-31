@@ -1,0 +1,7 @@
+####################################################################
+31st March 2024
+
+1) 
+It seems that the current implementation of fake Temp data varies a lot across different models.
+This makes it easier for even random policy to collapse belief
+
