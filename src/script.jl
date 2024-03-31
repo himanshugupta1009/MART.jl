@@ -85,6 +85,8 @@ a, info = action_info(planner, initial_mdp_state);
 
 s,a,o,b = run_experiment(sim_details,start_state);
 
+############### Run MCTS UAV Policy ###############
+
 export JULIA_NUM_THREADS=20
 Threads.nthreads()
 using Base.Threads
@@ -92,18 +94,9 @@ num_experiments = 100
 b_arrays = Array{Any,1}(undef,num_experiments)
 @threads for j in 1:num_experiments
     println("Running Experiment ",j)
-    s,o,a,b = run_experiment(sim_details,start_state);
+    s,o,a,b = run_experiment(sim_details,start_state,:mcts);
     b_arrays[j] = (j=>b)
 end
-
-num_experiments = 100
-b_arrays = Array{Any,1}(undef,num_experiments)
-for j in 1:num_experiments
-    println("Running Experiment ",j)
-    s,o,a,b = run_experiment(sim_details,start_state);
-    b_arrays[j] = (j=>b)
-end
-
 
 c = 0
 for i in 1:num_experiments
@@ -122,6 +115,65 @@ end
 histogram
 
 c,histogram
+
+
+############### Run Random UAV Policy ###############
+
+num_experiments = 100
+b_arrays = Array{Any,1}(undef,num_experiments)
+for j in 1:num_experiments
+    println("Running Experiment ",j)
+    s,o,a,b = run_experiment(sim_details,start_state,:random);
+    b_arrays[j] = (j=>b)
+end
+
+c = 0
+for i in 1:num_experiments
+    if(b_arrays[i][2][end][2][5] > 0.75)
+        c+=1
+    end
+end
+c
+
+histogram = MVector{10,Int64}(zeros(10))
+for i in 1:num_experiments
+    prob = b_arrays[i][2][end][2][5]
+    hist_index = Int(floor(prob*10)) + 1
+    histogram[hist_index] += 1
+end
+histogram
+
+c,histogram
+
+
+############### Run Straight Line UAV Policy ###############
+
+num_experiments = 100
+b_arrays = Array{Any,1}(undef,num_experiments)
+for j in 1:num_experiments
+    println("Running Experiment ",j)
+    s,o,a,b = run_experiment(sim_details,start_state,:sl);
+    b_arrays[j] = (j=>b)
+end
+
+c = 0
+for i in 1:num_experiments
+    if(b_arrays[i][2][end][2][5] > 0.75)
+        c+=1
+    end
+end
+c
+
+histogram = MVector{10,Int64}(zeros(10))
+for i in 1:num_experiments
+    prob = b_arrays[i][2][end][2][5]
+    hist_index = Int(floor(prob*10)) + 1
+    histogram[hist_index] += 1
+end
+histogram
+
+c,histogram
+
 
 function visualize(data,label)
 

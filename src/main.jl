@@ -2,7 +2,7 @@ include("simulator.jl")
 include("generate_fake_data.jl")
 include("belief_mdp.jl")
 
-function run_experiment(sim,start_state)
+function run_experiment(sim,start_state,uav_policy_type=:mcts)
 
     T = sim.total_time
     t = sim.time_step
@@ -28,7 +28,8 @@ function run_experiment(sim,start_state)
                 fake_observation,fake_wind,noise_func,
                 DVG,DWG,PNG,
                 t,
-                num_models);
+                num_models,
+                );
 
     #Initialize MCTS Solver and Planner
     mcts_solver = MCTSSolver(
@@ -48,9 +49,15 @@ function run_experiment(sim,start_state)
                             start_time)
     #Find Initial Action
     println("Finding the Initial Action")
-    initial_uav_action, info = action_info(planner, initial_mdp_state);
-    # initial_uav_action = rand(POMDPs.actions(mart_mdp))
-    # initial_uav_action = MARTBeliefMDPAction(10.0,0.0,0.0)
+    if(uav_policy_type == :mcts)  #MCTS
+        initial_uav_action, info = action_info(planner, initial_mdp_state);
+    elseif(uav_policy_type == :random)  #Random
+        initial_uav_action = rand(POMDPs.actions(mart_mdp))
+    elseif(uav_policy_type == :sl) #Straight Line
+        initial_uav_action = MARTBeliefMDPAction(10.0,0.0,0.0)
+    else
+        error("Invalid UAV Policy")
+    end    
 
     #Store Relevant Values
     push!(state_history,(start_time=>start_state))
@@ -94,9 +101,15 @@ function run_experiment(sim,start_state)
         end
         if(i<num_steps)
             bmdp_state = MARTBeliefMDPState(next_uav_state,next_belief,next_time)
-            next_uav_action, info = action_info(planner, bmdp_state);
-            # next_uav_action = rand(POMDPs.actions(mart_mdp))
-            # next_uav_action = MARTBeliefMDPAction(10.0,0.0,0.0)
+            if(uav_policy_type == :mcts)  #MCTS
+                next_uav_action, info = action_info(planner, bmdp_state);
+            elseif(uav_policy_type == :random)  #Random
+                next_uav_action = rand(POMDPs.actions(mart_mdp))
+            elseif(uav_policy_type == :sl) #Straight Line
+                next_uav_action = MARTBeliefMDPAction(10.0,0.0,0.0)
+            else
+                error("Invalid UAV Policy")
+            end   
         else
             #=
             Doing this to ensure that the action is not computed for the final
@@ -129,6 +142,6 @@ noise_func(t) = process_noise(PNG,t);
 sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,
                             10.0,100.0);
 
-s,a,o,b = run_experiment(sim_details,start_state);
+s,a,o,b = run_experiment(sim_details,start_state,:sl);
 
 =#
