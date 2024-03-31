@@ -113,17 +113,18 @@ end
 
 
 function POMDPs.actions(mdp::MARTBeliefMDP)
-        return SVector{9,MARTBeliefMDPAction}(
-            MARTBeliefMDPAction(10.0,-2*pi/180,-2*pi/180),
-            MARTBeliefMDPAction(10.0,-2*pi/180,0.0),
-            MARTBeliefMDPAction(10.0,-2*pi/180,2*pi/180),
-            MARTBeliefMDPAction(10.0,0.0,-2*pi/180),
-            MARTBeliefMDPAction(10.0,0.0,0.0),
-            MARTBeliefMDPAction(10.0,0.0,2*pi/180),
-            MARTBeliefMDPAction(10.0,2*pi/180,-2*pi/180),
-            MARTBeliefMDPAction(10.0,2*pi/180,0.0),
-            MARTBeliefMDPAction(10.0,2*pi/180,2*pi/180)
-        )
+    action_set =  SVector{9,MARTBeliefMDPAction}(
+        MARTBeliefMDPAction(10.0,-2*pi/180,-2*pi/180),
+        MARTBeliefMDPAction(10.0,-2*pi/180,0.0),
+        MARTBeliefMDPAction(10.0,-2*pi/180,2*pi/180),
+        MARTBeliefMDPAction(10.0,0.0,-2*pi/180),
+        MARTBeliefMDPAction(10.0,0.0,0.0),
+        MARTBeliefMDPAction(10.0,0.0,2*pi/180),
+        MARTBeliefMDPAction(10.0,2*pi/180,-2*pi/180),
+        MARTBeliefMDPAction(10.0,2*pi/180,0.0),
+        MARTBeliefMDPAction(10.0,2*pi/180,2*pi/180)
+    )
+    return action_set
 end
 
 POMDPs.discount(m::MARTBeliefMDP) = 0.95

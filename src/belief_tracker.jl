@@ -26,7 +26,7 @@ function pressure_likelihood(dvg,m,o_pressure,X,t)
     pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:3))+t )
     dist = Normal(pres_mean, sqrt(dvg.press_noise_amp[m]))
     likelihood = pdf(dist,o_pressure)
-    # return 1.0
+    return 1.0
     return likelihood
 end
 

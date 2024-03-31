@@ -4,13 +4,16 @@ using StaticArrays
 struct DummyValuesGenerator{T,P}
     temp_noise_amp::T
     press_noise_amp::P
+    # rng::AbstractRNG
 end
 
 
 function fake_temperature(dvg,M,X,t)
     @assert isinteger(M)
     noise = sqrt(dvg.temp_noise_amp[M])*randn()
-    ft = dvg.temp_noise_amp[M]*sin(sum(X[1:3])+t)
+    # noise = 0.0
+    input_var = sum(view(X,1:3))+t
+    ft = dvg.temp_noise_amp[M]*sin(input_var)
     return ft+noise
 end
 
@@ -18,7 +21,9 @@ end
 function fake_pressure(dvg,M,X,t)
     @assert isinteger(M)
     noise = sqrt(dvg.press_noise_amp[M])*randn()
-    fp = dvg.press_noise_amp[M]*cos(sum(X[1:3])+t)
+    # noise = 0.0
+    input_var = sum(view(X,1:3))+t
+    fp = dvg.press_noise_amp[M]*cos(input_var)
     return fp+noise
 end
 
