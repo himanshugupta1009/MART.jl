@@ -5,3 +5,6 @@
 It seems that the current implementation of fake Temp data varies a lot across different models.
 This makes it easier for even random policy to collapse belief
 
+Problem1 - Due to process noise while building tree, every new node is different.
+So, tree is shallow. 
+Fix - Put zero process noise and zero observation noise in MART MDP. 
