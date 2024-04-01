@@ -8,30 +8,30 @@ struct DummyValuesGenerator{T,P}
 end
 
 
-function fake_temperature(dvg,M,X,t)
+function fake_temperature(dvg,M,X,t,rng=MersenneTwister(111))
     @assert isinteger(M)
-    noise = sqrt(dvg.temp_noise_amp[M])*randn()
-    # noise = 0.0
+    noise = sqrt(dvg.temp_noise_amp[M])*randn(rng)
+    noise = 0.0
     input_var = sum(view(X,1:3))+t
     ft = dvg.temp_noise_amp[M]*sin(input_var)
     return ft+noise
 end
 
 
-function fake_pressure(dvg,M,X,t)
+function fake_pressure(dvg,M,X,t,rng=MersenneTwister(111))
     @assert isinteger(M)
-    noise = sqrt(dvg.press_noise_amp[M])*randn()
-    # noise = 0.0
+    noise = sqrt(dvg.press_noise_amp[M])*randn(rng)
+    noise = 0.0
     input_var = sum(view(X,1:3))+t
     fp = dvg.press_noise_amp[M]*cos(input_var)
     return fp+noise
 end
 
 
-function fake_observation(dvg,M,X,t)
+function fake_observation(dvg,M,X,t,rng=MersenneTwister(111))
     @assert isinteger(M)
-    ft = fake_temperature(dvg,M,X,t)
-    fp = fake_pressure(dvg,M,X,t)
+    ft = fake_temperature(dvg,M,X,t,rng)
+    fp = fake_pressure(dvg,M,X,t,rng)
     obs = SVector(X...,ft,fp)
     return obs
 end
@@ -54,11 +54,11 @@ struct ProcessNoiseGenerator{T}
     covar_matrix::T
 end
 
-no_noise(t) = SVector(0.0,0.0,0.0,0.0,0.0)
+no_noise(t,rng) = SVector(0.0,0.0,0.0,0.0,0.0)
 
-function process_noise(png,t)
+function process_noise(png,t,rng=MersenneTwister(70))
     num_state_variables = size(png.covar_matrix)[1]
-    noise = sqrt(png.covar_matrix)*randn(num_state_variables)
+    noise = sqrt(png.covar_matrix)*randn(rng,num_state_variables)
     return SVector{num_state_variables,Float64}(noise)
 end
 
@@ -86,10 +86,11 @@ function get_fake_data(rng=MersenneTwister(69))
     end    
     DWG = DummyWindGenerator(const_wind,wind_models)
 
-    noise_covar = SMatrix{3,3}([
-            2500.0 0 0;
-            0 2500.0 0;
-            0 0 2500.0;
+    noise_mag = 1600.0
+    noise_covar = SMatrix{3,3}(noise_mag*[
+            1.0 0 0;
+            0 1.0 0;
+            0 0 1.0;
             ])
     PNG = ProcessNoiseGenerator(noise_covar)
 

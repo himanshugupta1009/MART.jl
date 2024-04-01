@@ -86,17 +86,17 @@ function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
     dist = PMT.SparseCat(1:m.M, curr_belief)
     sampled_model = rand(rng,dist)
     mwf(X,t) = m.wind(m.dwg,sampled_model,X,t)
-    mof(X,t) = m.observation(m.dvg,sampled_model,X,t)
+    mof(X,t,r) = m.observation(m.dvg,sampled_model,X,t,r)
     CTR(X,t) = a
 
     new_state_list = aircraft_simulate(aircraft_dynamics,curr_uav_state,
                             time_interval,(CTR,mwf,no_noise),m.Δt)
     new_state = new_state_list[end]
-    process_noise = m.noise(next_t)
+    process_noise = m.noise(next_t,rng)
     new_uav_state = add_noise(new_state, process_noise)
 
     #Sample an observation from the new state
-    o = mof(new_uav_state,next_t)
+    o = mof(new_uav_state,next_t,rng)
 
     #Update the belief for this sampled observation
     new_belief = update_belief(m,curr_belief,curr_uav_state,CTR,o,time_interval)
@@ -127,7 +127,7 @@ function POMDPs.actions(mdp::MARTBeliefMDP)
     return action_set
 end
 
-POMDPs.discount(m::MARTBeliefMDP) = 0.95
+POMDPs.discount(m::MARTBeliefMDP) = 1.0
 
 #=
 Some analysis

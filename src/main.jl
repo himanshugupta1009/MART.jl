@@ -11,11 +11,13 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
     num_models = 7
     start_time = 0.0
     print_logs = true
-    mcts_rng = MersenneTwister(7)
+    process_noise_rng = MersenneTwister(7)
+    observation_noise_rng = MersenneTwister(17)
+    mcts_rng = MersenneTwister(27)
 
     #Relevant Values to be stored
     state_history = Vector{Pair{Float64,typeof(start_state)}}()
-    otype = typeof(sim.get_observation(start_state,start_time))
+    otype = typeof(sim.get_observation(start_state,start_time,MersenneTwister()))
     observation_history = Vector{Pair{Float64,otype}}()
     action_history = Vector{Pair{Float64,SVector{3,Float64}}}()
     belief_history = Vector{Pair{Float64,SVector{num_models,Float64}}}()
@@ -25,7 +27,7 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
                         (-10000.0,10000.0), SphericalObstacle[] );
     mart_mdp = MARTBeliefMDP(
                 env,
-                fake_observation,fake_wind,noise_func,
+                fake_observation,fake_wind,no_noise,
                 DVG,DWG,PNG,
                 t,
                 num_models,
@@ -51,6 +53,7 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
     println("Finding the Initial Action")
     if(uav_policy_type == :mcts)  #MCTS
         initial_uav_action, info = action_info(planner, initial_mdp_state);
+        # inchrome(D3Tree(info[:tree]))
     elseif(uav_policy_type == :random)  #Random
         initial_uav_action = rand(POMDPs.actions(mart_mdp))
     elseif(uav_policy_type == :sl) #Straight Line
@@ -87,10 +90,10 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
         #Simulate the UAV
         new_state_list = aircraft_simulate(aircraft_dynamics,curr_uav_state,
                                 time_interval,(CTR,sim.wind,no_noise),t)
-        process_noise = sim.noise(next_time)
+        process_noise = sim.noise(next_time,process_noise_rng)
         next_uav_state = add_noise(new_state_list[end], process_noise)
         #Sample an observation from the environment
-        observation = sim.get_observation(next_uav_state,next_time)
+        observation = sim.get_observation(next_uav_state,next_time,observation_noise_rng)
         #Update the Belief
         next_belief = update_belief(mart_mdp,curr_belief,curr_uav_state,CTR,
                         observation,time_interval)
@@ -137,8 +140,9 @@ start_state = SVector(1000.0,1000.0,1800.0,pi/6,0.0);
 control_func(X,t) = SVector(10.0,0.0,0.0);
 true_model = 5;
 wind_func(X,t) = fake_wind(DWG,true_model,X,t);
-obs_func(X,t) = fake_observation(DVG,true_model,X,t);
-noise_func(t) = process_noise(PNG,t);
+obs_func(X,t,rng) = fake_observation(DVG,true_model,X,t,rng);
+noise_func(t,rng) = process_noise(PNG,t,rng);
+noise_func(t,rng) = no_noise(t,rng);
 sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,
                             10.0,100.0);
 
