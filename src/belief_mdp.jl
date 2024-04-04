@@ -86,7 +86,7 @@ function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
     dist = PMT.SparseCat(1:m.M, curr_belief)
     sampled_model = rand(rng,dist)
     mwf(X,t) = m.wind(m.dwg,sampled_model,X,t)
-    mof(X,t,r) = m.observation(m.dvg,sampled_model,X,t,r)
+    mof(X,t) = m.observation(m.dvg,sampled_model,X,t)
     CTR(X,t) = a
 
     new_state_list = aircraft_simulate(aircraft_dynamics,curr_uav_state,
@@ -96,7 +96,8 @@ function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
     new_uav_state = add_noise(new_state, process_noise)
 
     #Sample an observation from the new state
-    o = mof(new_uav_state,next_t,rng)
+    o = mof(new_uav_state,next_t)
+    # o_noise = sample_observation_noise(rng) 
 
     #Update the belief for this sampled observation
     new_belief = update_belief(m,curr_belief,curr_uav_state,CTR,o,time_interval)
@@ -113,21 +114,21 @@ end
 
 
 function POMDPs.actions(mdp::MARTBeliefMDP)
-    action_set =  SVector{9,MARTBeliefMDPAction}(
-        MARTBeliefMDPAction(10.0,-2*pi/180,-2*pi/180),
+    action_set =  SVector{3,MARTBeliefMDPAction}(
+        # MARTBeliefMDPAction(10.0,-2*pi/180,-2*pi/180),
         MARTBeliefMDPAction(10.0,-2*pi/180,0.0),
-        MARTBeliefMDPAction(10.0,-2*pi/180,2*pi/180),
-        MARTBeliefMDPAction(10.0,0.0,-2*pi/180),
+        # MARTBeliefMDPAction(10.0,-2*pi/180,2*pi/180),
+        # MARTBeliefMDPAction(10.0,0.0,-2*pi/180),
         MARTBeliefMDPAction(10.0,0.0,0.0),
-        MARTBeliefMDPAction(10.0,0.0,2*pi/180),
-        MARTBeliefMDPAction(10.0,2*pi/180,-2*pi/180),
+        # MARTBeliefMDPAction(10.0,0.0,2*pi/180),
+        # MARTBeliefMDPAction(10.0,2*pi/180,-2*pi/180),
         MARTBeliefMDPAction(10.0,2*pi/180,0.0),
-        MARTBeliefMDPAction(10.0,2*pi/180,2*pi/180)
+        # MARTBeliefMDPAction(10.0,2*pi/180,2*pi/180)
     )
     return action_set
 end
 
-POMDPs.discount(m::MARTBeliefMDP) = 1.0
+POMDPs.discount(m::MARTBeliefMDP) = 0.98
 
 #=
 Some analysis

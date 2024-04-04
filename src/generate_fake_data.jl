@@ -4,38 +4,45 @@ using StaticArrays
 struct DummyValuesGenerator{T,P}
     temp_noise_amp::T
     press_noise_amp::P
-    # rng::AbstractRNG
 end
 
 
-function fake_temperature(dvg,M,X,t,rng=MersenneTwister(111))
+function fake_temperature(dvg,M,X,t)
     @assert isinteger(M)
-    noise = sqrt(dvg.temp_noise_amp[M])*randn(rng)
-    noise = 0.0
+    # noise = sqrt(dvg.temp_noise_amp[M])*randn(rng)
+    # noise = 0.0
     input_var = sum(view(X,1:3))+t
     ft = dvg.temp_noise_amp[M]*sin(input_var)
-    return ft+noise
+    return ft
 end
 
 
-function fake_pressure(dvg,M,X,t,rng=MersenneTwister(111))
+function fake_pressure(dvg,M,X,t)
     @assert isinteger(M)
-    noise = sqrt(dvg.press_noise_amp[M])*randn(rng)
-    noise = 0.0
+    # noise = sqrt(dvg.press_noise_amp[M])*randn(rng)
+    # noise = 0.0
     input_var = sum(view(X,1:3))+t
     fp = dvg.press_noise_amp[M]*cos(input_var)
-    return fp+noise
+    return fp
 end
 
 
-function fake_observation(dvg,M,X,t,rng=MersenneTwister(111))
+function fake_observation(dvg,M,X,t)
     @assert isinteger(M)
-    ft = fake_temperature(dvg,M,X,t,rng)
-    fp = fake_pressure(dvg,M,X,t,rng)
+    ft = fake_temperature(dvg,M,X,t)
+    fp = fake_pressure(dvg,M,X,t)
     obs = SVector(X...,ft,fp)
     return obs
 end
 
+function sample_observation_noise(rng=MersenneTwister(111))
+    position_noise = SVector(0.0,0.0,0.0,0.0,0.0)
+    σ_pressure_noise = 1.0 
+    pressure_noise = randn(rng)*σ_pressure_noise
+    σ_temperature_noise = 1.0
+    temperature_noise = randn(rng)*σ_temperature_noise
+    return SVector{7,Float64}(position_noise...,temperature_noise,pressure_noise)
+end
 
 struct DummyWindGenerator{T,P}
     constant_wind::T
