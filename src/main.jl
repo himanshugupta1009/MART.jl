@@ -35,7 +35,7 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
 
     #Initialize MCTS Solver and Planner
     mcts_solver = MCTSSolver(
-                    n_iterations=5000,
+                    n_iterations=50000,
                     depth=50,
                     exploration_constant=1.0,
                     estimate_value = 0.0,
@@ -93,6 +93,7 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
                                 time_interval,(CTR,sim.wind,no_noise),t)
         process_noise = sim.noise(next_time,process_noise_rng)
         next_uav_state = add_noise(new_state_list[end], process_noise)
+        println(new_state_list[end], next_uav_state)
         #Sample an observation from the environment
         observation = sim.get_observation(next_uav_state,next_time)
         observation_noise = sample_observation_noise(observation_noise_rng)
@@ -145,10 +146,18 @@ true_model = 5;
 wind_func(X,t) = fake_wind(DWG,true_model,X,t);
 obs_func(X,t) = fake_observation(DVG,true_model,X,t);
 noise_func(t,rng) = process_noise(PNG,t,rng);
-noise_func(t,rng) = no_noise(t,rng);
+# noise_func(t,rng) = no_noise(t,rng);
 sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,
                             10.0,100.0);
 
 s,a,o,b = run_experiment(sim_details,start_state,:sl);
 
+=#
+
+
+#=
+
+Put a Rollout Policy
+Use DPWSolver
+Define Region with less observation noise and more observation noise
 =#
