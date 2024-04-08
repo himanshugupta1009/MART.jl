@@ -11,8 +11,8 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
     num_models = 7
     start_time = 0.0
     print_logs = true
-    process_noise_rng = MersenneTwister()
-    observation_noise_rng = MersenneTwister()
+    process_noise_rng = MersenneTwister(7)
+    observation_noise_rng = MersenneTwister(17)
     mcts_rng = MersenneTwister(27)
 
     #Relevant Values to be stored
@@ -100,6 +100,7 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
         #Sample an observation from the environment
         observation = sim.get_observation(next_uav_state,next_time)
         observation_noise = sample_observation_noise(next_uav_state,observation_noise_rng)
+        println(observation_noise)
         observation += observation_noise
         #Update the Belief
         next_belief = update_belief(mart_mdp,curr_belief,curr_uav_state,CTR,
