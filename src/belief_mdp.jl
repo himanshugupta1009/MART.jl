@@ -108,7 +108,7 @@ function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
     # println(sp)
     #Compute the reward R(b,a,b')
     r = calculate_reward(s,a,sp)
-
+    # println(sp, r)
     return (sp=sp,r=r)
 end
 
@@ -129,6 +129,17 @@ function POMDPs.actions(mdp::MARTBeliefMDP)
 end
 
 POMDPs.discount(m::MARTBeliefMDP) = 0.98
+
+
+
+#Define Rollout Policy Here
+struct SLRollout{P} <: Policy
+    target::P
+end
+function POMDPs.action(p::SLRollout, s)
+    return MARTBeliefMDPAction(10.0,0.0,0.0)
+end
+
 
 #=
 Some analysis
