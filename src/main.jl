@@ -34,14 +34,16 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
                 );
 
     #Initialize MCTS Solver and Planner
+    rollout_obj = SLRollout(1)
     mcts_solver = MCTSSolver(
-                    n_iterations=50000,
-                    depth=50,
+                    n_iterations=10^8,
+                    depth=100,
                     exploration_constant=1.0,
-                    estimate_value = 0.0,
+                    # estimate_value = 0.0,
+                    estimate_value = RolloutEstimator(rollout_obj),
                     rng = mcts_rng,
                     enable_tree_vis = true,
-                    max_time=Inf
+                    max_time=60.0,
                     );
     planner = solve(mcts_solver,mart_mdp);
 
@@ -74,6 +76,7 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
     curr_uav_action = initial_uav_action
 
     #Run the experiment
+    total_reward = 0.0
     for i in 1:num_steps
         time_interval = ((i-1)*t,i*t)
         next_time = time_interval[2]
@@ -96,7 +99,7 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
         println(new_state_list[end], next_uav_state)
         #Sample an observation from the environment
         observation = sim.get_observation(next_uav_state,next_time)
-        observation_noise = sample_observation_noise(observation_noise_rng)
+        observation_noise = sample_observation_noise(next_uav_state,observation_noise_rng)
         observation += observation_noise
         #Update the Belief
         next_belief = update_belief(mart_mdp,curr_belief,curr_uav_state,CTR,
@@ -105,6 +108,12 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
         if(print_logs)
             println("Simulation Finished. Now finding the best UAV Action for \
                     the next interval : ", (i*t,(i+1)*t))
+
+            p = SVector(0.0,0.0,0.0,0.0,1.0,0.0,0.0)
+            r = -SB.kldivergence(p,next_belief)
+            println("Current Reward : ", r)
+            total_reward += discount(mart_mdp)^i*r
+            println("Total Reward : ", total_reward)
         end
         if(i<num_steps)
             bmdp_state = MARTBeliefMDPState(next_uav_state,next_belief,next_time)
@@ -132,6 +141,7 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
         curr_uav_state = next_uav_state
         curr_belief = next_belief
         curr_uav_action = next_uav_action
+        # sleep(5.0)
     end
 
     return state_history,action_history,observation_history,belief_history
