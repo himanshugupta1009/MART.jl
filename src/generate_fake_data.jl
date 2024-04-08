@@ -32,11 +32,18 @@ function fake_observation(dvg,M,X,t)
 end
 
 
-function sample_observation_noise(rng=MersenneTwister(111))
+function sample_observation_noise(position, rng=MersenneTwister(111))
     position_noise = SVector(0.0,0.0,0.0,0.0,0.0)
-    σ_pressure_noise = 1.0 
+    if(position[1] in (4500:5500) && position[2] in (4500:5500))
+        σ_pressure_noise = 0.5
+        σ_temperature_noise = 0.5
+    else
+        σ_pressure_noise = 4.0
+        σ_temperature_noise = 4.0
+    end
+    # σ_pressure_noise = 1.0 
     pressure_noise = randn(rng)*σ_pressure_noise
-    σ_temperature_noise = 1.0
+    # σ_temperature_noise = 1.0
     temperature_noise = randn(rng)*σ_temperature_noise
     return SVector{7,Float64}(position_noise...,temperature_noise,pressure_noise)
 end

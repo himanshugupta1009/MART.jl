@@ -15,7 +15,11 @@ function temperature_likelihood(dvg,m,o_temp,X,t)
     # temp_mean = dvg.temp_noise_amp[m]*sin(sum(X[1:3])+t)
     temp_mean = dvg.temp_noise_amp[m]*sin( sum(view(X,1:2)))
     # dist = Normal(temp_mean,sqrt(dvg.temp_noise_amp[m]))
-    dist = Normal(temp_mean,1.0)
+    if(X[1] in (4500:5500) && X[2] in (4500:5500))
+        dist = Normal(temp_mean,0.5)
+    else
+        dist = Normal(temp_mean,4.0)
+    end
     likelihood = pdf(dist,o_temp)
     # return 1.0
     return likelihood
@@ -26,7 +30,12 @@ function pressure_likelihood(dvg,m,o_pressure,X,t)
     # pres_mean = dvg.press_noise_amp[m]*cos(sum(X[1:3])+t)
     pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:2)) )
     # dist = Normal(pres_mean, sqrt(dvg.press_noise_amp[m]))
-    dist = Normal(pres_mean,1.0)
+    if(X[1] in (4500:5500) && X[2] in (4500:5500))
+        dist = Normal(pres_mean,0.5)
+    else
+        dist = Normal(pres_mean,4.0)
+    end
+    # dist = Normal(pres_mean,1.0)
     likelihood = pdf(dist,o_pressure)
     # return 1.0
     return likelihood
