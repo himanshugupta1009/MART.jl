@@ -34,7 +34,7 @@ end
 
 function sample_observation_noise(position, rng=MersenneTwister(111))
     position_noise = SVector(0.0,0.0,0.0,0.0,0.0)
-    if(position[1] in (4500:5500) && position[2] in (4500:5500))
+    if(position[1] >= 4500 && position[1]<=5500 && position[2]>=4500 && position[2]<=5500)    
         σ_pressure_noise = 0.5
         σ_temperature_noise = 0.5
     else
