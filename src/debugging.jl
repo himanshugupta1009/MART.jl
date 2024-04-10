@@ -112,8 +112,8 @@ end
 
 function plot_probability(dvg,num_samples_array,rng=MersenneTwister(7))
 
-    seed = rand(UInt32)
-    rng = MersenneTwister(seed)
+    # seed = rand(UInt32)
+    # rng = MersenneTwister(seed)
     num_models = 4
     true_model_num = 3
     temp_prob_values = Dict{Int,Vector{Float64}}()
