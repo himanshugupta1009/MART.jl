@@ -110,12 +110,11 @@ function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
     # println(sp)
     #Compute the reward R(b,a,b')
     r = calculate_reward(s,a,sp)
-    # println(sp, r)
-    # if(new_uav_state[1] >= 4500 && new_uav_state[1]<=5500 && new_uav_state[2]>=4500 && new_uav_state[2]<=5500)
-    #     println("@@@@@@@@@@@ Good News!! Low Noise Region Found. @@@@@@@@@@@")
-    #     println(sp)
-    #     println(r)
-    # end
+    if(new_uav_state[1] >= 4500 && new_uav_state[1]<=5500 && new_uav_state[2]>=4500 && new_uav_state[2]<=5500)
+        println("@@@@@@@@@@@ Good News!! Low Noise Region Found. @@@@@@@@@@@")
+        println(sp)
+        println(r)
+    end
     return (sp=sp,r=r)
 end
 
