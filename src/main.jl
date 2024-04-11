@@ -11,9 +11,9 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
     num_models = 7
     start_time = 0.0
     print_logs = true
-    process_noise_rng = MersenneTwister(7)
-    observation_noise_rng = MersenneTwister(17)
-    mcts_rng = MersenneTwister(27)
+    process_noise_rng = MersenneTwister()
+    observation_noise_rng = MersenneTwister()
+    mcts_rng = MersenneTwister()
 
     #Relevant Values to be stored
     state_history = Vector{Pair{Float64,typeof(start_state)}}()
