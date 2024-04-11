@@ -10,9 +10,20 @@ struct SimulationDetails
     total_time::Float64
 end
 
+function add_SVectors(size,a,b)
+    # c = MVector{size,eltype(a)}(undef)
+    c = MVector(a)
+    min_size = min(length(a),length(b))
+    for i in 1:min_size
+        c[i] = a[i] + b[i]
+    end
+    return SVector(c)
+end
+
 function add_noise(state,noise)
-    if(length(noise)<5)
-        s_prime = state + typeof(state)(vcat(noise,SVector(0.0,0.0)))
+    if(length(noise)<length(state))
+        s = length(state)
+        s_prime = add_SVectors(s,state,noise)
     else
         s_prime = state + typeof(state)(noise)
     end
