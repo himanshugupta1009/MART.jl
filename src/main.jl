@@ -167,8 +167,18 @@ s,a,o,b = run_experiment(sim_details,start_state,:sl);
 
 
 #=
-
-Put a Rollout Policy
 Use DPWSolver
-Define Region with less observation noise and more observation noise
+=#
+
+
+#=
+Changes to make the problem 2D from from 3D
+
+1) Remove Process Noise in z direction
+2) Remove Actions that can change z
+3) Modify mean in transition likelihood functions (belief.jl)
+4) Modify Wind to be in 2D in fake_wind and generate_fake_data 
+    functions (generate_fake_data.jl)
+5) 
+
 =#

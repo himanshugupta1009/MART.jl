@@ -56,7 +56,8 @@ end
 
 function fake_wind(dwg,M,X,t)
     @assert isinteger(M)
-    pos = SVector(X[1],X[2],X[3])
+    # pos = SVector(X[1],X[2],X[3])
+    pos = SVector(X[1],X[2],0.0)
     dist_vec = pos - SVector{3,Float64}(dwg.wind_models[M].μ)
     wind = dwg.constant_wind + ( dist_vec / norm(dist_vec,2) )
     return wind
@@ -82,7 +83,8 @@ function get_fake_data(rng=MersenneTwister(69))
     P_Noise_amp = SVector{num_models,Float64}(1.3, 2.9, 2.3, 0.6, 1.9, 0.1, 1.7)
     DVG = DummyValuesGenerator(T_noise_amp,P_Noise_amp)
 
-    const_wind = SVector(5.0,7.0,8.0)
+    # const_wind = SVector(5.0,7.0,8.0)
+    const_wind = SVector(5.0,7.0,0.0)
     max_x = max_y = max_z = 3000.0
     wind_noise_covar = SMatrix{3,3}([
                         30000.0 0 0;
@@ -91,7 +93,8 @@ function get_fake_data(rng=MersenneTwister(69))
                         ])
     wind_models = Vector{MvNormal}(undef,num_models)
     for i in 1:num_models
-        μ = SVector(floor(rand(rng)*max_x),floor(rand(rng)*max_y),floor(rand(rng)*max_z))
+        # μ = SVector(floor(rand(rng)*max_x),floor(rand(rng)*max_y),floor(rand(rng)*max_z))
+        μ = SVector(floor(rand(rng)*max_x),floor(rand(rng)*max_y),0.0)
         σ = wind_noise_covar
         gaussian_model = MvNormal(μ,σ)
         wind_models[i] = gaussian_model
@@ -99,11 +102,15 @@ function get_fake_data(rng=MersenneTwister(69))
     DWG = DummyWindGenerator(const_wind,wind_models)
 
     noise_mag = 1600.0
-    noise_covar = SMatrix{3,3}(noise_mag*[
-            1.0 0 0;
-            0 1.0 0;
-            0 0 1.0;
-            ])
+    # noise_covar = SMatrix{3,3}(noise_mag*[
+    #         1.0 0 0;
+    #         0 1.0 0;
+    #         0 0 0.0;
+    #         ])
+    noise_covar = SMatrix{2,2}(noise_mag*[
+        1.0 0;
+        0 1.0;
+        ])
     PNG = ProcessNoiseGenerator(noise_covar)
 
     return DVG,DWG,PNG

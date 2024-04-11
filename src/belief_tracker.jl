@@ -43,11 +43,11 @@ end
 
 
 function transition_likelihood(png,o_position,X,t)
-    # dist = MvNormal(X[1:3],png.covar_matrix)
-    mean = SVector(X[1],X[2],X[3])
+    # mean = SVector(X[1],X[2],X[3])
+    mean = SVector(X[1],X[2])
     dist = MvNormal(mean,png.covar_matrix)
-    # likelihood = pdf(dist,o_position[1:3])
-    observed_position = SVector(o_position[1],o_position[2],o_position[3])
+    # observed_position = SVector(o_position[1],o_position[2],o_position[3])
+    observed_position = SVector(o_position[1],o_position[2])
     likelihood = pdf(dist,observed_position)
     return likelihood
 end
