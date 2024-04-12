@@ -163,6 +163,9 @@ sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,
 
 s,a,o,b = run_experiment(sim_details,start_state,:sl);
 
+
+pp = PlottingParams()
+visualize_path(pp,s)
 =#
 
 

@@ -109,7 +109,7 @@ c
 histogram = MVector{10,Int64}(zeros(10))
 for i in 1:num_experiments
     prob = b_arrays[i][2][end][2][5]
-    hist_index = Int(floor(prob*10)) + 1
+    hist_index = clamp(Int(floor(prob*10)) + 1,1,10)
     histogram[hist_index] += 1
 end
 histogram
@@ -138,7 +138,7 @@ c
 histogram = MVector{10,Int64}(zeros(10))
 for i in 1:num_experiments
     prob = b_arrays[i][2][end][2][5]
-    hist_index = Int(floor(prob*10)) + 1
+    hist_index = clamp(Int(floor(prob*10)) + 1,1,10)
     histogram[hist_index] += 1
 end
 histogram
@@ -167,7 +167,7 @@ c
 histogram = MVector{10,Int64}(zeros(10))
 for i in 1:num_experiments
     prob = b_arrays[i][2][end][2][5]
-    hist_index = Int(floor(prob*10)) + 1
+    hist_index = clamp(Int(floor(prob*10)) + 1,1,10)
     histogram[hist_index] += 1
 end
 histogram
