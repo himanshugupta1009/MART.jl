@@ -1,3 +1,17 @@
+#=
+This consists code to check if and when the probability mass collapses when the
+UAV doesn't move but just collects observations from the environment.
+
+This was written while I was trying to figure out why the mass collapsed so quickly even 
+with straight line and random Policy.
+
+Conclusion - The mass is supposed to collapse eventually no matter what the noise is. 
+However, depending on the amount of noise, the number of samples needed will vary.
+Higher noise typically means more samples are needed for the the mass to collapse 
+to the correct model.
+=#
+
+
 using Plots
 
 struct TestDummyValuesGenerator{T,P}
