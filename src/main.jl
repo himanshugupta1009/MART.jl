@@ -1,8 +1,10 @@
 include("simulator.jl")
 include("generate_fake_data.jl")
 include("belief_mdp.jl")
+include("visualize_UAV_path.jl")
+using LazySets
 
-function run_experiment(sim,start_state,uav_policy_type=:mcts)
+function run_experiment(sim,env,start_state,uav_policy_type=:mcts)
 
     T = sim.total_time
     t = sim.time_step
@@ -23,8 +25,6 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
     belief_history = Vector{Pair{Float64,SVector{num_models,Float64}}}()
 
     #Define Belief MDP
-    env = ExperimentEnvironment( (-10000.0,10000.0),(-10000.0,10000.0),
-                        (-10000.0,10000.0), SphericalObstacle[] );
     mart_mdp = MARTBeliefMDP(
                 env,
                 fake_observation,fake_wind,no_noise,
@@ -99,7 +99,7 @@ function run_experiment(sim,start_state,uav_policy_type=:mcts)
         println(new_state_list[end], next_uav_state)
         #Sample an observation from the environment
         observation = sim.get_observation(next_uav_state,next_time)
-        observation_noise = sample_observation_noise(next_uav_state,observation_noise_rng)
+        observation_noise = sample_observation_noise(next_uav_state,env,observation_noise_rng)
         println(observation_noise)
         observation += observation_noise
         #Update the Belief
@@ -160,11 +160,19 @@ noise_func(t,rng) = process_noise(PNG,t,rng);
 # noise_func(t,rng) = no_noise(t,rng);
 sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,
                             10.0,100.0);
+env = ExperimentEnvironment( 
+                    (0.0,7000.0),
+                    (0.0,7000.0),
+                    (0.0,7000.0), 
+                    SphericalObstacle[],
+                    SVector( VPolygon([ SVector(2000.0,5000.0), SVector(2000.0,6000.0), SVector(3000.0,6000.0), SVector(3000.0,5000.0) ]) ),
+                    SVector( (σ_P=0.1,σ_T=0.1) ),
+                    (σ_P=4.0,σ_T=4.0),
+                    );
+s,a,o,b = run_experiment(sim_details,env,start_state,:sl);
 
-s,a,o,b = run_experiment(sim_details,start_state,:sl);
 
-
-pp = PlottingParams()
+pp = PlottingParams(env)
 visualize_path(pp,s)
 =#
 

@@ -32,20 +32,30 @@ function fake_observation(dvg,M,X,t)
 end
 
 
-function sample_observation_noise(position, rng=MersenneTwister(111))
+function sample_observation_noise(X,env::ExperimentEnvironment{R,S,T,U},rng=MersenneTwister(111)) where {R,S,T,U}
+
+    (;LNRs,LNR_noise_covariance,HNR_noise_covariance) = env
     position_noise = SVector(0.0,0.0,0.0,0.0,0.0)
-    if(position[1] >= 4500 && position[1]<=5500 && position[2]>=4500 && position[2]<=5500)    
-        σ_pressure_noise = 0.1
-        σ_temperature_noise = 0.1
-    else
-        σ_pressure_noise = 4.0
-        σ_temperature_noise = 4.0
+    position = SVector(X[1],X[2])
+
+    (;σ_P,σ_T) = HNR_noise_covariance
+    for i in 1:length(LNRs)
+        low_noise_region = LNRs[i]
+        if(position ∈ low_noise_region)
+            covar_tuple = LNR_noise_covariance[i]
+            (;σ_P,σ_T) = covar_tuple
+            break
+        end
     end
-    # σ_pressure_noise = 1.0 
-    pressure_noise = randn(rng)*σ_pressure_noise
-    # σ_temperature_noise = 1.0
-    temperature_noise = randn(rng)*σ_temperature_noise
-    return SVector{7,Float64}(position_noise...,temperature_noise,pressure_noise)
+    # σ_P = 1.0 
+    pressure_noise = randn(rng)*σ_P
+    # σ_T = 1.0
+    temperature_noise = randn(rng)*σ_T
+    return SVector{length(X)+length(HNR_noise_covariance),Float64}(position_noise...,temperature_noise,pressure_noise)
+    #=
+    NOTE: Using the splat operator `...` here doesn't lead to a separate memory allocation if position_noise is a StaticArray.
+    If position_noise is a regular array of any type, then the splat operator will lead to a separate memory allocation.
+    =#
 end
 
 

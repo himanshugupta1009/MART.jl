@@ -11,31 +11,46 @@ struct BeliefUpdateParams{T,Q,P}
 end
 
 
-function temperature_likelihood(dvg,m,o_temp,X,t)
+function temperature_likelihood(env::ExperimentEnvironment{R,S,T,U},dvg,m,o_temp,X,t) where {R,S,T,U}
     # temp_mean = dvg.temp_noise_amp[m]*sin(sum(X[1:3])+t)
     temp_mean = dvg.temp_noise_amp[m]*sin( sum(view(X,1:2)))
-    # dist = Normal(temp_mean,sqrt(dvg.temp_noise_amp[m]))
-    if(X[1] >= 4500 && X[1]<=5500 && X[2]>=4500 && X[2]<=5500)
-        dist = Normal(temp_mean,0.1)
-    else
-        dist = Normal(temp_mean,4.0)
+    (;LNRs,LNR_noise_covariance,HNR_noise_covariance) = env
+    (;σ_T) = HNR_noise_covariance
+    position = SVector(X[1],X[2])
+
+    for i in 1:length(LNRs)
+        low_noise_region = LNRs[i]
+        if(position ∈ low_noise_region)
+            covar_tuple = LNR_noise_covariance[i]
+            (;σ_T) = covar_tuple
+            break
+        end
     end
+
+    dist = Normal(temp_mean,σ_T)
     likelihood = pdf(dist,o_temp)
     # return 1.0
     return likelihood
 end
 
 
-function pressure_likelihood(dvg,m,o_pressure,X,t)
+function pressure_likelihood(env::ExperimentEnvironment{R,S,T,U},dvg,m,o_pressure,X,t) where {R,S,T,U}
     # pres_mean = dvg.press_noise_amp[m]*cos(sum(X[1:3])+t)
     pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:2)) )
-    # dist = Normal(pres_mean, sqrt(dvg.press_noise_amp[m]))
-    if(X[1] >= 4500 && X[1]<=5500 && X[2]>=4500 && X[2]<=5500)
-        dist = Normal(pres_mean,0.1)
-    else
-        dist = Normal(pres_mean,4.0)
+    (;LNRs,LNR_noise_covariance,HNR_noise_covariance) = env
+    (;σ_P) = HNR_noise_covariance
+    position = SVector(X[1],X[2])
+
+    for i in 1:length(LNRs)
+        low_noise_region = LNRs[i]
+        if(position ∈ low_noise_region)
+            covar_tuple = LNR_noise_covariance[i]
+            (;σ_P) = covar_tuple
+            break
+        end
     end
-    # dist = Normal(pres_mean,1.0)
+
+    dist = Normal(pres_mean,σ_P)
     likelihood = pdf(dist,o_pressure)
     # return 1.0
     return likelihood

@@ -21,8 +21,8 @@ struct MARTBeliefMDPAction <:FieldVector{3,Float64}
 end
 
 #BeliefMDP
-struct MARTBeliefMDP{T,P,Q} <: POMDPs.MDP{MARTBeliefMDPState,MARTBeliefMDPAction}
-    env::ExperimentEnvironment
+struct MARTBeliefMDP{S,T,P,Q} <: POMDPs.MDP{MARTBeliefMDPState,MARTBeliefMDPAction}
+    env::S
     observation::Function
     wind::Function
     noise::Function
@@ -37,15 +37,16 @@ function update_belief(m,b0,s0,ctr,o,time_interval)
 
     num_models = m.M
     b1 = MVector{num_models,Float64}(undef)
+    (;env,png,dvg,dwg,Δt) = m
 
     for i in 1:num_models
-        mwf(X,t) = m.wind(m.dwg,i,X,t)
+        mwf(X,t) = m.wind(dwg,i,X,t)
         s1_list = aircraft_simulate(aircraft_dynamics,s0,time_interval,
-        (ctr,mwf,no_noise),m.Δt)
+        (ctr,mwf,no_noise),Δt)
         s1 = s1_list[end]
-        l_pos = transition_likelihood(m.png,o,s1,time_interval[2])
-        l_temp = temperature_likelihood(m.dvg,i,o[6],o,time_interval[2])
-        l_pres = pressure_likelihood(m.dvg,i,o[7],o,time_interval[2])
+        l_pos = transition_likelihood(png,o,s1,time_interval[2])
+        l_temp = temperature_likelihood(env,dvg,i,o[6],o,time_interval[2])
+        l_pres = pressure_likelihood(env,dvg,i,o[7],o,time_interval[2])
         # println(i , " ", s1[2], " ", l_pos, " ", l_temp, " ", l_pres)
         b1[i] = l_temp*l_pres*l_pos*b0[i]
     end
@@ -110,11 +111,21 @@ function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
     # println(sp)
     #Compute the reward R(b,a,b')
     r = calculate_reward(s,a,sp)
-    if(new_uav_state[1] >= 4500 && new_uav_state[1]<=5500 && new_uav_state[2]>=4500 && new_uav_state[2]<=5500)
-        println("@@@@@@@@@@@ Good News!! Low Noise Region Found. @@@@@@@@@@@")
-        println(sp)
-        println(r)
+
+    #=
+    Code below should be commented out later
+    =#
+    (;LNRs) = m.env
+    pos = SVector( new_uav_state[1], new_uav_state[2] ) 
+    for i in 1:length(LNRs)
+        low_noise_region = LNRs[i]
+        if( pos ∈ low_noise_region )
+            println("@@@@@@@@@@@ Good News!! Low Noise Region $low_noise_region found. @@@@@@@@@@@")
+            println(sp)
+            println(r)
+        end
     end
+
     return (sp=sp,r=r)
 end
 
