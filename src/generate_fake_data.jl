@@ -126,6 +126,76 @@ function get_fake_data(rng=MersenneTwister(69))
     return DVG,DWG,PNG
 end
 
+function get_experiment_environment(rng=MersenneTwister(199))
+
+    x_min = 0.0
+    x_max = 7000.0
+    y_min = 0.0
+    y_max = 7000.0
+    z_min = 0.0
+    z_max = 7000.0
+    obstacles = SphericalObstacle[]
+    σ_P_HN = 4.0
+    σ_T_HN = 4.0
+    num_LNRs = 1
+    lnr_side_length = 1000
+
+    #Define Low Noise Regions
+    LNRs = Array{VPolygon,1}()
+    for i in 1:num_LNRs
+        lowermost_x = rand(rng,0:6000)
+        lowermost_y = rand(rng,4000:6000)
+        num_vertices = 4
+        vertices = Vector{SVector{2,Float64}}(undef,num_vertices)
+        vertices[1] = SVector(lowermost_x,lowermost_y)
+        vertices[2] = SVector(lowermost_x,lowermost_y+lnr_side_length)
+        vertices[3] = SVector(lowermost_x+lnr_side_length,lowermost_y+lnr_side_length)
+        vertices[4] = SVector(lowermost_x+lnr_side_length,lowermost_y)
+        push!(LNRs,VPolygon(vertices))
+    end
+    # LNRs = SVector( 
+    #             VPolygon([ SVector(2000.0,5000.0), SVector(2000.0,6000.0), SVector(3000.0,6000.0), SVector(3000.0,5000.0) ]) 
+    #             )
+    LNRs = SVector{num_LNRs,typeof(LNRs[1])}(LNRs)
+    
+    #Define Noise Covariance for LNRs
+    LNR_noise_covariance = []
+    for i in 1:num_LNRs
+        push!(LNR_noise_covariance,(σ_P=0.1,σ_T=0.1))
+    end
+    LNR_noise_covariance = SVector{num_LNRs,typeof(LNR_noise_covariance[1])}(LNR_noise_covariance)
+
+    #Define Noise Covariance for HNRs
+    HNR_noise_covariance = (σ_P=σ_P_HN,σ_T=σ_T_HN)
+
+    env = ExperimentEnvironment( 
+        (x_min,x_max),
+        (y_min,y_max),
+        (z_min,z_max),
+        obstacles,
+        LNRs,
+        LNR_noise_covariance,
+        HNR_noise_covariance,
+        );
+    return env
+end
+
+#=
+The way I defined it earlier
+env = ExperimentEnvironment( 
+                    (0.0,7000.0),
+                    (0.0,7000.0),
+                    (0.0,7000.0), 
+                    SphericalObstacle[],
+                    SVector( VPolygon([ SVector(2000.0,5000.0), SVector(2000.0,6000.0), SVector(3000.0,6000.0), SVector(3000.0,5000.0) ]) ),
+                    SVector( (σ_P=0.1,σ_T=0.1) ),
+                    (σ_P=4.0,σ_T=4.0),
+                    );
+=#
+
+
+
+
 #=
 OLD FUNCTIONS TO GENERATE FAKE WIND
 struct OldDummyWindGenerator{T,P}

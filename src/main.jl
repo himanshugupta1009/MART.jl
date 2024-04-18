@@ -4,7 +4,12 @@ include("belief_mdp.jl")
 include("visualize_UAV_path.jl")
 using LazySets
 
-function run_experiment(sim,env,start_state,uav_policy_type=:mcts)
+function run_experiment(sim,env,start_state,dvg,dwg,png,
+                            uav_policy_type=:mcts,
+                            process_noise_rng=MersenneTwister(70),
+                            observation_noise_rng=MersenneTwister(111),
+                            mcts_rng=MersenneTwister(69)
+                            )
 
     T = sim.total_time
     t = sim.time_step
@@ -13,9 +18,9 @@ function run_experiment(sim,env,start_state,uav_policy_type=:mcts)
     num_models = 7
     start_time = 0.0
     print_logs = true
-    process_noise_rng = MersenneTwister()
-    observation_noise_rng = MersenneTwister()
-    mcts_rng = MersenneTwister()
+    # process_noise_rng = MersenneTwister()
+    # observation_noise_rng = MersenneTwister()
+    # mcts_rng = MersenneTwister()
 
     #Relevant Values to be stored
     state_history = Vector{Pair{Float64,typeof(start_state)}}()
@@ -28,7 +33,7 @@ function run_experiment(sim,env,start_state,uav_policy_type=:mcts)
     mart_mdp = MARTBeliefMDP(
                 env,
                 fake_observation,fake_wind,no_noise,
-                DVG,DWG,PNG,
+                dvg,dwg,png,
                 t,
                 num_models,
                 );
@@ -43,7 +48,7 @@ function run_experiment(sim,env,start_state,uav_policy_type=:mcts)
                     estimate_value = RolloutEstimator(rollout_obj),
                     rng = mcts_rng,
                     enable_tree_vis = true,
-                    max_time=60.0,
+                    max_time=1.0,
                     );
     planner = solve(mcts_solver,mart_mdp);
 
@@ -160,20 +165,13 @@ noise_func(t,rng) = process_noise(PNG,t,rng);
 # noise_func(t,rng) = no_noise(t,rng);
 sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,
                             10.0,100.0);
-env = ExperimentEnvironment( 
-                    (0.0,7000.0),
-                    (0.0,7000.0),
-                    (0.0,7000.0), 
-                    SphericalObstacle[],
-                    SVector( VPolygon([ SVector(2000.0,5000.0), SVector(2000.0,6000.0), SVector(3000.0,6000.0), SVector(3000.0,5000.0) ]) ),
-                    SVector( (σ_P=0.1,σ_T=0.1) ),
-                    (σ_P=4.0,σ_T=4.0),
-                    );
-s,a,o,b = run_experiment(sim_details,env,start_state,:sl);
+env = get_experiment_environment();
+s,a,o,b = run_experiment(sim_details,env,start_state,DVG,DWG,PNG,:sl);
 
 
 pp = PlottingParams(env)
 visualize_path(pp,s)
+
 =#
 
 
