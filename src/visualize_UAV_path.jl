@@ -42,18 +42,19 @@ function visualize_path_snapshot(plotting_params,time_value,state)
     y_val = maximum(boundary.y)
     Plots.annotate!(snapshot, x_val, y_val, 
                     text("t = $t_round sec", :black, :center, 14))
-    display(snapshot)
+    # display(snapshot)
     return snapshot
 end
 
 
-function visualize_path(plotting_params,states)
+function visualize_path(plotting_params,states,filename="./src/uav_path.gif")
     num_steps = length(states)
     anim = @animate for i ∈ 1:num_steps
         t,state = states[i]
         visualize_path_snapshot(plotting_params,t,state)
     end
-    gif(anim, "./src/uav_path.gif", fps = 1)
+    println(filename)
+    gif(anim, filename, fps = 1)
 end
 #=
 pp = PlottingParams(env)
@@ -105,7 +106,7 @@ function plot_2D_wind_vectors(plotting_params,dwg,model_num,min_separation = 300
 end
 #=
 pp = PlottingParams(env)
-plot_2D_wind_vectors(pp,DWG,5)
+s = plot_2D_wind_vectors(pp,DWG,5)
 =#
 
 
@@ -157,7 +158,7 @@ function plot_2D_temperature_data(plotting_params,dvg,model_num,min_separation =
 end
 #=
 pp = PlottingParams(env)
-plot_2D_temperature_data(pp,DVG,5)
+s = plot_2D_temperature_data(pp,DVG,5)
 =#
 
 
@@ -204,7 +205,7 @@ function plot_2D_pressure_data(plotting_params,dvg,model_num,min_separation = 30
 end
 #=
 pp = PlottingParams(env)
-plot_2D_pressure_data(pp,DVG,5)
+s = plot_2D_pressure_data(pp,DVG,5)
 =#
 
 #=
