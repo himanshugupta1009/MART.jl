@@ -126,25 +126,24 @@ function get_fake_data(rng=MersenneTwister(69))
     return DVG,DWG,PNG
 end
 
-function get_experiment_environment(rng=MersenneTwister(199))
+function get_experiment_environment(num_LNRs = 1,rng=MersenneTwister(199))
 
     x_min = 0.0
-    x_max = 7000.0
+    x_max = 10000.0
     y_min = 0.0
-    y_max = 7000.0
+    y_max = 10000.0
     z_min = 0.0
-    z_max = 7000.0
+    z_max = 10000.0
     obstacles = SphericalObstacle[]
     σ_P_HN = 4.0
     σ_T_HN = 4.0
-    num_LNRs = 1
-    lnr_side_length = 1000
+    lnr_side_length = 500
 
     #Define Low Noise Regions
     LNRs = Array{VPolygon,1}()
     for i in 1:num_LNRs
-        lowermost_x = rand(rng,0:6000)
-        lowermost_y = rand(rng,4000:6000)
+        lowermost_x = rand(rng,0:9000)
+        lowermost_y = rand(rng,4000:9000)
         num_vertices = 4
         vertices = Vector{SVector{2,Float64}}(undef,num_vertices)
         vertices[1] = SVector(lowermost_x,lowermost_y)
@@ -161,7 +160,8 @@ function get_experiment_environment(rng=MersenneTwister(199))
     #Define Noise Covariance for LNRs
     LNR_noise_covariance = []
     for i in 1:num_LNRs
-        push!(LNR_noise_covariance,(σ_P=0.1,σ_T=0.1))
+        # push!(LNR_noise_covariance,(σ_P=0.1,σ_T=0.1))
+        push!(LNR_noise_covariance,(σ_P=0.1*(3^i),σ_T=0.1*(3^i)))
     end
     LNR_noise_covariance = SVector{num_LNRs,typeof(LNR_noise_covariance[1])}(LNR_noise_covariance)
 

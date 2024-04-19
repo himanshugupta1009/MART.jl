@@ -4,10 +4,12 @@ include("main.jl")
 function run_pipeline(num_experiments,generate_plots = false)
 
     fake_data_rng_seeds = rand(1:1000,num_experiments)
+    LNR_rng_seeds = rand(1:1000,num_experiments)
     process_noise_rng_seeds = rand(1:1000,num_experiments)
     observation_noise_rng_seeds = rand(1:1000,num_experiments)
     mcts_rng_seeds = rand(1:1000,num_experiments)
     true_model = 5
+    num_LNRs = 3
     MCTS_policy_results = Dict()
     SL_policy_results = Dict()
     Random_policy_results = Dict()
@@ -16,19 +18,20 @@ function run_pipeline(num_experiments,generate_plots = false)
     for exp_num in 1:num_experiments
 
         fake_data_rng_seed = fake_data_rng_seeds[exp_num]
+        LNR_rng_seed = LNR_rng_seeds[exp_num]
         process_noise_rng_seed = process_noise_rng_seeds[exp_num]
         observation_noise_rng_seed = observation_noise_rng_seeds[exp_num]
         mcts_rng_seed = mcts_rng_seeds[exp_num]
 
 
         DVG,DWG,PNG = get_fake_data(MersenneTwister(fake_data_rng_seed));
-        start_state = SVector(1000.0,1000.0,1800.0,pi/2,0.0);
+        start_state = SVector(5000.0,1000.0,1800.0,pi/2,0.0);
         c_func(X,t) = SVector(10.0,0.0,0.0);
         w_func(X,t) = fake_wind(DWG,true_model,X,t);
         o_func(X,t) = fake_observation(DVG,true_model,X,t);
         n_func(t,rng) = process_noise(PNG,t,rng);
-        sim_details = SimulationDetails(c_func,w_func,n_func,o_func,10.0,400.0);
-        env = get_experiment_environment(MersenneTwister(fake_data_rng_seed));
+        sim_details = SimulationDetails(c_func,w_func,n_func,o_func,10.0,500.0);
+        env = get_experiment_environment(num_LNRs,MersenneTwister(LNR_rng_seed));
         plotting_params = PlottingParams(env)
         folder_location = pwd()*"/pipeline_plots/"
         
@@ -80,8 +83,10 @@ function run_pipeline(num_experiments,generate_plots = false)
     end
 
     results = (mcts=MCTS_policy_results,sl=SL_policy_results,random=Random_policy_results)
-    seeds = (fake_data=fake_data_rng_seeds,process_noise=process_noise_rng_seeds,
-                        observation_noise=observation_noise_rng_seeds,mcts=mcts_rng_seeds)
+    seeds = (fake_data=fake_data_rng_seeds,LNR=LNR_rng_seeds,
+            process_noise=process_noise_rng_seeds,observation_noise=observation_noise_rng_seeds,
+            mcts=mcts_rng_seeds
+            )
 
     return seeds,results
 end
@@ -183,6 +188,7 @@ num_experiments = 10
 seeds,results = run_pipeline(num_experiments,true)
 TMN = 5
 s = get_histogram_plots(results,TMN)
+
 =#
 
 
