@@ -23,7 +23,8 @@ function visualize_path_snapshot(plotting_params,time_value,state)
 
     plot!(snapshot,boundary,opacity=0.1,color=:skyblue,linewidth=2.0,label="Boundary")
     for i in 1:length(ROI)
-        plot!(snapshot,ROI[i],opacity=0.3,color=:green,linewidth=2.0,label="Low Noise Region")
+        # plot!(snapshot,ROI[i],opacity=0.3,color=:green,linewidth=2.0,label="Low Noise Region $i")
+        plot!(snapshot,ROI[i],opacity=0.3,linewidth=2.0,label="Low Noise Region $i")
     end
     # plot!(snapshot,ROI,opacity=0.3,color=:green,linewidth=2.0,label="Low Noise Region")
 
