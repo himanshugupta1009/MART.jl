@@ -9,7 +9,8 @@ end
 
 function fake_temperature(dvg,M,X,t)
     @assert isinteger(M)
-    input_var = sum(view(X,1:2))
+    # input_var = sum(view(X,1:2))
+    input_var = sum(view(X,1:2))/3000.0 + 0.001*M
     ft = dvg.temp_noise_amp[M]*sin(input_var)
     return ft
 end
@@ -17,7 +18,8 @@ end
 
 function fake_pressure(dvg,M,X,t)
     @assert isinteger(M)
-    input_var = sum(view(X,1:2))
+    # input_var = sum(view(X,1:2))
+    input_var = sum(view(X,1:2))/3000.0 + 0.001*M
     fp = dvg.press_noise_amp[M]*cos(input_var)
     return fp
 end
@@ -90,7 +92,9 @@ function get_fake_data(rng=MersenneTwister(69))
     num_models = 7
 
     T_noise_amp = SVector{num_models,Float64}(0.6, 0.1, 1.3, 1.1, 0.5, 0.8, 1.7)
+    T_noise_amp = SVector{num_models,Float64}(ones(num_models))
     P_Noise_amp = SVector{num_models,Float64}(1.3, 2.9, 2.3, 0.6, 1.9, 0.1, 1.7)
+    P_Noise_amp = SVector{num_models,Float64}(ones(num_models))
     DVG = DummyValuesGenerator(T_noise_amp,P_Noise_amp)
 
     # const_wind = SVector(5.0,7.0,8.0)
@@ -161,7 +165,7 @@ function get_experiment_environment(num_LNRs = 1,rng=MersenneTwister(199))
     LNR_noise_covariance = []
     for i in 1:num_LNRs
         # push!(LNR_noise_covariance,(σ_P=0.1,σ_T=0.1))
-        push!(LNR_noise_covariance,(σ_P=0.1*(3^i),σ_T=0.1*(3^i)))
+        push!(LNR_noise_covariance,(σ_P=0.001*(3^i),σ_T=0.001*(3^i)))
     end
     LNR_noise_covariance = SVector{num_LNRs,typeof(LNR_noise_covariance[1])}(LNR_noise_covariance)
 
@@ -274,4 +278,13 @@ noise_covar = SMatrix{3,3}([
         0 0 3000.0;
         ])
 PNG = ProcessNoiseGenerator(noise_covar)
+=#
+
+
+#=
+x= 1:100:10000
+y = 1:100:10000
+dist = MvNormal([5200,5200],[10000000 0; 0 10000000])
+f(x,y) = sin( (x+y+5) / 1000)
+plot(x,y,f,st=:surface)
 =#
