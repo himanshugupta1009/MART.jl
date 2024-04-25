@@ -1,27 +1,45 @@
 using LinearAlgebra
 using StaticArrays
+using Distributions
 
 struct DummyValuesGenerator{T,P}
     temp_noise_amp::T
     press_noise_amp::P
+    gaussian_model::MvNormal
+    covar_magnitude::Float64
 end
 
 
 function fake_temperature(dvg,M,X,t)
     @assert isinteger(M)
     # input_var = sum(view(X,1:2))
-    input_var = sum(view(X,1:2))/3000.0 + 0.001*M
-    ft = dvg.temp_noise_amp[M]*sin(input_var)
-    return ft
+    # input_var = sum(view(X,1:2))/3000.0 + 0.001*M
+    # ft = dvg.temp_noise_amp[M]*sin(input_var)
+    (;gaussian_model,covar_magnitude) = dvg
+    prob = pdf(gaussian_model, SVector(X[1],X[2])) 
+    ft = sin( (X[1]+M) /1000.0 ) * sin( (X[2]+M) /1000.0 ) 
+    return covar_magnitude*prob*ft*100
 end
 
+# function fake_pressure(dvg,M,X,t)
+#     @assert isinteger(M)
+#     # input_var = sum(view(X,1:2))
+#     # input_var = sum(view(X,1:2))/3000.0 + 0.001*M
+#     # fp = dvg.press_noise_amp[M]*cos(input_var)
+#     fp = cos( (X[1]+M) /1000.0 ) * cos( (X[2]+M) /1000.0 ) 
+#     return fp
+# end
 
 function fake_pressure(dvg,M,X,t)
     @assert isinteger(M)
     # input_var = sum(view(X,1:2))
-    input_var = sum(view(X,1:2))/3000.0 + 0.001*M
-    fp = dvg.press_noise_amp[M]*cos(input_var)
-    return fp
+    # input_var = sum(view(X,1:2))/3000.0 + 0.001*M
+    # fp = dvg.press_noise_amp[M]*cos(input_var)
+    # return fp
+    (;gaussian_model,covar_magnitude) = dvg
+    prob = pdf(gaussian_model, SVector(X[1],X[2])) 
+    fp = cos( (X[1]+M) /1000.0 ) * cos( (X[2]+M) /1000.0 )
+    return covar_magnitude*prob*fp*100
 end
 
 
@@ -92,10 +110,17 @@ function get_fake_data(rng=MersenneTwister(69))
     num_models = 7
 
     T_noise_amp = SVector{num_models,Float64}(0.6, 0.1, 1.3, 1.1, 0.5, 0.8, 1.7)
-    T_noise_amp = SVector{num_models,Float64}(ones(num_models))
+    # T_noise_amp = SVector{num_models,Float64}(ones(num_models))
     P_Noise_amp = SVector{num_models,Float64}(1.3, 2.9, 2.3, 0.6, 1.9, 0.1, 1.7)
-    P_Noise_amp = SVector{num_models,Float64}(ones(num_models))
-    DVG = DummyValuesGenerator(T_noise_amp,P_Noise_amp)
+    # P_Noise_amp = SVector{num_models,Float64}(ones(num_models))
+    gaussian_mean = SVector(5000.0,5000.0)
+    mag = 10e6
+    gaussian_covar = SMatrix{2,2}(mag*[
+                        1.0 0;
+                        0 1.0;
+                        ])
+    dist = MvNormal(gaussian_mean,gaussian_covar)
+    DVG = DummyValuesGenerator(T_noise_amp,P_Noise_amp,dist,mag)
 
     # const_wind = SVector(5.0,7.0,8.0)
     const_wind = SVector(5.0,7.0,0.0)
@@ -141,7 +166,7 @@ function get_experiment_environment(num_LNRs = 1,rng=MersenneTwister(199))
     obstacles = SphericalObstacle[]
     σ_P_HN = 4.0
     σ_T_HN = 4.0
-    lnr_side_length = 500
+    lnr_side_length = 1000
 
     #Define Low Noise Regions
     LNRs = Array{VPolygon,1}()
@@ -284,7 +309,21 @@ PNG = ProcessNoiseGenerator(noise_covar)
 #=
 x= 1:100:10000
 y = 1:100:10000
-dist = MvNormal([5200,5200],[10000000 0; 0 10000000])
-f(x,y) = sin( (x+y+5) / 1000)
+mag = 10e6 
+dist = MvNormal([7200,7200],[mag*1.0 0; 0 mag*1.0])
+f(x,y) = mag*pdf(dist,[x,y])
 plot(x,y,f,st=:surface)
+
+
+x= 1:100:10000
+y = 1:100:10000
+f(x,y) = sin( (x+M)/1000)*sin((y+M)/1000.0)
+plot(x,y,f,st=:surface)
+
+
+x= 1:100:10000
+y = 1:100:10000
+f(x,y) = fake_pressure(DVG,2,SVector(x,y),0.0) - fake_pressure(DVG,5,SVector(x,y),0.0) 
+plot(x,y,f,st=:surface)
+
 =#

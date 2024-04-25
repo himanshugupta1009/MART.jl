@@ -27,35 +27,72 @@ function test_get_fake_data()
 end
 
 function test_pressure_likelihood(dvg,m,o_pressure,X,t)
-    pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:2)) )
-    dist = Normal(pres_mean,4.0)
+    # pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:2)) )
+    pres_mean = test_fake_pressure(dvg,m,X,t)
+    std_value = 0.003
+    dist = Normal(pres_mean,std_value)
     likelihood = pdf(dist,o_pressure)
     return likelihood
 end
 
 function test_temperature_likelihood(dvg,m,o_temp,X,t)
-    temp_mean = dvg.temp_noise_amp[m]*sin( sum(view(X,1:2)))
-    dist = Normal(temp_mean,4.0)
+    # temp_mean = dvg.temp_noise_amp[m]*sin( sum(view(X,1:2)))
+    temp_mean = test_fake_temperature(dvg,m,X,t)
+    std_value = 0.003
+    dist = Normal(temp_mean,std_value)
     likelihood = pdf(dist,o_temp)
     return likelihood
 end
+
+function test_fake_temperature(dvg,M,X,t)
+    @assert isinteger(M)
+    # input_var = sum(view(X,1:2))
+    # input_var = sum(view(X,1:2))/3000.0 + 0.001*M
+    # ft = dvg.temp_noise_amp[M]*sin(input_var)
+    ft = sin( (X[1]+M) /1000.0 ) * sin( (X[2]+M) /1000.0 ) 
+    mag = 10e6 
+    dist = MvNormal(SVector(5000.0,5000.0),SMatrix{2,2}(mag*[
+        1.0 0;
+        0 1.0;
+        ]))
+    prob = pdf(dist, SVector(X[1],X[2])) 
+    return mag*prob*ft*100
+end
+
+
+function test_fake_pressure(dvg,M,X,t)
+    @assert isinteger(M)
+    # input_var = sum(view(X,1:2))
+    # input_var = sum(view(X,1:2))/3000.0 + 0.001*M
+    # fp = dvg.press_noise_amp[M]*cos(input_var)
+    fp = cos( (X[1]+M) /1000.0 ) * cos( (X[2]+M) /1000.0 ) 
+    mag = 10e6 
+    dist = MvNormal(SVector(5000.0,5000.0),SMatrix{2,2}(mag*[
+        1.0 0;
+        0 1.0;
+        ]))
+    prob = pdf(dist, SVector(X[1],X[2])) 
+    return mag*prob*fp*100
+end
+
+
 
 function do_testing(dvg,num_samples,true_model_num=3,rng=MersenneTwister(6))
 
     num_models = 4
     start_belief = get_initial_belief(Val(num_models))
-    X = SVector(5.0,5.0) 
-    true_pressure_value = fake_pressure(dvg,true_model_num,X,0.0)
-    true_temperature_value = fake_temperature(dvg,true_model_num,X,0.0)
+    X = SVector(5000.0,5000.0) 
+    true_pressure_value = test_fake_pressure(dvg,true_model_num,X,0.0)
+    true_temperature_value = test_fake_temperature(dvg,true_model_num,X,0.0)
     
     curr_belief = MVector(start_belief)
     println("Starting Belief: ", curr_belief)
     for i in 1:num_samples
         #Sample Temperature Value 
-        sampled_temperature_value = true_temperature_value + 4*randn(rng)
+        sampled_temperature_value = true_temperature_value + 0.1*randn(rng)
         temperature_likelihood_array = MVector{num_models,Float64}(undef)
         #Sample Pressure Value 
-        sampled_pressure_value = true_pressure_value + 2*randn(rng)
+        sampled_pressure_value = true_pressure_value + 0.1*randn(rng)
         pressure_likelihood_array = MVector{num_models,Float64}(undef)
 
         for m in 1:num_models
@@ -83,7 +120,8 @@ function generate_probability_values(dvg,temperature_samples,pressure_samples)
 
     num_models = 4
     start_belief = get_initial_belief(Val(num_models))
-    X = SVector(5.0,5.0) 
+    X = SVector(5000.0,5000.0)
+    t_value = 0.0 
     curr_temperature_belief = MVector(start_belief)
     curr_pressure_belief = MVector(start_belief)
     curr_total_belief = MVector(start_belief)
@@ -100,10 +138,10 @@ function generate_probability_values(dvg,temperature_samples,pressure_samples)
 
         for m in 1:num_models
             temperature_likelihood = test_temperature_likelihood(dvg,m,sampled_temperature_value,
-                                        X,0.0)
+                                        X,t_value)
             temperature_likelihood_array[m] = temperature_likelihood
             pressure_likelihood = test_pressure_likelihood(dvg,m,sampled_pressure_value,
-                                        X,0.0)
+                                        X,t_value)
             pressure_likelihood_array[m] = pressure_likelihood
         end
         for m in 1:num_models
@@ -133,15 +171,17 @@ function plot_probability(dvg,num_samples_array,rng=MersenneTwister(7))
     temp_prob_values = Dict{Int,Vector{Float64}}()
     pres_prob_values = Dict{Int,Vector{Float64}}()
     total_prob_values = Dict{Int,Vector{Float64}}()
-    X = SVector(5.0,5.0) 
-    true_pressure_value = fake_pressure(dvg,true_model_num,X,0.0)
-    true_temperature_value = fake_temperature(dvg,true_model_num,X,0.0)
+    X = SVector(5000.0,5000.0)
+    t_value = 0.0 
+    std_value = 0.003
+    true_pressure_value = test_fake_pressure(dvg,true_model_num,X,t_value)
+    true_temperature_value = test_fake_temperature(dvg,true_model_num,X,t_value)
 
     max_num_samples = maximum(num_samples_array)
 
     #Generate Samples
-    temperature_samples = [ true_temperature_value + 4*randn(rng) for i in 1:max_num_samples]
-    pressure_samples = [ true_pressure_value + 4*randn(rng) for i in 1:max_num_samples]
+    temperature_samples = [ true_temperature_value + std_value*randn(rng) for i in 1:max_num_samples]
+    pressure_samples = [ true_pressure_value + std_value*randn(rng) for i in 1:max_num_samples]
 
     for num_samples in num_samples_array
         T_samples = view(temperature_samples,1:num_samples)
