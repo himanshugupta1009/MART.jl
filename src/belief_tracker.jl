@@ -14,7 +14,8 @@ end
 function temperature_likelihood(env::ExperimentEnvironment{R,S,T,U},dvg,m,o_temp,X,t) where {R,S,T,U}
     # temp_mean = dvg.temp_noise_amp[m]*sin(sum(X[1:3])+t)
     # temp_mean = dvg.temp_noise_amp[m]*sin( sum(view(X,1:2)))
-    temp_mean = dvg.temp_noise_amp[m]*sin( sum(view(X,1:2))/1000.0 + 0.001*m)
+    # temp_mean = dvg.temp_noise_amp[m]*sin( sum(view(X,1:2))/1000.0 + 0.001*m)
+    temp_mean = fake_temperature(dvg,m,X,t)
     (;LNRs,LNR_noise_covariance,HNR_noise_covariance) = env
     (;σ_T) = HNR_noise_covariance
     position = SVector(X[1],X[2])
@@ -38,7 +39,8 @@ end
 function pressure_likelihood(env::ExperimentEnvironment{R,S,T,U},dvg,m,o_pressure,X,t) where {R,S,T,U}
     # pres_mean = dvg.press_noise_amp[m]*cos(sum(X[1:3])+t)
     # pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:2)) )
-    pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:2))/1000.0 + 0.001*m)
+    # pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:2))/1000.0 + 0.001*m)
+    pres_mean = fake_pressure(dvg,m,X,t)
     (;LNRs,LNR_noise_covariance,HNR_noise_covariance) = env
     (;σ_P) = HNR_noise_covariance
     position = SVector(X[1],X[2])
