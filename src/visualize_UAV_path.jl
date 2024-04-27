@@ -572,37 +572,37 @@ s = plot_2D_pressure_difference_data_surface(pp,DVG,2,5)
 MAX_MODEL_NUM = 5
 
 
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 for i in 1:MAX_MODEL_NUM
-    s = plot_2D_temperature_data(pp,DVG,i)
+    s = plot_2D_temperature_data(pp,DVG,i,500)
     savefig(s,"./MART_plots/temperature_data_m$i.png") 
 end   
 
 
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 for i in 1:MAX_MODEL_NUM
     s = plot_2D_temperature_data_surface(pp,DVG,i)
     savefig(s,"./MART_plots/temperature_surface_m$i.png") 
 end   
 
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 s = plot_2D_temperature_difference_data(pp,DVG,2,5)
 savefig(s,"./MART_plots/temperature_difference_data_m2_m5.png") 
 
 
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 s = plot_2D_temperature_difference_data_surface(pp,DVG,2,5)
 savefig(s,"./MART_plots/temperature_difference_surface_m2_m5.png") 
 
 
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 for i in 1:MAX_MODEL_NUM
     s = plot_2D_pressure_data(pp,DVG,i)
     savefig(s,"./MART_plots/pressure_data_m$i.png") 
 end   
 
 
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 for i in 1:MAX_MODEL_NUM
     s = plot_2D_pressure_data_surface(pp,DVG,i)
     savefig(s,"./MART_plots/pressure_surface_m$i.png") 
