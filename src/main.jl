@@ -114,12 +114,12 @@ function run_experiment(sim,env,start_state,dvg,dwg,png,
         if(print_logs)
             println("Simulation Finished. Now finding the best UAV Action for \
                     the next interval : ", (i*t,(i+1)*t))
-
-            p = SVector(0.0,0.0,0.0,0.0,1.0,0.0,0.0)
-            r = -SB.kldivergence(p,next_belief)
-            println("Current Reward : ", r)
-            total_reward += discount(mart_mdp)^i*r
-            println("Total Reward : ", total_reward)
+            # p = MVector(zeros(num_models)...)
+            # p[5] = 1.0
+            # r = -SB.kldivergence(p,next_belief)
+            # println("Current Reward : ", r)
+            # total_reward += discount(mart_mdp)^i*r
+            # println("Total Reward : ", total_reward)
         end
         if(i<num_steps)
             bmdp_state = MARTBeliefMDPState(next_uav_state,next_belief,next_time)
@@ -156,7 +156,7 @@ end
 #=
 
 DVG,DWG,PNG = get_fake_data();
-start_state = SVector(1000.0,1000.0,1800.0,pi/6,0.0);
+start_state = SVector(5000.0,1000.0,1800.0,pi/6,0.0);
 control_func(X,t) = SVector(10.0,0.0,0.0);
 true_model = 5;
 wind_func(X,t) = fake_wind(DWG,true_model,X,t);
@@ -164,12 +164,12 @@ obs_func(X,t) = fake_observation(DVG,true_model,X,t);
 noise_func(t,rng) = process_noise(PNG,t,rng);
 # noise_func(t,rng) = no_noise(t,rng);
 sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,
-                            10.0,100.0);
-env = get_experiment_environment();
+                            10.0,1000.0);
+env = get_experiment_environment(0);
 s,a,o,b = run_experiment(sim_details,env,start_state,DVG,DWG,PNG,:sl);
 
 
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 visualize_path(pp,s)
 
 =#

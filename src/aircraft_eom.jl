@@ -12,7 +12,6 @@ function AircraftEOM(state,control,wind,noise)
     x_dot = control[1]*cos(state[4])*cos(state[5]) + wind[1] + noise[1]
     y_dot = control[1]*sin(state[4])*cos(state[5]) + wind[2] + noise[2]
     z_dot = control[1]*sin(state[5]) + wind[3] + noise[3]
-
     return SVector(x_dot, y_dot, z_dot, control[2] + noise[4], control[3] + noise[5])
 end
 
