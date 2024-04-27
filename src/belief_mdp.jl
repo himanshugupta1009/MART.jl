@@ -73,7 +73,8 @@ function calculate_reward(bmdp_s,a,bmdp_sp)
     =#
     q = bmdp_sp.belief
     val,ind = findmax(q)
-    p = MVector(0.0,0.0,0.0,0.0,0.0,0.0,0.0)
+    num_models = length(q)
+    p = MVector(zeros(num_models)...)
     p[ind] = 1.0
     r = SB.kldivergence(p,q)
     return -r
@@ -115,16 +116,16 @@ function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
     #=
     Code below should be commented out later
     =#
-    (;LNRs) = m.env
-    pos = SVector( new_uav_state[1], new_uav_state[2] ) 
-    for i in 1:length(LNRs)
-        low_noise_region = LNRs[i]
-        if( pos ∈ low_noise_region )
-            println("@@@@@@@@@@@ Good News!! Low Noise Region $low_noise_region found. @@@@@@@@@@@")
-            println(sp)
-            println(r)
-        end
-    end
+    # (;LNRs) = m.env
+    # pos = SVector( new_uav_state[1], new_uav_state[2] ) 
+    # for i in 1:length(LNRs)
+    #     low_noise_region = LNRs[i]
+    #     if( pos ∈ low_noise_region )
+    #         println("@@@@@@@@@@@ Good News!! Low Noise Region $low_noise_region found. @@@@@@@@@@@")
+    #         println(sp)
+    #         println(r)
+    #     end
+    # end
 
     return (sp=sp,r=r)
 end
