@@ -29,7 +29,7 @@ end
 function test_pressure_likelihood(dvg,m,o_pressure,X,t)
     # pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:2)) )
     pres_mean = test_fake_pressure(dvg,m,X,t)
-    std_value = 0.003
+    std_value = sigma_value_noise
     dist = Normal(pres_mean,std_value)
     likelihood = pdf(dist,o_pressure)
     return likelihood
@@ -38,7 +38,7 @@ end
 function test_temperature_likelihood(dvg,m,o_temp,X,t)
     # temp_mean = dvg.temp_noise_amp[m]*sin( sum(view(X,1:2)))
     temp_mean = test_fake_temperature(dvg,m,X,t)
-    std_value = 0.003
+    std_value = sigma_value_noise
     dist = Normal(temp_mean,std_value)
     likelihood = pdf(dist,o_temp)
     return likelihood
@@ -56,15 +56,16 @@ function test_fake_temperature(dvg,M,X,t)
         0 1.0;
         ]))
     prob = pdf(dist, SVector(X[1],X[2])) 
+    return 2.0+0.001*M
     return mag*prob*ft*100
 end
-
+test_fake_temperature(dvg,M,X,t) = fake_temperature(DVG,M,X,t)
 
 function test_fake_pressure(dvg,M,X,t)
     @assert isinteger(M)
     # input_var = sum(view(X,1:2))
-    # input_var = sum(view(X,1:2))/3000.0 + 0.001*M
     # fp = dvg.press_noise_amp[M]*cos(input_var)
+    # input_var = sum(view(X,1:2))/3000.0 + 0.001*M
     fp = cos( (X[1]+M) /1000.0 ) * cos( (X[2]+M) /1000.0 ) 
     mag = 10e6 
     dist = MvNormal(SVector(5000.0,5000.0),SMatrix{2,2}(mag*[
@@ -72,9 +73,10 @@ function test_fake_pressure(dvg,M,X,t)
         0 1.0;
         ]))
     prob = pdf(dist, SVector(X[1],X[2])) 
+    return 5.0+0.001*M
     return mag*prob*fp*100
 end
-
+test_fake_pressure(dvg,M,X,t) = fake_pressure(DVG,M,X,t)
 
 
 function do_testing(dvg,num_samples,true_model_num=3,rng=MersenneTwister(6))
@@ -116,11 +118,10 @@ end
 
 
 
-function generate_probability_values(dvg,temperature_samples,pressure_samples)
+function generate_probability_values(X,dvg,temperature_samples,pressure_samples)
 
     num_models = 4
     start_belief = get_initial_belief(Val(num_models))
-    X = SVector(5000.0,5000.0)
     t_value = 0.0 
     curr_temperature_belief = MVector(start_belief)
     curr_pressure_belief = MVector(start_belief)
@@ -161,8 +162,8 @@ function generate_probability_values(dvg,temperature_samples,pressure_samples)
     return curr_temperature_belief, curr_pressure_belief, curr_total_belief
 end
 
-
-function plot_probability(dvg,num_samples_array,rng=MersenneTwister(7))
+global sigma_value_noise = 1.0
+function plot_probability(X,dvg,num_samples_array,rng=MersenneTwister(7))
 
     # seed = rand(UInt32)
     # rng = MersenneTwister(seed)
@@ -171,9 +172,9 @@ function plot_probability(dvg,num_samples_array,rng=MersenneTwister(7))
     temp_prob_values = Dict{Int,Vector{Float64}}()
     pres_prob_values = Dict{Int,Vector{Float64}}()
     total_prob_values = Dict{Int,Vector{Float64}}()
-    X = SVector(5000.0,5000.0)
+    # X = SVector(3000.0,5000.0)
     t_value = 0.0 
-    std_value = 0.003
+    std_value = sigma_value_noise
     true_pressure_value = test_fake_pressure(dvg,true_model_num,X,t_value)
     true_temperature_value = test_fake_temperature(dvg,true_model_num,X,t_value)
 
@@ -186,7 +187,7 @@ function plot_probability(dvg,num_samples_array,rng=MersenneTwister(7))
     for num_samples in num_samples_array
         T_samples = view(temperature_samples,1:num_samples)
         P_samples = view(pressure_samples,1:num_samples)
-        T_belief, P_belief, Total_belief = generate_probability_values(dvg,T_samples,P_samples)
+        T_belief, P_belief, Total_belief = generate_probability_values(X,dvg,T_samples,P_samples)
         temp_prob_values[num_samples] = T_belief
         pres_prob_values[num_samples] = P_belief
         total_prob_values[num_samples] = Total_belief
@@ -281,6 +282,10 @@ do_testing(dvg,10)
 
 dvg = test_get_fake_data()
 num_samples_array = SVector(10,100,1000,10000)
-plot_probability(dvg,num_samples_array)
-plot_probability(dvg,num_samples_array,MersenneTwister(17))
+X = SVector(5000.0,5000.0)
+plot_probability(X,dvg,num_samples_array)
+plot_probability(X,dvg,num_samples_array,MersenneTwister(17))
+
+num_samples_array = SVector(1:1:100...)
+seed = rand(UInt32); plot_probability(X,dvg,num_samples_array,MersenneTwister(seed))
 =#

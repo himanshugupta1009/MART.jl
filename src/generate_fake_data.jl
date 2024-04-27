@@ -3,9 +3,9 @@ using StaticArrays
 using Distributions
 
 struct DummyValuesGenerator{T,P}
-    temp_noise_amp::T
-    press_noise_amp::P
-    gaussian_model::MvNormal
+    num_DMRs::Int64
+    base_DMRs::T
+    model_DMRs::P
     covar_magnitude::Float64
 end
 
@@ -15,31 +15,52 @@ function fake_temperature(dvg,M,X,t)
     # input_var = sum(view(X,1:2))
     # input_var = sum(view(X,1:2))/3000.0 + 0.001*M
     # ft = dvg.temp_noise_amp[M]*sin(input_var)
-    (;gaussian_model,covar_magnitude) = dvg
-    prob = pdf(gaussian_model, SVector(X[1],X[2])) 
-    ft = sin( (X[1]+M) /1000.0 ) * sin( (X[2]+M) /1000.0 ) 
-    return covar_magnitude*prob*ft*100
+    (;num_DMRs,model_DMRs,covar_magnitude) = dvg
+    # prob = pdf(gaussian_model, SVector(X[1],X[2])) 
+    # ft = sin( (X[1]+M) /1000.0 ) * sin( (X[2]+M) /1000.0 )
+
+    sum = 5.0
+    for i in 1:num_DMRs
+        sum += pdf(model_DMRs[M][i],SVector(X[1],X[2]))*covar_magnitude*M*0.1
+    end
+    return sum*sin( X[1]/1000.0 ) * sin( X[2]/1000.0 )
 end
 
-# function fake_pressure(dvg,M,X,t)
-#     @assert isinteger(M)
-#     # input_var = sum(view(X,1:2))
-#     # input_var = sum(view(X,1:2))/3000.0 + 0.001*M
-#     # fp = dvg.press_noise_amp[M]*cos(input_var)
-#     fp = cos( (X[1]+M) /1000.0 ) * cos( (X[2]+M) /1000.0 ) 
-#     return fp
-# end
 
 function fake_pressure(dvg,M,X,t)
     @assert isinteger(M)
     # input_var = sum(view(X,1:2))
     # input_var = sum(view(X,1:2))/3000.0 + 0.001*M
     # fp = dvg.press_noise_amp[M]*cos(input_var)
-    # return fp
-    (;gaussian_model,covar_magnitude) = dvg
-    prob = pdf(gaussian_model, SVector(X[1],X[2])) 
-    fp = cos( (X[1]+M) /1000.0 ) * cos( (X[2]+M) /1000.0 )
-    return covar_magnitude*prob*fp*100
+    (;num_DMRs,model_DMRs,covar_magnitude) = dvg
+    # prob = pdf(gaussian_model, SVector(X[1],X[2])) 
+    # fp = cos( (X[1]+M) /1000.0 ) * cos( (X[2]+M) /1000.0 )
+
+    sum = 2.0
+    for i in 1:num_DMRs
+        sum += pdf(model_DMRs[M][i],SVector(X[1],X[2]))*covar_magnitude*M*0.1
+    end
+    return sum*cos( X[1]/1000.0 ) * cos( X[2]/1000.0 )
+
+    #=
+    d1 = MvNormal( SVector(3000.0+10*M,5000.0+10*M), SMatrix{2,2}(0.01*covar_magnitude*[
+        1.0 0;
+        0 1.0;
+        ]) )
+    d2 = MvNormal( SVector(6000.0+10*M,8000.0+10*M), SMatrix{2,2}(0.01*covar_magnitude*[
+        1.0 0;
+        0 1.0;
+        ]) )
+    d3 = MvNormal( SVector(4000.0+10*M,7000.0+10*M), SMatrix{2,2}(0.01*covar_magnitude*[
+        1.0 0;
+        0 1.0;
+        ]) )
+    
+    return 2.0 + 
+            pdf(d1,SVector(X[1],X[2]))*covar_magnitude*M+
+            pdf(d2,SVector(X[1],X[2]))*covar_magnitude*M+
+            pdf(d3,SVector(X[1],X[2]))*covar_magnitude*M
+    =#
 end
 
 
@@ -105,22 +126,42 @@ function process_noise(png,t,rng=MersenneTwister(70))
     return SVector{num_state_variables,Float64}(noise)
 end
 
-function get_fake_data(rng=MersenneTwister(69))
+function get_fake_data(num_models=7,num_DMRs=3,rng=MersenneTwister(69))
 
-    num_models = 7
-
-    T_noise_amp = SVector{num_models,Float64}(0.6, 0.1, 1.3, 1.1, 0.5, 0.8, 1.7)
+    # T_noise_amp = SVector{7,Float64}(0.6, 0.1, 1.3, 1.1, 0.5, 0.8, 1.7)
     # T_noise_amp = SVector{num_models,Float64}(ones(num_models))
-    P_Noise_amp = SVector{num_models,Float64}(1.3, 2.9, 2.3, 0.6, 1.9, 0.1, 1.7)
+    # P_Noise_amp = SVector{7,Float64}(1.3, 2.9, 2.3, 0.6, 1.9, 0.1, 1.7)
     # P_Noise_amp = SVector{num_models,Float64}(ones(num_models))
-    gaussian_mean = SVector(5000.0,5000.0)
+
+    #Define Different Measurement Regions
+    base_DMRs = Array{Tuple{SVector{2,Float64},SMatrix{2,2,Float64}},1}(undef,num_DMRs)
     mag = 10e6
-    gaussian_covar = SMatrix{2,2}(mag*[
+
+    for i in 1:num_DMRs
+        mean_x = rand(rng,0:10000)
+        mean_y = rand(rng,7000:10000)
+        gaussian_mean = SVector(mean_x,mean_y)
+        gaussian_covar = SMatrix{2,2}(0.01*mag*[
                         1.0 0;
                         0 1.0;
                         ])
-    dist = MvNormal(gaussian_mean,gaussian_covar)
-    DVG = DummyValuesGenerator(T_noise_amp,P_Noise_amp,dist,mag)
+        base_DMRs[i] = (gaussian_mean,gaussian_covar)
+    end
+
+    models_DMRs = Array{Dict{Int,MvNormal},1}(undef,num_models)
+    for i in 1:num_models
+        model_i_DMRs = Dict{Int,MvNormal}()
+        for j in 1:num_DMRs
+            DMR = base_DMRs[j]
+            μ = DMR[1] + SVector(10*i,10*i)
+            σ = DMR[2]
+            gaussian_model = MvNormal(μ,σ)
+            model_i_DMRs[j] = gaussian_model
+        end
+        models_DMRs[i] = model_i_DMRs
+    end
+
+    DVG = DummyValuesGenerator(num_DMRs,base_DMRs,models_DMRs,mag)
 
     # const_wind = SVector(5.0,7.0,8.0)
     const_wind = SVector(5.0,7.0,0.0)
@@ -158,44 +199,50 @@ end
 function get_experiment_environment(num_LNRs = 1,rng=MersenneTwister(199))
 
     x_min = 0.0
-    x_max = 10000.0
+    x_max = 15000.0
     y_min = 0.0
-    y_max = 10000.0
+    y_max = 15000.0
     z_min = 0.0
     z_max = 10000.0
     obstacles = SphericalObstacle[]
-    σ_P_HN = 4.0
-    σ_T_HN = 4.0
+    σ_P_HN = 1.0
+    σ_T_HN = 1.0
     lnr_side_length = 1000
+    num_vertices = 4
 
-    #Define Low Noise Regions
-    LNRs = Array{VPolygon,1}()
-    for i in 1:num_LNRs
-        lowermost_x = rand(rng,0:9000)
-        lowermost_y = rand(rng,4000:9000)
-        num_vertices = 4
-        vertices = Vector{SVector{2,Float64}}(undef,num_vertices)
-        vertices[1] = SVector(lowermost_x,lowermost_y)
-        vertices[2] = SVector(lowermost_x,lowermost_y+lnr_side_length)
-        vertices[3] = SVector(lowermost_x+lnr_side_length,lowermost_y+lnr_side_length)
-        vertices[4] = SVector(lowermost_x+lnr_side_length,lowermost_y)
-        push!(LNRs,VPolygon(vertices))
-    end
-    # LNRs = SVector( 
-    #             VPolygon([ SVector(2000.0,5000.0), SVector(2000.0,6000.0), SVector(3000.0,6000.0), SVector(3000.0,5000.0) ]) 
-    #             )
-    LNRs = SVector{num_LNRs,typeof(LNRs[1])}(LNRs)
-    
-    #Define Noise Covariance for LNRs
-    LNR_noise_covariance = []
-    for i in 1:num_LNRs
-        # push!(LNR_noise_covariance,(σ_P=0.1,σ_T=0.1))
-        push!(LNR_noise_covariance,(σ_P=0.001*(3^i),σ_T=0.001*(3^i)))
-    end
-    LNR_noise_covariance = SVector{num_LNRs,typeof(LNR_noise_covariance[1])}(LNR_noise_covariance)
 
     #Define Noise Covariance for HNRs
     HNR_noise_covariance = (σ_P=σ_P_HN,σ_T=σ_T_HN)
+
+    #Define Low Noise Regions and the corresponding Noise Covariance
+    if(num_LNRs==0)
+        LNRs = SVector{num_LNRs,VPolygon}()        
+        LNR_noise_covariance = SVector{num_LNRs,NamedTuple{(:σ_P,:σ_T),Tuple{Float64,Float64}}}()
+    else    
+        LNRs = Array{VPolygon,1}()
+        for i in 1:num_LNRs
+            lowermost_x = rand(rng,0:9000)
+            lowermost_y = rand(rng,4000:9000)
+            vertices = Vector{SVector{2,Float64}}(undef,num_vertices)
+            vertices[1] = SVector(lowermost_x,lowermost_y)
+            vertices[2] = SVector(lowermost_x,lowermost_y+lnr_side_length)
+            vertices[3] = SVector(lowermost_x+lnr_side_length,lowermost_y+lnr_side_length)
+            vertices[4] = SVector(lowermost_x+lnr_side_length,lowermost_y)
+            push!(LNRs,VPolygon(vertices))
+        end
+        LNRs = SVector{num_LNRs,typeof(LNRs[1])}(LNRs)
+        # LNRs = SVector(LNRs...)
+
+        LNR_noise_covariance = []
+        for i in 1:num_LNRs
+            push!(LNR_noise_covariance,(σ_P=2.0,σ_T=2.0))
+            # push!(LNR_noise_covariance,(σ_P=0.1,σ_T=0.1))
+            # push!(LNR_noise_covariance,(σ_P=0.001*(3^i),σ_T=0.001*(3^i)))
+        end
+        LNR_noise_covariance = SVector{num_LNRs,typeof(LNR_noise_covariance[1])}(LNR_noise_covariance)
+        # LNR_noise_covariance = SVector(LNR_noise_covariance...)
+    end
+    # LNRs = SVector(VPolygon([ SVector(2000.0,5000.0), SVector(2000.0,6000.0), SVector(3000.0,6000.0), SVector(3000.0,5000.0) ]))
 
     env = ExperimentEnvironment( 
         (x_min,x_max),
@@ -324,6 +371,16 @@ plot(x,y,f,st=:surface)
 x= 1:100:10000
 y = 1:100:10000
 f(x,y) = fake_pressure(DVG,2,SVector(x,y),0.0) - fake_pressure(DVG,5,SVector(x,y),0.0) 
+plot(x,y,f,st=:surface)
+
+
+x= 1:100:10000
+y = 1:100:10000
+function f(x,y) 
+    c = fake_pressure(DVG,2,SVector(x,y),0.0) - fake_pressure(DVG,5,SVector(x,y),0.0) 
+    println(c)
+    return c
+end
 plot(x,y,f,st=:surface)
 
 =#
