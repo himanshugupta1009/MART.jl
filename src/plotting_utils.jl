@@ -10,9 +10,10 @@ struct PlottingParams
     uav_edge_length::Float64
     boundary::Shape
     ROI::Array{Shape,1}
+    DVG::DummyValuesGenerator
 end
 
-function PlottingParams(env)
+function PlottingParams(env,dvg)
     plot_size = 1000
     dpi = 100
     legend = true
@@ -26,9 +27,10 @@ function PlottingParams(env)
     x_boundary = SVector{4,Float64}(x_range[1],x_range[1],x_range[2],x_range[2])
     y_boundary = SVector{4,Float64}(y_range[1],y_range[2],y_range[2],y_range[1])
     boundary = Shape(x_boundary, y_boundary)
-    #Define Shape for all low noise regions  
-    ROI = Array{Shape,1}(undef,length(LNRs))
-    for i in 1:length(LNRs)
+    #Define Shape for all low noise regions
+    num_LNRs = length(LNRs)
+    ROI = Array{Shape,1}(undef,num_LNRs)
+    for i in 1:num_LNRs
         low_noise_region = LNRs[i]
         num_vertices = length(low_noise_region.vertices)
         x_ROI = SVector{num_vertices,Float64}([vertex[1] for vertex in low_noise_region.vertices]...)
@@ -39,7 +41,7 @@ function PlottingParams(env)
     # y_ROI = SVector{4,Float64}(5000,6000,6000,5000)
     # ROI = Shape(x_ROI,y_ROI)
     return PlottingParams(plot_size,dpi,legend,gridlinewidth,axis,gridalpha,
-                                uav_edge_length,boundary,ROI)
+                                uav_edge_length,boundary,ROI,dvg)
 end
 
 
@@ -129,4 +131,12 @@ function draw_triangle_edges(midpoint,angle,edge_length)
     plot!(snapshot,edge_AC_x,edge_AC_y,label="AC",linewidth=4,color=:blue)
     display(snapshot)
     return snapshot
+end
+
+
+function get_ellipse_points(a,b,num_points=10)
+    θ_range = LinRange(0, 2π, num_points)
+    x = a*cos.(θ_range)
+    y = b*sin.(θ_range)
+    return x,y
 end
