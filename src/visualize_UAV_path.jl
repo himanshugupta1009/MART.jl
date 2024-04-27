@@ -3,7 +3,7 @@ include("plotting_utils.jl")
 function visualize_path_snapshot(plotting_params,time_value,state)
 
     (;plot_size,dpi,legend,gridlinewidth,axis,gridalpha,boundary,ROI,
-                        uav_edge_length) = plotting_params
+                    DVG,uav_edge_length) = plotting_params
 
     snapshot = plot(
         aspect_ratio=:equal,
@@ -26,8 +26,24 @@ function visualize_path_snapshot(plotting_params,time_value,state)
         # plot!(snapshot,ROI[i],opacity=0.3,color=:green,linewidth=2.0,label="Low Noise Region $i")
         plot!(snapshot,ROI[i],opacity=0.3,linewidth=2.0,label="Low Noise Region $i")
     end
-    # plot!(snapshot,ROI,opacity=0.3,color=:green,linewidth=2.0,label="Low Noise Region")
 
+
+    #Plot the Different Measurement Region as an Ellipse
+    (;base_DMRs) = DVG
+    colorlist = (:green,:darkolivegreen,:darkgreen)
+    num_ellipse_points = 10
+    for elem in base_DMRs
+        mean,covar = elem[1],elem[2]
+        a,b = sqrt(covar[1,1]),sqrt(covar[2,2])
+        for i in 1:3
+            ex,ey = get_ellipse_points(a*i,b*i,num_ellipse_points)
+            ex = ex .+ mean[1]
+            ey = ey .+ mean[2]
+            plot!(snapshot,ex,ey,opacity=0.9,color=colorlist[i],linewidth=2.0,label="")
+        end
+    end    
+
+    # Plot the UAV
     point_A,point_B,point_C = get_equilateral_triangle(SVector(state[1],state[2]),
                                                         state[4],uav_edge_length)
     edge_AB_x = SVector(point_A[1],point_B[1])
@@ -58,7 +74,7 @@ function visualize_path(plotting_params,states,filename="./src/uav_path.gif")
     gif(anim, filename, fps = 1)
 end
 #=
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 visualize_path(pp,s)
 =#
 
@@ -106,7 +122,7 @@ function plot_2D_wind_vectors(plotting_params,dwg,model_num,min_separation = 300
     return snapshot
 end
 #=
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 s = plot_2D_wind_vectors(pp,DWG,5)
 =#
 
@@ -155,7 +171,7 @@ function plot_2D_wind_vectors_difference(plotting_params,dwg,model_num1,model_nu
     return snapshot
 end
 #=
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 s = plot_2D_wind_vectors_difference(pp,DWG,2,5)
 =#
 
@@ -207,7 +223,7 @@ function plot_2D_temperature_data(plotting_params,dvg,model_num,min_separation =
     return snapshot
 end
 #=
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 s = plot_2D_temperature_data(pp,DVG,5)
 =#
 
@@ -256,7 +272,7 @@ function plot_2D_temperature_difference_data(plotting_params,dvg,model_num1,
     return snapshot
 end
 #=
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 s = plot_2D_temperature_difference_data(pp,DVG,2,5)
 =#
 
@@ -302,7 +318,7 @@ function plot_2D_pressure_data(plotting_params,dvg,model_num,min_separation = 30
     return snapshot
 end
 #=
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 s = plot_2D_pressure_data(pp,DVG,5)
 =#
 
@@ -350,7 +366,7 @@ function plot_2D_pressure_difference_data(plotting_params,dvg,model_num1,model_n
     return snapshot
 end
 #=
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 s = plot_2D_pressure_difference_data(pp,DVG,2,5)
 =#
 
@@ -401,7 +417,7 @@ function plot_2D_temperature_data_surface(plotting_params,dvg,model_num,min_sepa
     return snapshot
 end
 #=
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 s = plot_2D_temperature_data_surface(pp,DVG,5,100)
 =#
 
@@ -449,7 +465,7 @@ function plot_2D_temperature_difference_data_surface(plotting_params,dvg,model_n
     return snapshot
 end
 #=
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 s = plot_2D_temperature_difference_data_surface(pp,DVG,5,7)
 =#
 
@@ -494,6 +510,10 @@ function plot_2D_pressure_data_surface(plotting_params,dvg,model_num,min_separat
     display(snapshot)
     return snapshot
 end
+#=
+pp = PlottingParams(env,DVG)
+s = plot_2D_pressure_data_surface(pp,DVG,5)
+=#
 
 
 function plot_2D_pressure_difference_data_surface(plotting_params,dvg,model_num1,model_num2,min_separation = 300)
@@ -540,7 +560,7 @@ function plot_2D_pressure_difference_data_surface(plotting_params,dvg,model_num1
 end
 
 #=
-pp = PlottingParams(env)
+pp = PlottingParams(env,DVG)
 s = plot_2D_pressure_difference_data_surface(pp,DVG,2,5)
 =#
 

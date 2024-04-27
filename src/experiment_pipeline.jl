@@ -8,8 +8,10 @@ function run_pipeline(num_experiments,generate_plots = false)
     process_noise_rng_seeds = rand(1:1000,num_experiments)
     observation_noise_rng_seeds = rand(1:1000,num_experiments)
     mcts_rng_seeds = rand(1:1000,num_experiments)
+    num_models = 7
     true_model = 5
-    num_LNRs = 3
+    num_DMRs = 3
+    num_LNRs = 0
     MCTS_policy_results = Dict()
     SL_policy_results = Dict()
     Random_policy_results = Dict()
@@ -24,15 +26,15 @@ function run_pipeline(num_experiments,generate_plots = false)
         mcts_rng_seed = mcts_rng_seeds[exp_num]
 
 
-        DVG,DWG,PNG = get_fake_data(MersenneTwister(fake_data_rng_seed));
+        DVG,DWG,PNG = get_fake_data(num_models,num_DMRs,MersenneTwister(fake_data_rng_seed));
         start_state = SVector(5000.0,1000.0,1800.0,pi/2,0.0);
         c_func(X,t) = SVector(10.0,0.0,0.0);
         w_func(X,t) = fake_wind(DWG,true_model,X,t);
         o_func(X,t) = fake_observation(DVG,true_model,X,t);
         n_func(t,rng) = process_noise(PNG,t,rng);
-        sim_details = SimulationDetails(c_func,w_func,n_func,o_func,10.0,500.0);
+        sim_details = SimulationDetails(c_func,w_func,n_func,o_func,10.0,1000.0);
         env = get_experiment_environment(num_LNRs,MersenneTwister(LNR_rng_seed));
-        plotting_params = PlottingParams(env)
+        plotting_params = PlottingParams(env,DVG)
         folder_location = pwd()*"/pipeline_plots/"
         
         #Run Random Policy and store results
@@ -90,7 +92,6 @@ function run_pipeline(num_experiments,generate_plots = false)
 
     return seeds,results
 end
-
 #=
 num_experiments = 2
 seeds,results = run_pipeline(num_experiments,true)
@@ -184,9 +185,17 @@ end
 TMN = 5
 s = get_histogram_plots(results,TMN)
 
+#To run the pipeline without generating gifs
+TMN = 5
+num_experiments = 10
+seeds,results = run_pipeline(num_experiments)
+s = get_histogram_plots(results,TMN)
+
+
+#To run the pipeline and generate gifs
+TMN = 5
 num_experiments = 10
 seeds,results = run_pipeline(num_experiments,true)
-TMN = 5
 s = get_histogram_plots(results,TMN)
 
 =#
