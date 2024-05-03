@@ -202,8 +202,8 @@ function plot_2D_temperature_data(plotting_params,dvg,model_num,min_separation =
         # gridstyle=:dash,
         axis=true,
         gridalpha=0.0,
-        xticks=[start_x:min_separation*2:end_x...],
-        yticks=[start_y:min_separation*2:end_y...],
+        # xticks=[start_x:min_separation*2:end_x...],
+        # yticks=[start_y:min_separation*2:end_y...],
         xlabel="X Value",
         ylabel="Y Value",
         title="Temperature Value over the grid for Model Number $model_num",
@@ -249,8 +249,8 @@ function plot_2D_temperature_difference_data(plotting_params,dvg,model_num1,
         # gridstyle=:dash,
         axis=true,
         gridalpha=0.0,
-        xticks=[start_x:min_separation*2:end_x...],
-        yticks=[start_y:min_separation*2:end_y...],
+        # xticks=[start_x:min_separation*2:end_x...],
+        # yticks=[start_y:min_separation*2:end_y...],
         xlabel="X Value",
         ylabel="Y Value",
         title="Difference in Temperature Value over the grid for \n 
@@ -297,8 +297,8 @@ function plot_2D_pressure_data(plotting_params,dvg,model_num,min_separation = 30
         # gridstyle=:dash,
         axis=true,
         gridalpha=0.0,
-        xticks=[start_x:min_separation*2:end_x...],
-        yticks=[start_y:min_separation*2:end_y...],
+        # xticks=[start_x:min_separation*2:end_x...],
+        # yticks=[start_y:min_separation*2:end_y...],
         xlabel="X Value",
         ylabel="Y Value",
         title="Pressure Value over the grid for Model Number $model_num",
@@ -343,8 +343,8 @@ function plot_2D_pressure_difference_data(plotting_params,dvg,model_num1,model_n
         # gridstyle=:dash,
         axis=true,
         gridalpha=0.0,
-        xticks=[start_x:min_separation*2:end_x...],
-        yticks=[start_y:min_separation*2:end_y...],
+        # xticks=[start_x:min_separation*2:end_x...],
+        # yticks=[start_y:min_separation*2:end_y...],
         xlabel="X Value",
         ylabel="Y Value",
         title="Difference in Pressure Value over the grid for \n 
@@ -581,41 +581,41 @@ end
 
 pp = PlottingParams(env,DVG)
 for i in 1:MAX_MODEL_NUM
-    s = plot_2D_temperature_data_surface(pp,DVG,i)
+    s = plot_2D_temperature_data_surface(pp,DVG,i,500)
     savefig(s,"./MART_plots/temperature_surface_m$i.png") 
 end   
 
 pp = PlottingParams(env,DVG)
-s = plot_2D_temperature_difference_data(pp,DVG,2,5)
+s = plot_2D_temperature_difference_data(pp,DVG,2,5,500)
 savefig(s,"./MART_plots/temperature_difference_data_m2_m5.png") 
 
 
 pp = PlottingParams(env,DVG)
-s = plot_2D_temperature_difference_data_surface(pp,DVG,2,5)
+s = plot_2D_temperature_difference_data_surface(pp,DVG,2,5,500)
 savefig(s,"./MART_plots/temperature_difference_surface_m2_m5.png") 
 
 
 pp = PlottingParams(env,DVG)
 for i in 1:MAX_MODEL_NUM
-    s = plot_2D_pressure_data(pp,DVG,i)
+    s = plot_2D_pressure_data(pp,DVG,i,500)
     savefig(s,"./MART_plots/pressure_data_m$i.png") 
 end   
 
 
 pp = PlottingParams(env,DVG)
 for i in 1:MAX_MODEL_NUM
-    s = plot_2D_pressure_data_surface(pp,DVG,i)
+    s = plot_2D_pressure_data_surface(pp,DVG,i,500)
     savefig(s,"./MART_plots/pressure_surface_m$i.png") 
 end   
 
 
-pp = PlottingParams(env)
-s = plot_2D_pressure_difference_data(pp,DVG,2,5)
+pp = PlottingParams(env,DVG)
+s = plot_2D_pressure_difference_data(pp,DVG,2,5,500)
 savefig(s,"./MART_plots/pressure_difference_data_m2_m5.png") 
 
 
-pp = PlottingParams(env)
-s = plot_2D_pressure_difference_data_surface(pp,DVG,2,5)
+pp = PlottingParams(env,DVG)
+s = plot_2D_pressure_difference_data_surface(pp,DVG,2,5,500)
 savefig(s,"./MART_plots/pressure_difference_surface_m2_m5.png") 
 
 =#

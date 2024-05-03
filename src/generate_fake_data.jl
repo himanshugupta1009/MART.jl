@@ -36,7 +36,7 @@ function fake_pressure(dvg,M,X,t)
     # prob = pdf(gaussian_model, SVector(X[1],X[2])) 
     # fp = cos( (X[1]+M) /1000.0 ) * cos( (X[2]+M) /1000.0 )
 
-    sum = 2.0
+    sum = 5.0
     for i in 1:num_DMRs
         sum += pdf(model_DMRs[M][i],SVector(X[1],X[2]))*covar_magnitude*M*0.1
     end
