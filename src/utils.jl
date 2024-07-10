@@ -58,8 +58,8 @@ println( s["XLAT"][x_ind,y_ind,1],",", s["XLONG"][x_ind,y_ind,1] )
 x_ind, y_ind = 1,300
 println( s["XLAT"][x_ind,y_ind,1],",", s["XLONG"][x_ind,y_ind,1] )
 
-h = ( s["PH"] + s["PHB"] )/9.81
-z = (h[:,:,1:50,1] + h[:,:,2:51,1] )/2.0
+h = ( s["PH"] .+ s["PHB"] )/9.81
+z = (h[:,:,1:50,1] .+ h[:,:,2:51,1] )/2.0
 
 #=
 Keys in data
