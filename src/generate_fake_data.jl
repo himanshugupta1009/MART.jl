@@ -114,10 +114,6 @@ function fake_wind(dwg,M,X,t)
     return wind
 end
 
-struct ProcessNoiseGenerator{T}
-    covar_matrix::T
-end
-
 no_noise(t,rng) = SVector(0.0,0.0,0.0,0.0,0.0)
 
 function process_noise(png,t,rng=MersenneTwister(70))
@@ -205,8 +201,8 @@ function get_experiment_environment(num_LNRs = 1,rng=MersenneTwister(199))
     z_min = 0.0
     z_max = 10000.0
     obstacles = SphericalObstacle[]
-    σ_P_HN = 1.0
-    σ_T_HN = 1.0
+    σ_P_HN = 150.0
+    σ_T_HN = 20.0
     lnr_side_length = 1000
     num_vertices = 4
 

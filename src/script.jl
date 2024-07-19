@@ -92,15 +92,17 @@ Threads.nthreads()
 using Base.Threads
 num_experiments = 100
 b_arrays = Array{Any,1}(undef,num_experiments)
-@threads for j in 1:num_experiments
+# @threads for j in 1:num_experiments
+for j in 1:num_experiments
     println("Running Experiment ",j)
-    s,o,a,b = run_experiment(sim_details,start_state,:mcts);
+    # s,o,a,b = run_experiment(sim_details,start_state,:mcts);
+    s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,:mcts);
     b_arrays[j] = (j=>b)
 end
 
 c = 0
 for i in 1:num_experiments
-    if(b_arrays[i][2][end][2][5] > 0.75)
+    if(b_arrays[i][2][end][2][true_model] > 0.75)
         c+=1
     end
 end
@@ -108,7 +110,7 @@ c
 
 histogram = MVector{10,Int64}(zeros(10))
 for i in 1:num_experiments
-    prob = b_arrays[i][2][end][2][5]
+    prob = b_arrays[i][2][end][2][true_model]
     hist_index = clamp(Int(floor(prob*10)) + 1,1,10)
     histogram[hist_index] += 1
 end
@@ -116,6 +118,7 @@ histogram
 
 c,histogram
 
+(6, [11, 12, 12, 7, 6, 4, 2, 1, 4, 1])
 
 ############### Run Random UAV Policy ###############
 
@@ -123,7 +126,8 @@ num_experiments = 100
 b_arrays = Array{Any,1}(undef,num_experiments)
 for j in 1:num_experiments
     println("Running Experiment ",j)
-    s,o,a,b = run_experiment(sim_details,start_state,:random);
+    s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,:random);
+    # s,o,a,b = run_experiment(sim_details,start_state,:random);
     b_arrays[j] = (j=>b)
 end
 
@@ -152,13 +156,14 @@ num_experiments = 100
 b_arrays = Array{Any,1}(undef,num_experiments)
 for j in 1:num_experiments
     println("Running Experiment ",j)
-    s,o,a,b = run_experiment(sim_details,start_state,:sl);
+    # s,o,a,b = run_experiment(sim_details,start_state,:sl);
+    s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,:sl);
     b_arrays[j] = (j=>b)
 end
 
 c = 0
 for i in 1:num_experiments
-    if(b_arrays[i][2][end][2][5] > 0.75)
+    if(b_arrays[i][2][end][2][true_model] > 0.75)
         c+=1
     end
 end
@@ -166,7 +171,7 @@ c
 
 histogram = MVector{10,Int64}(zeros(10))
 for i in 1:num_experiments
-    prob = b_arrays[i][2][end][2][5]
+    prob = b_arrays[i][2][end][2][true_model]
     hist_index = clamp(Int(floor(prob*10)) + 1,1,10)
     histogram[hist_index] += 1
 end
