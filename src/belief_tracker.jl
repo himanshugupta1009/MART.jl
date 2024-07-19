@@ -72,6 +72,106 @@ function transition_likelihood(png,o_position,X,t)
 end
 
 
+
+
+
+#=
+New Format
+=#
+
+function transition_likelihood(weather_functions,observed_position,propogated_position)
+    # println("$propogated_position $observed_position")
+    covar_matrix = weather_functions.process_noise.covar_matrix
+    dist = MvNormal(propogated_position,covar_matrix)
+    likelihood = pdf(dist,observed_position)
+    return likelihood
+end
+
+function temperature_likelihood(env::ExperimentEnvironment{R,S,T,U},weather_models,weather_functions,
+                        M,observed_temp,X,t) where {R,S,T,U}
+
+    expected_temp = weather_functions.temperature(weather_models,M,X,t)
+    (;LNRs,LNR_noise_covariance,HNR_noise_covariance) = env
+    (;σ_T) = HNR_noise_covariance
+
+    for i in 1:length(LNRs)
+        low_noise_region = LNRs[i]
+        if(position ∈ low_noise_region)
+            covar_tuple = LNR_noise_covariance[i]
+            (;σ_T) = covar_tuple
+            break
+        end
+    end
+
+    # println("σ_T : $σ_T")
+    dist = Normal(expected_temp,σ_T)
+    likelihood = pdf(dist,observed_temp)
+    # println("ET: $expected_temp OT: $observed_temp L: $likelihood")
+    # return 1.0
+    return likelihood
+end
+
+function pressure_likelihood(env::ExperimentEnvironment{R,S,T,U},weather_models,weather_functions,
+                        M,observed_pressure,X,t) where {R,S,T,U}
+
+    expected_pressure = weather_functions.pressure(weather_models,M,X,t)
+    (;LNRs,LNR_noise_covariance,HNR_noise_covariance) = env
+    (;σ_P) = HNR_noise_covariance
+
+    for i in 1:length(LNRs)
+        low_noise_region = LNRs[i]
+        if(position ∈ low_noise_region)
+            covar_tuple = LNR_noise_covariance[i]
+            (;σ_P) = covar_tuple
+            break
+        end
+    end
+
+    # println("σ_P : $σ_P")
+    dist = Normal(expected_pressure,σ_P)
+    likelihood = pdf(dist,observed_pressure)
+    # println("EP: $expected_pressure OP: $observed_pressure L: $likelihood")
+    # return 1.0
+    return likelihood
+end
+
+
+function update_belief(curr_belief,curr_state,current_control,new_observation,time_interval,
+                    weather_models,weather_functions,env,num_models)
+
+    b1 = MVector{num_models,Float64}(undef)
+    observed_pos = SVector(new_observation[1],new_observation[2],new_observation[3])
+    Δt = time_interval[2] - time_interval[1]
+
+    for M in 1:num_models
+        mwf(X,t) = weather_functions.wind(weather_models,M,X,t)
+        s1_list = aircraft_simulate(aircraft_dynamics,curr_state,time_interval,
+        (current_control,mwf,no_noise),Δt)
+        s1 = s1_list[end]
+        propogated_pos = SVector(s1[1],s1[2],s1[3])
+        l_pos = transition_likelihood(weather_functions,observed_pos,propogated_pos)
+        l_temp = temperature_likelihood(env,weather_models,weather_functions,M,
+                    new_observation[6],propogated_pos,time_interval[2])
+        l_pres = pressure_likelihood(env,weather_models,weather_functions,M,
+                    new_observation[7],propogated_pos,time_interval[2])
+        # println(M , " ", s1, " ", l_pos, " ", l_temp, " ", l_pres)
+        b1[M] = l_temp*l_pres*l_pos*curr_belief[M]
+    end
+
+    b1 = b1/sum(b1)
+    # return SVector{num_models,Float64}(b1)
+    return SVector(b1)
+end
+
+
+
+#Functions if you are using BeliefUpdateParams
+
+function get_initial_belief(::Val{M}) where M
+    a = fill(1/M, M)
+    return SVector{M}(a)
+end
+
 function update_belief(bup,b0,s0,o,time_interval)
 
     num_models = length(b0)
@@ -93,13 +193,6 @@ function update_belief(bup,b0,s0,o,time_interval)
     b1 = b1/sum(b1)
     return SVector{num_models,Float64}(b1)
 end
-
-
-function get_initial_belief(::Val{M}) where M
-    a = fill(1/M, M)
-    return SVector{M}(a)
-end
-
 
 function final_belief(bup,::Val{M},s,o) where M
 

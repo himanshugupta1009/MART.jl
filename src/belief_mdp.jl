@@ -21,40 +21,20 @@ struct MARTBeliefMDPAction <:FieldVector{3,Float64}
 end
 
 #BeliefMDP
-struct MARTBeliefMDP{S,T,P,Q} <: POMDPs.MDP{MARTBeliefMDPState,MARTBeliefMDPAction}
+struct MARTBeliefMDP{S,T,P} <: POMDPs.MDP{MARTBeliefMDPState,MARTBeliefMDPAction}
     env::S
-    observation::Function
-    wind::Function
-    noise::Function
-    dvg::T
-    dwg::P
-    png::Q
+    weather_models::T
+    weather_functions::P
     Δt::Float64
     M::Int64 #Number of Weather Models
 end
 
 function update_belief(m,b0,s0,ctr,o,time_interval)
-
-    num_models = m.M
-    b1 = MVector{num_models,Float64}(undef)
-    (;env,png,dvg,dwg,Δt) = m
-
-    for i in 1:num_models
-        mwf(X,t) = m.wind(dwg,i,X,t)
-        s1_list = aircraft_simulate(aircraft_dynamics,s0,time_interval,
-        (ctr,mwf,no_noise),Δt)
-        s1 = s1_list[end]
-        l_pos = transition_likelihood(png,o,s1,time_interval[2])
-        l_temp = temperature_likelihood(env,dvg,i,o[6],o,time_interval[2])
-        l_pres = pressure_likelihood(env,dvg,i,o[7],o,time_interval[2])
-        # println(i , " ", s1[2], " ", l_pos, " ", l_temp, " ", l_pres)
-        b1[i] = l_temp*l_pres*l_pos*b0[i]
-    end
-
-    b1 = b1/sum(b1)
-    # return SVector{num_models,Float64}(b1)
-    return SVector(b1)
+    (;weather_models,weather_functions,env,M) = m
+    return update_belief(b0,s0,ctr,o,time_interval,
+                    weather_models,weather_functions,env,M)
 end
+
 
 function calculate_reward(bmdp_s,a,bmdp_sp)
 
@@ -77,26 +57,33 @@ function calculate_reward(bmdp_s,a,bmdp_sp)
     p = MVector(zeros(num_models)...)
     p[ind] = 1.0
     r = SB.kldivergence(p,q)
+    # if(r<=0.1)
+    #     println("######################## Mass collapsed : Reward is $r ########################")
+    #     println("######################## Belief : $q ########################")
+    # end
     return -r
 end
 
 function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
 
+    (;env,weather_models,weather_functions,Δt,M) = m
+
     #Apply given action on the UAV and get the new UAV state
     curr_uav_state = s.uav
     curr_belief = s.belief
-    next_t = s.t + m.Δt
+    next_t = s.t + Δt
     time_interval = (s.t, next_t)
-    dist = PMT.SparseCat(1:m.M, curr_belief)
+    dist = PMT.SparseCat(1:M, curr_belief)
     sampled_model = rand(rng,dist)
-    mwf(X,t) = m.wind(m.dwg,sampled_model,X,t)
-    mof(X,t) = m.observation(m.dvg,sampled_model,X,t)
+    mwf(X,t) = weather_functions.wind(weather_models,sampled_model,X,t)
+    mof(X,t) = weather_functions.observation(weather_models,sampled_model,X,t)
     CTR(X,t) = a
 
     new_state_list = aircraft_simulate(aircraft_dynamics,curr_uav_state,
-                            time_interval,(CTR,mwf,no_noise),m.Δt)
+                            time_interval,(CTR,mwf,no_noise),Δt)
     new_state = new_state_list[end]
-    process_noise = m.noise(next_t,rng)
+    covar_matrix = weather_functions.process_noise.covar_matrix
+    process_noise = weather_functions.process_noise.noise(covar_matrix,next_t,rng)
     new_uav_state = add_noise(new_state, process_noise)
 
     #Sample an observation from the new state
