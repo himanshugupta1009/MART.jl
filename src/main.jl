@@ -1,13 +1,14 @@
 include("simulator.jl")
 include("generate_fake_data.jl")
+include("weather_data.jl")
 include("belief_mdp.jl")
 include("visualize_UAV_path.jl")
 using LazySets
 
-function run_experiment(sim,env,start_state,dvg,dwg,png,
+function run_experiment(sim,env,start_state,weather_models,weather_functions,
                             uav_policy_type=:mcts,
-                            process_noise_rng=MersenneTwister(70),
-                            observation_noise_rng=MersenneTwister(111),
+                            process_noise_rng=MersenneTwister(), #70
+                            observation_noise_rng=MersenneTwister(), #111
                             mcts_rng=MersenneTwister(69)
                             )
 
@@ -32,8 +33,8 @@ function run_experiment(sim,env,start_state,dvg,dwg,png,
     #Define Belief MDP
     mart_mdp = MARTBeliefMDP(
                 env,
-                fake_observation,fake_wind,no_noise,
-                dvg,dwg,png,
+                weather_models,
+                weather_functions,
                 t,
                 num_models,
                 );
@@ -41,14 +42,14 @@ function run_experiment(sim,env,start_state,dvg,dwg,png,
     #Initialize MCTS Solver and Planner
     rollout_obj = SLRollout(1)
     mcts_solver = MCTSSolver(
-                    n_iterations=10^8,
+                    n_iterations=100,
                     depth=100,
                     exploration_constant=1.0,
                     # estimate_value = 0.0,
                     estimate_value = RolloutEstimator(rollout_obj),
                     rng = mcts_rng,
                     enable_tree_vis = true,
-                    max_time=1.0,
+                    max_time=Inf,
                     );
     planner = solve(mcts_solver,mart_mdp);
 
@@ -167,6 +168,45 @@ sim_details = SimulationDetails(control_func,wind_func,noise_func,obs_func,
                             10.0,1000.0);
 env = get_experiment_environment(0);
 s,a,o,b = run_experiment(sim_details,env,start_state,DVG,DWG,PNG,:sl);
+
+
+pp = PlottingParams(env,DVG)
+visualize_path(pp,s)
+
+=#
+
+
+
+#=
+
+weather_models = WeatherModels(7,6);
+noise_mag = 6400.0
+noise_covar = SMatrix{3,3}(noise_mag*[
+        1.0 0 0;
+        0 1.0 0;
+        0 0 1.0;
+        ])
+function noise_func(Q,t,rng)
+    N = size(Q,1)
+    noise = sqrt(Q)*randn(rng,N)
+    return SVector(noise)
+end
+PNG = ProcessNoiseGenerator(noise_func,noise_covar)
+weather_functions = WeatherModelFunctions(get_wind,PNG,get_T,get_P,get_observation)
+start_state = SVector(100_000.0,100_000.0,1800.0,pi/6,0.0);
+control_func(X,t) = SVector(10.0,0.0,0.0);
+true_model = 4;
+wind_func(X,t) = get_wind(weather_models,true_model,X,t);
+obs_func(X,t) = get_observation(weather_models,true_model,X,t);
+sim_noise_func(t,rng) = noise_func(PNG.covar_matrix,t,rng);
+# noise_func(t,rng) = no_noise(t,rng);
+sim_details = SimulationDetails(control_func,wind_func,sim_noise_func,obs_func,
+                            10.0,1000.0);
+env = get_experiment_environment(0);
+s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,:sl);
+
+
+visualize_simulation_belief(b,true_model)
 
 
 pp = PlottingParams(env,DVG)
