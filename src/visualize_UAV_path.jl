@@ -619,3 +619,37 @@ s = plot_2D_pressure_difference_data_surface(pp,DVG,2,5,500)
 savefig(s,"./MART_plots/pressure_difference_surface_m2_m5.png") 
 
 =#
+
+
+
+function visualize_simulation_belief(b,true_model_num)
+    num_timesteps = length(b)
+    num_models = length(b[1][2])
+
+    snapshot = plot(
+        # aspect_ratio=:equal,
+        size=(500,500),
+        dpi = 100,
+        legend=true,
+        gridlinewidth=2.0,
+        # gridstyle=:dash,
+        axis=true,
+        gridalpha=0.0,
+        xticks=collect(0:10:num_timesteps),
+        yticks=collect(0.0:0.1:1.0),
+        xlabel="X Value",
+        ylabel="Probability Value",
+        title="Belief over all the models with time",
+        )
+
+    x_axis = 1:num_timesteps
+    for m in 1:num_models
+        y_axis = [b[i][2][m] for i in 1:num_timesteps]
+        if(m == true_model_num)
+            plot!(snapshot,x_axis,y_axis,label="Model $m",color=:black,linewidth=3.0)
+        else
+            plot!(snapshot,x_axis,y_axis,label="Model $m")
+        end
+    end
+    display(snapshot)
+end
