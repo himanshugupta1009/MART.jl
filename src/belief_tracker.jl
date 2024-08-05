@@ -1,82 +1,8 @@
 using Distributions
 import StatsBase as SB
 
-struct BeliefUpdateParams{T,Q,P}
-    dvg::T
-    dwg::Q
-    png::P
-    control::Function
-    wind::Function
-    step::Function
-end
-
-
-function temperature_likelihood(env::ExperimentEnvironment{R,S,T,U},dvg,m,o_temp,X,t) where {R,S,T,U}
-    # temp_mean = dvg.temp_noise_amp[m]*sin(sum(X[1:3])+t)
-    # temp_mean = dvg.temp_noise_amp[m]*sin( sum(view(X,1:2)))
-    # temp_mean = dvg.temp_noise_amp[m]*sin( sum(view(X,1:2))/1000.0 + 0.001*m)
-    temp_mean = fake_temperature(dvg,m,X,t)
-    (;LNRs,LNR_noise_covariance,HNR_noise_covariance) = env
-    (;σ_T) = HNR_noise_covariance
-    position = SVector(X[1],X[2])
-
-    for i in 1:length(LNRs)
-        low_noise_region = LNRs[i]
-        if(position ∈ low_noise_region)
-            covar_tuple = LNR_noise_covariance[i]
-            (;σ_T) = covar_tuple
-            break
-        end
-    end
-
-    dist = Normal(temp_mean,σ_T)
-    likelihood = pdf(dist,o_temp)
-    # return 1.0
-    return likelihood
-end
-
-
-function pressure_likelihood(env::ExperimentEnvironment{R,S,T,U},dvg,m,o_pressure,X,t) where {R,S,T,U}
-    # pres_mean = dvg.press_noise_amp[m]*cos(sum(X[1:3])+t)
-    # pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:2)) )
-    # pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:2))/1000.0 + 0.001*m)
-    pres_mean = fake_pressure(dvg,m,X,t)
-    (;LNRs,LNR_noise_covariance,HNR_noise_covariance) = env
-    (;σ_P) = HNR_noise_covariance
-    position = SVector(X[1],X[2])
-
-    for i in 1:length(LNRs)
-        low_noise_region = LNRs[i]
-        if(position ∈ low_noise_region)
-            covar_tuple = LNR_noise_covariance[i]
-            (;σ_P) = covar_tuple
-            break
-        end
-    end
-
-    dist = Normal(pres_mean,σ_P)
-    likelihood = pdf(dist,o_pressure)
-    # return 1.0
-    return likelihood
-end
-
-
-function transition_likelihood(png,o_position,X,t)
-    # mean = SVector(X[1],X[2],X[3])
-    mean = SVector(X[1],X[2])
-    dist = MvNormal(mean,png.covar_matrix)
-    # observed_position = SVector(o_position[1],o_position[2],o_position[3])
-    observed_position = SVector(o_position[1],o_position[2])
-    likelihood = pdf(dist,observed_position)
-    return likelihood
-end
-
-
-
-
-
 #=
-New Format
+New Format of functions with WRF data
 =#
 
 function transition_likelihood(weather_functions,observed_position,propogated_position)
@@ -84,6 +10,7 @@ function transition_likelihood(weather_functions,observed_position,propogated_po
     covar_matrix = weather_functions.process_noise.covar_matrix
     dist = MvNormal(propogated_position,covar_matrix)
     likelihood = pdf(dist,observed_position)
+    return 1.0
     return likelihood
 end
 
@@ -131,7 +58,7 @@ function pressure_likelihood(env::ExperimentEnvironment{R,S,T,U},weather_models,
     dist = Normal(expected_pressure,σ_P)
     likelihood = pdf(dist,observed_pressure)
     # println("EP: $expected_pressure OP: $observed_pressure L: $likelihood")
-    # return 1.0
+    return 1.0
     return likelihood
 end
 
@@ -151,21 +78,54 @@ function update_belief(curr_belief,curr_state,current_control,new_observation,ti
         propogated_pos = SVector(s1[1],s1[2],s1[3])
         l_pos = transition_likelihood(weather_functions,observed_pos,propogated_pos)
         l_temp = temperature_likelihood(env,weather_models,weather_functions,M,
+                    new_observation[6],observed_pos,time_interval[2])
+        l_pres = pressure_likelihood(env,weather_models,weather_functions,M,
+                    new_observation[7],observed_pos,time_interval[2])
+        b1[M] = l_temp*l_pres*l_pos*curr_belief[M]
+        # println(M , " ", l_pos, " ", l_temp, " ", l_pres, " ", l_temp*l_pres*l_pos, " ", l_temp*l_pres*l_pos*curr_belief[M])
+    end
+    # println("New unnormalized Belief is $b1[M]")
+    b1 = b1/sum(b1)
+    return SVector(b1)
+end
+
+function float_errors_update_belief(curr_belief,curr_state,current_control,new_observation,time_interval,
+                    weather_models,weather_functions,env,num_models)
+
+    b1 = MVector{num_models,Float64}(undef)
+    observed_pos = SVector(new_observation[1],new_observation[2],new_observation[3])
+    Δt = time_interval[2] - time_interval[1]
+
+    for M in 1:num_models
+        mwf(X,t) = weather_functions.wind(weather_models,M,X,t)
+        s1_list = aircraft_simulate(aircraft_dynamics,curr_state,time_interval,
+        (current_control,mwf,no_noise),Δt)
+        s1 = s1_list[end]
+        propogated_pos = SVector(s1[1],s1[2],s1[3])
+        l_pos = transition_likelihood(weather_functions,observed_pos,propogated_pos)
+        l_temp = temperature_likelihood(env,weather_models,weather_functions,M,
                     new_observation[6],propogated_pos,time_interval[2])
         l_pres = pressure_likelihood(env,weather_models,weather_functions,M,
                     new_observation[7],propogated_pos,time_interval[2])
-        # println(M , " ", s1, " ", l_pos, " ", l_temp, " ", l_pres)
         b1[M] = l_temp*l_pres*l_pos*curr_belief[M]
+        println(M , " ", l_pos, " ", l_temp, " ", l_pres, " ", l_temp*l_pres*l_pos)
     end
-
+    println("New unnormalized Belief is $b1[M]")
     b1 = b1/sum(b1)
-    # return SVector{num_models,Float64}(b1)
     return SVector(b1)
 end
 
 
-
 #Functions if you are using BeliefUpdateParams
+
+struct BeliefUpdateParams{T,Q,P}
+    dvg::T
+    dwg::Q
+    png::P
+    control::Function
+    wind::Function
+    step::Function
+end
 
 function get_initial_belief(::Val{M}) where M
     a = fill(1/M, M)
@@ -235,4 +195,73 @@ BUP = BeliefUpdateParams(DVG,DWG,PNG,control_func,fake_wind,move_straight)
 initial_b = SVector(NTuple{7,Float64}(fill(1/7,7)))
 update_belief(BUP,initial_b,start_state,o[1][2],(0.0,o[1][1]))
 final_belief(BUP,Val(7),s,o)
+=#
+
+
+
+#=
+Old likelihood functions
+
+
+
+function temperature_likelihood(env::ExperimentEnvironment{R,S,T,U},dvg,m,o_temp,X,t) where {R,S,T,U}
+    # temp_mean = dvg.temp_noise_amp[m]*sin(sum(X[1:3])+t)
+    # temp_mean = dvg.temp_noise_amp[m]*sin( sum(view(X,1:2)))
+    # temp_mean = dvg.temp_noise_amp[m]*sin( sum(view(X,1:2))/1000.0 + 0.001*m)
+    temp_mean = fake_temperature(dvg,m,X,t)
+    (;LNRs,LNR_noise_covariance,HNR_noise_covariance) = env
+    (;σ_T) = HNR_noise_covariance
+    position = SVector(X[1],X[2])
+
+    for i in 1:length(LNRs)
+        low_noise_region = LNRs[i]
+        if(position ∈ low_noise_region)
+            covar_tuple = LNR_noise_covariance[i]
+            (;σ_T) = covar_tuple
+            break
+        end
+    end
+
+    dist = Normal(temp_mean,σ_T)
+    likelihood = pdf(dist,o_temp)
+    # return 1.0
+    return likelihood
+end
+
+
+function pressure_likelihood(env::ExperimentEnvironment{R,S,T,U},dvg,m,o_pressure,X,t) where {R,S,T,U}
+    # pres_mean = dvg.press_noise_amp[m]*cos(sum(X[1:3])+t)
+    # pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:2)) )
+    # pres_mean = dvg.press_noise_amp[m]*cos( sum(view(X,1:2))/1000.0 + 0.001*m)
+    pres_mean = fake_pressure(dvg,m,X,t)
+    (;LNRs,LNR_noise_covariance,HNR_noise_covariance) = env
+    (;σ_P) = HNR_noise_covariance
+    position = SVector(X[1],X[2])
+
+    for i in 1:length(LNRs)
+        low_noise_region = LNRs[i]
+        if(position ∈ low_noise_region)
+            covar_tuple = LNR_noise_covariance[i]
+            (;σ_P) = covar_tuple
+            break
+        end
+    end
+
+    dist = Normal(pres_mean,σ_P)
+    likelihood = pdf(dist,o_pressure)
+    # return 1.0
+    return likelihood
+end
+
+
+function transition_likelihood(png,o_position,X,t)
+    # mean = SVector(X[1],X[2],X[3])
+    mean = SVector(X[1],X[2])
+    dist = MvNormal(mean,png.covar_matrix)
+    # observed_position = SVector(o_position[1],o_position[2],o_position[3])
+    observed_position = SVector(o_position[1],o_position[2])
+    likelihood = pdf(dist,observed_position)
+    return likelihood
+end
+
 =#

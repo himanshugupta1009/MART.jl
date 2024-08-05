@@ -1,6 +1,6 @@
 using MCTS
 using POMDPs
-import POMDPModelTools as PMT
+import POMDPTools as PT
 using Random
 include("definitions.jl")
 include("belief_tracker.jl")
@@ -53,6 +53,7 @@ function calculate_reward(bmdp_s,a,bmdp_sp)
     =#
     q = bmdp_sp.belief
     val,ind = findmax(q)
+    ind=4
     num_models = length(q)
     p = MVector(zeros(num_models)...)
     p[ind] = 1.0
@@ -73,7 +74,7 @@ function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
     curr_belief = s.belief
     next_t = s.t + Δt
     time_interval = (s.t, next_t)
-    dist = PMT.SparseCat(1:M, curr_belief)
+    dist = PT.SparseCat(1:M, curr_belief)
     sampled_model = rand(rng,dist)
     mwf(X,t) = weather_functions.wind(weather_models,sampled_model,X,t)
     mof(X,t) = weather_functions.observation(weather_models,sampled_model,X,t)
@@ -119,18 +120,19 @@ end
 
 
 function POMDPs.actions(mdp::MARTBeliefMDP)
+    Va = 20.0
     action_set =  SVector{5,MARTBeliefMDPAction}(
         # MARTBeliefMDPAction(10.0,-2*pi/180,-2*pi/180),
-        MARTBeliefMDPAction(10.0,-4.5*pi/180,0.0),
-        MARTBeliefMDPAction(10.0,-2*pi/180,0.0),
-        # MARTBeliefMDPAction(10.0,-2*pi/180,2*pi/180),
-        # MARTBeliefMDPAction(10.0,0.0,-2*pi/180),
-        MARTBeliefMDPAction(10.0,0.0,0.0),
-        # MARTBeliefMDPAction(10.0,0.0,2*pi/180),
-        # MARTBeliefMDPAction(10.0,2*pi/180,-2*pi/180),
-        MARTBeliefMDPAction(10.0,2*pi/180,0.0),
-        MARTBeliefMDPAction(10.0,4.5*pi/180,0.0),
-        # MARTBeliefMDPAction(10.0,2*pi/180,2*pi/180)
+        MARTBeliefMDPAction(Va,-4.5*pi/180,0.0),
+        MARTBeliefMDPAction(Va,-2*pi/180,0.0),
+        # MARTBeliefMDPAction(Va,-2*pi/180,2*pi/180),
+        # MARTBeliefMDPAction(Va,0.0,-2*pi/180),
+        MARTBeliefMDPAction(Va,0.0,0.0),
+        # MARTBeliefMDPAction(Va,0.0,2*pi/180),
+        # MARTBeliefMDPAction(Va,2*pi/180,-2*pi/180),
+        MARTBeliefMDPAction(Va,2*pi/180,0.0),
+        MARTBeliefMDPAction(Va,4.5*pi/180,0.0),
+        # MARTBeliefMDPAction(Va,2*pi/180,2*pi/180)
     )
     return action_set
 end
@@ -144,7 +146,7 @@ struct SLRollout{P} <: Policy
     target::P
 end
 function POMDPs.action(p::SLRollout, s)
-    return MARTBeliefMDPAction(10.0,0.0,0.0)
+    return MARTBeliefMDPAction(20.0,0.0,0.0)
 end
 
 
