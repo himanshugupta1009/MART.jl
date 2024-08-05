@@ -622,27 +622,30 @@ savefig(s,"./MART_plots/pressure_difference_surface_m2_m5.png")
 
 
 
-function visualize_simulation_belief(b,true_model_num)
-    num_timesteps = length(b)
+function visualize_simulation_belief(b,true_model_num,start_index,end_index)
+
+    num_timesteps = end_index - start_index + 1
+    time_step = b[start_index+1][1] - b[start_index][1]
     num_models = length(b[1][2])
+    x_axis = collect( (start_index-1)*time_step:time_step:((end_index-1)*time_step) )
 
     snapshot = plot(
         # aspect_ratio=:equal,
-        size=(500,500),
+        size=(800,800),
         dpi = 100,
         legend=true,
         gridlinewidth=2.0,
         # gridstyle=:dash,
         axis=true,
         gridalpha=0.0,
-        xticks=collect(0:10:num_timesteps),
+        xticks=x_axis,
+        tickfontsize=4,
         yticks=collect(0.0:0.1:1.0),
-        xlabel="X Value",
+        xlabel="Time (s)",
         ylabel="Probability Value",
         title="Belief over all the models with time",
         )
 
-    x_axis = 1:num_timesteps
     for m in 1:num_models
         y_axis = [b[i][2][m] for i in 1:num_timesteps]
         if(m == true_model_num)
@@ -650,6 +653,118 @@ function visualize_simulation_belief(b,true_model_num)
         else
             plot!(snapshot,x_axis,y_axis,label="Model $m")
         end
+    end
+    display(snapshot)
+end
+
+
+function plot_values_over_trajectory(weather_models,sym,s,o,start_index,end_index,o_flag=false)
+
+    num_models = weather_models.num_models
+    max_steps = end_index - start_index + 1
+    time_step = s[start_index+1][1] - s[start_index][1]
+    if(sym==:P)
+        value_func = get_P
+        o_index = 7
+    elseif(sym==:T)
+        value_func = get_T
+        o_index = 6
+    end
+
+    snapshot = plot(
+        # aspect_ratio=:equal,
+        size=(1000,1000),
+        dpi = 100,
+        legend=true,
+        gridlinewidth=2.0,
+        axis=true,
+        gridalpha=0.0,
+        xticks=collect(start_index*time_step:time_step:end_index*time_step),
+        tickfontsize=10,
+        # yticks=collect(0.0:0.1:1.0),
+        xlabel="Time (s)",
+        ylabel="Value (in K)",
+        title="Variation of the input value from function $value_func over all the models with time",
+    )
+
+
+    for m in 1:num_models
+        T_values = [ value_func(weather_models, m, s[t+1][2][1:3], t*time_step) for t in start_index:end_index]
+        if(m==true_model)
+            plot!(snapshot,start_index*time_step:time_step:end_index*time_step,T_values,label="Model $m",lw=2.0)
+        else
+            plot!(snapshot,start_index*time_step:time_step:end_index*time_step,T_values,label="Model $m")
+        end
+        println("Model $m : ", T_values)
+    end
+
+    if(o_flag)
+        plot!(start_index*time_step:time_step:end_index*time_step, [i[2][o_index] for i in o], color=:black)
+    end
+    # plot!(snapshot,1:max_steps,[o[t][2][6] for t in 1:max_steps],label="True Value",line=:dash)
+    display(snapshot)
+end
+#=
+plot_values_over_trajectory(weather_models,get_P,s,1,6)
+
+=#
+
+
+function plot_T_values(weather_models,x_index,y_index,z_index)
+
+    snapshot = plot(
+        # aspect_ratio=:equal,
+        size=(800,800),
+        dpi = 100,
+        legend=true,
+        gridlinewidth=2.0,
+        # gridstyle=:dash,
+        axis=true,
+        gridalpha=0.0,
+        # xticks=collect(0:6*time_step:((num_timesteps-1)*time_step)),
+        tickfontsize=10,
+        # yticks=collect(0.0:0.1:1.0),
+        xlabel="Time (s)",
+        ylabel="Temperature Value (in K)",
+        title="Temperature variation over all the models with time",
+    )
+
+    num_models = weather_models.num_models
+    t_max = 10
+
+    for m in 1:num_models
+        T_values = [ weather_models.models[m].T[x_index,y_index,z_index,t] for t in 1:t_max]
+        plot!(snapshot,1:t_max,T_values,label="Model $m")
+    end
+    display(snapshot)
+end
+
+
+function plot_P_values(weather_models,x_index,y_index,z_index)
+
+    snapshot = plot(
+        # aspect_ratio=:equal,
+        size=(800,800),
+        dpi = 100,
+        legend=true,
+        gridlinewidth=2.0,
+        # gridstyle=:dash,
+        axis=true,
+        gridalpha=0.0,
+        # xticks=collect(0:6*time_step:((num_timesteps-1)*time_step)),
+        tickfontsize=10,
+        # yticks=collect(0.0:0.1:1.0),
+        xlabel="Time (s)",
+        ylabel="Temperature Value (in K)",
+        title="Temperature variation over all the models with time",
+    )
+
+    num_models = weather_models.num_models
+    t_max = 10
+
+    for m in 1:num_models
+        P_values = [ weather_models.models[m].P[x_index,y_index,z_index,t] for t in 1:t_max]
+        plot!(snapshot,1:t_max,P_values,label="Model $m")
     end
     display(snapshot)
 end
