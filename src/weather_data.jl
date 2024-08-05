@@ -25,6 +25,7 @@ struct WeatherModelData
     # Z_midpoint::Array{Float64,4}
     P::Array{Float64,4}
     T::Array{Float64,4}
+    R::Array{Float64,3}
 end
 
 struct WeatherModels{N}
@@ -45,8 +46,9 @@ struct WeatherModels{N}
     models::Array{WeatherModelData,1}
 end
 
-function WeatherModels(num_models,num_timesteps)
+function WeatherModels(desired_models,num_timesteps)
 
+    num_models = length(desired_models)
     num_x_points = 300
     num_y_points = 300
     num_z_points = 50
@@ -60,14 +62,21 @@ function WeatherModels(num_models,num_timesteps)
     W_grid = RectangleGrid(0.5:1:num_x_points-0.5,0.5:1:num_y_points-0.5,0:num_z_points)
     vector_value_keys = Symbol[:U,:V,:W,:Z]
     # relevant_keys = String["U","V","W","Z","Z_midpoint","P","T"]
-    # relevant_keys = Char['U','V','W','Z','P','T']
-    relevant_keys = String["U","V","W","Z","P","T"]
+    # relevant_keys = String["U","V","W","Z","P","T"]
+    relevant_keys = String["U","V","W","Z","P","T","R"]
     data = WeatherModelData[]
-    for m in 1:num_models
+    for m in desired_models
         file_name = "./dataset/model_"*string(m)*".h5"
         file_obj = HDF5.h5open(file_name, "r")
-        model_data = HDF5.read(file_obj, relevant_keys...)
-        wm_data = WeatherModelData([relevant_key_data[:,:,:,1:num_timesteps] for relevant_key_data in model_data]...)
+        # model_data = HDF5.read(file_obj, relevant_keys...)
+        # wm_data = WeatherModelData([relevant_key_data[:,:,:,1:num_timesteps] for relevant_key_data in model_data]...)
+        U,V,W,Z,P,T,R = HDF5.read(file_obj, relevant_keys...)
+        wm_data = WeatherModelData(U[:,:,:,1:num_timesteps],V[:,:,:,1:num_timesteps],W[:,:,:,1:num_timesteps],
+                                    Z[:,:,:,1:num_timesteps],
+                                    P[:,:,:,1:num_timesteps],
+                                    T[:,:,:,1:num_timesteps],
+                                    R[:,:,1:num_timesteps]
+                                    )
         push!(data, wm_data)
         HDF5.close(file_obj)
     end
@@ -90,7 +99,7 @@ function WeatherModels(num_models,num_timesteps)
                         )
 end
 #=
-wm = WeatherModels(7,6);
+wm = WeatherModels([1,2,3,4,5,6,7],6);
 
 Base.summarysize(wm)
 Base.summarysize(wm.models)
