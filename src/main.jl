@@ -6,6 +6,7 @@ include("visualize_UAV_path.jl")
 using LazySets
 
 function run_experiment(sim,env,start_state,weather_models,weather_functions,
+                            num_models,
                             uav_policy_type=:mcts,
                             process_noise_rng=MersenneTwister(), #70
                             observation_noise_rng=MersenneTwister(), #111
@@ -16,9 +17,10 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
     t = sim.time_step
     @assert(isinteger(T/t))
     num_steps = Int(T/t)
-    num_models = 7
+    # num_models = weather_models.num_models
     start_time = 0.0
     print_logs = true
+    straight_line_Va = 20.0 
     # process_noise_rng = MersenneTwister()
     # observation_noise_rng = MersenneTwister()
     # mcts_rng = MersenneTwister()
@@ -42,8 +44,8 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
     #Initialize MCTS Solver and Planner
     rollout_obj = SLRollout(1)
     mcts_solver = MCTSSolver(
-                    n_iterations=100,
-                    depth=100,
+                    n_iterations=1000,
+                    depth=num_steps,
                     exploration_constant=1.0,
                     # estimate_value = 0.0,
                     estimate_value = RolloutEstimator(rollout_obj),
@@ -66,7 +68,7 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
     elseif(uav_policy_type == :random)  #Random
         initial_uav_action = rand(POMDPs.actions(mart_mdp))
     elseif(uav_policy_type == :sl) #Straight Line
-        initial_uav_action = MARTBeliefMDPAction(10.0,0.0,0.0)
+        initial_uav_action = MARTBeliefMDPAction(straight_line_Va,0.0,0.0)
     else
         error("Invalid UAV Policy")
     end    
@@ -102,15 +104,18 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
                                 time_interval,(CTR,sim.wind,no_noise),t)
         process_noise = sim.noise(next_time,process_noise_rng)
         next_uav_state = add_noise(new_state_list[end], process_noise)
-        println(new_state_list[end], next_uav_state)
+        println("True State : $(new_state_list[end])\n Noise: $process_noise\n New State: $next_uav_state")
+
         #Sample an observation from the environment
-        observation = sim.get_observation(next_uav_state,next_time)
+        sampled_observation = sim.get_observation(next_uav_state,next_time)
         observation_noise = sample_observation_noise(next_uav_state,env,observation_noise_rng)
-        println(observation_noise)
-        observation += observation_noise
+        observation = sampled_observation + observation_noise
+        println("True O: $(sampled_observation[6:7]); Noise: $(observation_noise[6:7]); New O: $(observation[6:7])")
+
         #Update the Belief
-        next_belief = update_belief(mart_mdp,curr_belief,curr_uav_state,CTR,
-                        observation,time_interval)
+        next_belief = update_belief(curr_belief,curr_uav_state,CTR,observation,time_interval,
+                    weather_models,weather_functions,env,num_models)
+
         #Find action for the next iteration of the for loop
         if(print_logs)
             println("Simulation Finished. Now finding the best UAV Action for \
@@ -125,11 +130,22 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
         if(i<num_steps)
             bmdp_state = MARTBeliefMDPState(next_uav_state,next_belief,next_time)
             if(uav_policy_type == :mcts)  #MCTS
+                mcts_solver = MCTSSolver(
+                    n_iterations=100,
+                    depth=num_steps-i,
+                    exploration_constant=1.0,
+                    # estimate_value = 0.0,
+                    estimate_value = RolloutEstimator(rollout_obj),
+                    rng = mcts_rng,
+                    enable_tree_vis = true,
+                    max_time=Inf,
+                    );
+                planner = solve(mcts_solver,mart_mdp);
                 next_uav_action, info = action_info(planner, bmdp_state);
             elseif(uav_policy_type == :random)  #Random
                 next_uav_action = rand(POMDPs.actions(mart_mdp))
             elseif(uav_policy_type == :sl) #Straight Line
-                next_uav_action = MARTBeliefMDPAction(10.0,0.0,0.0)
+                next_uav_action = MARTBeliefMDPAction(straight_line_Va,0.0,0.0)
             else
                 error("Invalid UAV Policy")
             end   
@@ -179,12 +195,15 @@ visualize_path(pp,s)
 
 #=
 
-weather_models = WeatherModels(7,6);
-noise_mag = 6400.0
+dm = [1,2,3,4,5]
+nm = length(dm)
+ns = 6
+weather_models = WeatherModels(dm,ns);
+noise_mag = 2500.0
 noise_covar = SMatrix{3,3}(noise_mag*[
         1.0 0 0;
-        0 1.0 0;
-        0 0 1.0;
+        0 2/3 0;
+        0 0 1/3;
         ])
 function noise_func(Q,t,rng)
     N = size(Q,1)
@@ -193,20 +212,21 @@ function noise_func(Q,t,rng)
 end
 PNG = ProcessNoiseGenerator(noise_func,noise_covar)
 weather_functions = WeatherModelFunctions(get_wind,PNG,get_T,get_P,get_observation)
-start_state = SVector(100_000.0,100_000.0,1800.0,pi/6,0.0);
+x = rand(50_000.0:150_000.0)
+y = rand(50_000.0:150_000.0)
+z = rand(2_000.0:3_000.0)
+start_state = SVector(x,y,z,pi/2,0.0)
+start_state = SVector(5_000.0,5_000.0,1800.0,pi/6,0.0);
 control_func(X,t) = SVector(10.0,0.0,0.0);
-true_model = 4;
+true_model = 2;
 wind_func(X,t) = get_wind(weather_models,true_model,X,t);
 obs_func(X,t) = get_observation(weather_models,true_model,X,t);
 sim_noise_func(t,rng) = noise_func(PNG.covar_matrix,t,rng);
-# noise_func(t,rng) = no_noise(t,rng);
+# sim_noise_func(t,rng) = no_noise(t,rng);
 sim_details = SimulationDetails(control_func,wind_func,sim_noise_func,obs_func,
-                            10.0,1000.0);
+                            100.0,2000.0);
 env = get_experiment_environment(0);
-s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,:sl);
-
-
-visualize_simulation_belief(b,true_model)
+s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,nm,:sl); visualize_simulation_belief(b,true_model,1,length(b))
 
 
 pp = PlottingParams(env,DVG)
@@ -229,5 +249,27 @@ Changes to make the problem 2D from from 3D
 4) Modify Wind to be in 2D in fake_wind and generate_fake_data 
     functions (generate_fake_data.jl)
 5) 
+
+=#
+
+#=
+function predicted_precipitation_value(weather_models,b,x,y,t)
+    # num_models = weather_models.num_models
+    num_models = length(b)
+    p = 0.0
+    for i in 1:num_models
+        p += b[i]*weather_models.models[i].R[x,y,t]
+    end
+    return p
+end
+
+
+rain_values = [predicted_precipitation_value(weather_models,b[1 + (t-1)*30][2],60,298,t) for t in 1:6]
+true_rain_values = [ weather_models.models[5].R[60,298,t] for t in 1:6]
+
+
+
+
+
 
 =#
