@@ -88,10 +88,10 @@ function sample_observation_noise(X,env::ExperimentEnvironment{R,S,T,U},rng=Mers
             break
         end
     end
-    # σ_P = 1.0 
-    pressure_noise = randn(rng)*σ_P
     # σ_T = 1.0
     temperature_noise = randn(rng)*σ_T
+    # σ_P = 1.0 
+    pressure_noise = randn(rng)*σ_P
     return SVector{length(X)+length(HNR_noise_covariance),Float64}(position_noise...,temperature_noise,pressure_noise)
     #=
     NOTE: Using the splat operator `...` here doesn't lead to a separate memory allocation if position_noise is a StaticArray.
@@ -201,8 +201,8 @@ function get_experiment_environment(num_LNRs = 1,rng=MersenneTwister(199))
     z_min = 0.0
     z_max = 10000.0
     obstacles = SphericalObstacle[]
-    σ_P_HN = 150.0
-    σ_T_HN = 20.0
+    σ_P_HN = 200.0
+    σ_T_HN = 1.0
     lnr_side_length = 1000
     num_vertices = 4
 

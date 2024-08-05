@@ -90,7 +90,7 @@ s,a,o,b = run_experiment(sim_details,start_state);
 export JULIA_NUM_THREADS=20
 Threads.nthreads()
 using Base.Threads
-num_experiments = 100
+num_experiments = 50
 b_arrays = Array{Any,1}(undef,num_experiments)
 # @threads for j in 1:num_experiments
 for j in 1:num_experiments
@@ -118,7 +118,7 @@ histogram
 
 c,histogram
 
-(6, [11, 12, 12, 7, 6, 4, 2, 1, 4, 1])
+
 
 ############### Run Random UAV Policy ###############
 
@@ -152,12 +152,16 @@ c,histogram
 
 ############### Run Straight Line UAV Policy ###############
 
-num_experiments = 100
+num_experiments = 1000
 b_arrays = Array{Any,1}(undef,num_experiments)
 for j in 1:num_experiments
     println("Running Experiment ",j)
     # s,o,a,b = run_experiment(sim_details,start_state,:sl);
-    s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,:sl);
+    x = rand(50_000.0:150_000.0)
+    y = rand(50_000.0:150_000.0)
+    z = rand(2_000.0:3_000.0)
+    start_state = SVector(x,y,z,pi/2,0.0)
+    s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,:random);
     b_arrays[j] = (j=>b)
 end
 
@@ -211,4 +215,30 @@ end
 #=
 visualize(histogram,"MCTS")
 plot!(collect(0.1:0.1:1.0), histogram, label="Random")
+=#
+
+function bar_plot(x,y,lab)
+    p = plot(x,y,
+        seriestype=:bar,
+        # yticks = [0.0:0.1:1...], 
+        # ylims=(0,1), 
+        dpi=300,
+        xlabel="Inferred probability of the True Model", 
+        ylabel="Number of Experments",
+        # title="Probability Distribution of Weather Models",
+        color=:red,
+        size=(1000,1000),
+        ylims=(0,1000),
+        xticks = [0.1:0.1:1.0...],
+        legend = true,
+        label = lab
+        )
+    # bar_plot = bar(x,y,legend=false)
+    # return bar_plot
+    display(p)
+end
+#=
+
+bar_plot([0.1:0.1:1.0...], histogram)
+
 =#
