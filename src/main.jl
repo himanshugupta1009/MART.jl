@@ -218,13 +218,13 @@ z = rand(2_000.0:3_000.0)
 start_state = SVector(x,y,z,pi/2,0.0)
 start_state = SVector(5_000.0,5_000.0,1800.0,pi/6,0.0);
 control_func(X,t) = SVector(10.0,0.0,0.0);
-true_model = 2;
+true_model = 7;
 wind_func(X,t) = get_wind(weather_models,true_model,X,t);
 obs_func(X,t) = get_observation(weather_models,true_model,X,t);
 sim_noise_func(t,rng) = noise_func(PNG.covar_matrix,t,rng);
 # sim_noise_func(t,rng) = no_noise(t,rng);
 sim_details = SimulationDetails(control_func,wind_func,sim_noise_func,obs_func,
-                            100.0,2000.0);
+                            10.0,600.0);
 env = get_experiment_environment(0);
 s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,nm,:sl); visualize_simulation_belief(b,true_model,1,length(b))
 

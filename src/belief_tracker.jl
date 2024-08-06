@@ -10,7 +10,7 @@ function transition_likelihood(weather_functions,observed_position,propogated_po
     covar_matrix = weather_functions.process_noise.covar_matrix
     dist = MvNormal(propogated_position,covar_matrix)
     likelihood = pdf(dist,observed_position)
-    return 1.0
+    # return 1.0
     return likelihood
 end
 
@@ -58,7 +58,7 @@ function pressure_likelihood(env::ExperimentEnvironment{R,S,T,U},weather_models,
     dist = Normal(expected_pressure,σ_P)
     likelihood = pdf(dist,observed_pressure)
     # println("EP: $expected_pressure OP: $observed_pressure L: $likelihood")
-    return 1.0
+    # return 1.0
     return likelihood
 end
 
