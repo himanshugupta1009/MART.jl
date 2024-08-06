@@ -63,13 +63,14 @@ function extract_relevant_data(model_num)
     #Define scalar value matrices
     P_grid = zeros(Float64,max_x_values,max_y_values,max_z_values,num_timestamps)
     T_grid = zeros(Float64,max_x_values,max_y_values,max_z_values,num_timestamps)
+    R_grid = zeros(Float64,max_x_values,max_y_values,num_timestamps)
 
     weird_exponential_num = 287/1004
     for i in 1:num_timestamps
         timestamp = start_time + Minute(5) * (i-1)
         timestamp_string = Dates.format(timestamp, date_format)
         f = HDF5.h5open(file_name*"/wrfout_d01_"*timestamp_string, "r")
-        U,V,W,PH,PHB,P,PB,T = HDF5.read(f,"U","V","W","PH","PHB","P","PB","T")
+        U,V,W,PH,PHB,P,PB,T,RAINC,RAINNC = HDF5.read(f,"U","V","W","PH","PHB","P","PB","T","RAINC","RAINNC")
         U_grid[:,:,:,i] = U
         V_grid[:,:,:,i] = V
         W_grid[:,:,:,i] = W
@@ -77,11 +78,12 @@ function extract_relevant_data(model_num)
         Z_midpoint_grid[:,:,:,i] = (Z_grid[:,:,1:50,i] .+ Z_grid[:,:,2:51,i]) / 2.0
         P_grid[:,:,:,i] = P .+ PB
         T_grid[:,:,:,i] = (T .+ 300.0) .* ( (P_grid[:,:,:,i]./100_000.0).^weird_exponential_num )
+        R_grid[:,:,i] = RAINC .+ RAINNC
         HDF5.close(f)
     end
     # U,V,W,PH,PHB,P,PB,T = repeat(SVector(nothing),8)
     # GC.gc()
-    return U_grid,V_grid,W_grid,Z_grid,Z_midpoint_grid,P_grid,T_grid
+    return U_grid,V_grid,W_grid,Z_grid,Z_midpoint_grid,P_grid,T_grid,R_grid
 end
 #=
 U_grid,V_grid,W_grid,Z_grid,Z_midpoint_grid,P_grid,T_grid = extract_relevant_data(1);
@@ -90,8 +92,10 @@ U_grid,V_grid,W_grid,Z_grid,Z_midpoint_grid,P_grid,T_grid = extract_relevant_dat
 
 function generate_relevant_dataset(model_num)
     @assert isinteger(model_num) && model_num > 0 "Incorrect Model Number"
-    U,V,W,Z,Z_midpoint,P,T = extract_relevant_data(model_num)
-    filename = "./dataset/model_$model_num.h5"
+    U,V,W,Z,Z_midpoint,P,T,R = extract_relevant_data(model_num)
+    # filename = "./dataset/model_$model_num.h5"
+    filename = "/media/himanshu/DATA/dataset/model_$model_num.h5"
+
     HDF5.h5write(filename, "U", U)
     HDF5.h5write(filename, "V", V)
     HDF5.h5write(filename, "W", W)
@@ -99,6 +103,7 @@ function generate_relevant_dataset(model_num)
     HDF5.h5write(filename, "Z_midpoint", Z_midpoint)
     HDF5.h5write(filename, "P", P)
     HDF5.h5write(filename, "T", T)
+    HDF5.h5write(filename, "R", R)
 end
 #=
 generate_relevant_dataset(1)

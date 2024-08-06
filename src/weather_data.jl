@@ -46,7 +46,7 @@ struct WeatherModels{N}
     models::Array{WeatherModelData,1}
 end
 
-function WeatherModels(desired_models,num_timesteps)
+function WeatherModels(desired_models,num_timesteps,data_folder="/media/himanshu/DATA/dataset/")
 
     num_models = length(desired_models)
     num_x_points = 300
@@ -66,8 +66,10 @@ function WeatherModels(desired_models,num_timesteps)
     relevant_keys = String["U","V","W","Z","P","T","R"]
     data = WeatherModelData[]
     for m in desired_models
-        file_name = "./dataset/model_"*string(m)*".h5"
-        file_obj = HDF5.h5open(file_name, "r")
+        # file_name = "./dataset/model_"*string(m)*".h5"
+        filename = "/media/himanshu/DATA/dataset/model_$m.h5"
+        filename = data_folder*"model_$m.h5"
+        file_obj = HDF5.h5open(filename, "r")
         # model_data = HDF5.read(file_obj, relevant_keys...)
         # wm_data = WeatherModelData([relevant_key_data[:,:,:,1:num_timesteps] for relevant_key_data in model_data]...)
         U,V,W,Z,P,T,R = HDF5.read(file_obj, relevant_keys...)
