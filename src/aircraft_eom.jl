@@ -55,10 +55,10 @@ hist = aircraft_simulate(aircraft_dynamics,SVector(100,100,1800,pi/6,0.0),
 
 weather_models = WeatherModels(7,6)
 true_model_num = 3
-control_func(u,t) = SVector(10.0,0.0,0.0)
+control_func(u,t) = SVector(20.0,0.0,2*pi/180)
 wind_func(X,t) = get_wind(weather_models,true_model_num,X,t)
 noise_func(t) = SVector(0.0,0.0,0.0,0.0,0.0)
 hist = aircraft_simulate(aircraft_dynamics,SVector(100_000,100_000,1800,pi/6,0.0),
-                (0.0,500.0),(control_func,wind_func,noise_func))
+                (0.0,10.0),(control_func,wind_func,noise_func))
 
 =#

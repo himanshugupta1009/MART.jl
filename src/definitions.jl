@@ -19,12 +19,12 @@ struct SphericalObstacle
     r::Float64
 end
 
-struct ExperimentEnvironment{R,S,T,U}
+struct ExperimentEnvironment{P,Q,R,S}
     x_range::Tuple{Float64,Float64}
     y_range::Tuple{Float64,Float64}
     z_range::Tuple{Float64,Float64}
-    obstacles::R #Array{SphericalObstacle,1}
-    LNRs::S
-    LNR_noise_covariance::T
-    HNR_noise_covariance::U
+    obstacles::P #Array{SphericalObstacle,1}
+    LNRs::Q
+    LNR_noise_covariance::R
+    HNR_noise_covariance::S
 end

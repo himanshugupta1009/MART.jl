@@ -187,7 +187,7 @@ function get_fake_data(num_models=7,num_DMRs=3,rng=MersenneTwister(69))
         1.0 0;
         0 1.0;
         ])
-    PNG = ProcessNoiseGenerator(noise_covar)
+    PNG = ProcessNoiseGenerator(noise_covar,5)
 
     return DVG,DWG,PNG
 end
