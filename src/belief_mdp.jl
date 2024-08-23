@@ -36,7 +36,7 @@ function update_belief(m,b0,s0,ctr,o,time_interval)
 end
 
 
-function calculate_reward(bmdp_s,a,bmdp_sp)
+function calculate_reward(m,bmdp_s,a,bmdp_sp)
 
     #=
     initial_ent = calculate_entropy(bmdp_s.belief)
@@ -53,7 +53,7 @@ function calculate_reward(bmdp_s,a,bmdp_sp)
     =#
     q = bmdp_sp.belief
     val,ind = findmax(q)
-    ind=4
+    # ind=4
     num_models = length(q)
     p = MVector(zeros(num_models)...)
     p[ind] = 1.0
@@ -62,6 +62,19 @@ function calculate_reward(bmdp_s,a,bmdp_sp)
     #     println("######################## Mass collapsed : Reward is $r ########################")
     #     println("######################## Belief : $q ########################")
     # end
+
+    uav = bmdp_sp.uav
+    (;weather_models) = m
+    (;base_DMRs,num_DMRs) = weather_models.DMRs
+    for i in 1:num_DMRs
+        μ = base_DMRs[i].μ
+        dist = sqrt( (uav[1]-μ[1])^2 + (uav[2]-μ[2])^2 + (uav[3]-μ[3])^2 )
+        if(dist<=300.0)
+            println("######################## Reached the good observation region ########################")
+            println("######################## Position is $uav ########################")
+            println("######################## Belief is $(bmdp_sp.belief) ########################")
+        end    
+    end
     return -r
 end
 
@@ -83,9 +96,12 @@ function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
     new_state_list = aircraft_simulate(aircraft_dynamics,curr_uav_state,
                             time_interval,(CTR,mwf,no_noise),Δt)
     new_state = new_state_list[end]
-    covar_matrix = weather_functions.process_noise.covar_matrix
-    process_noise = weather_functions.process_noise.noise(covar_matrix,next_t,rng)
-    new_uav_state = add_noise(new_state, process_noise)
+    # covar_matrix = weather_functions.process_noise.covar_matrix
+    # process_noise = weather_functions.process_noise.noise(covar_matrix,next_t,rng)
+    transition_noise = no_noise(0.0,next_t,rng)
+    new_uav_state = add_noise(new_state, transition_noise)
+    new_uav_state = typeof(curr_uav_state)(new_uav_state[1],new_uav_state[2],new_uav_state[3],
+                    wrap_between_0_and_2π(new_uav_state[4]),wrap_between_0_and_2π(new_uav_state[5]))
 
     #Sample an observation from the new state
     o = mof(new_uav_state,next_t)
@@ -99,7 +115,7 @@ function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
     sp = MARTBeliefMDPState(new_uav_state,new_belief,next_t)
     # println(sp)
     #Compute the reward R(b,a,b')
-    r = calculate_reward(s,a,sp)
+    r = calculate_reward(m,s,a,sp)
 
     #=
     Code below should be commented out later
@@ -118,7 +134,8 @@ function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
     return (sp=sp,r=r)
 end
 
-
+#=
+Action space when in 2D
 function POMDPs.actions(mdp::MARTBeliefMDP)
     Va = 20.0
     action_set =  SVector{5,MARTBeliefMDPAction}(
@@ -135,6 +152,75 @@ function POMDPs.actions(mdp::MARTBeliefMDP)
         # MARTBeliefMDPAction(Va,2*pi/180,2*pi/180)
     )
     return action_set
+end
+=#
+
+#Action space when in 3D
+# function POMDPs.actions(mdp::MARTBeliefMDP)
+#     Va = 20.0
+#     action_set =  SVector{3,MARTBeliefMDPAction}(
+#         # MARTBeliefMDPAction(Va,-2*pi/180,-2*pi/180),
+#         # MARTBeliefMDPAction(Va,-2*pi/180,0.0),
+#         # MARTBeliefMDPAction(Va,-2*pi/180,2*pi/180),
+#         MARTBeliefMDPAction(Va,0.0,-2*pi/180),
+#         MARTBeliefMDPAction(Va,0.0,0.0),
+#         MARTBeliefMDPAction(Va,0.0,2*pi/180),
+#         # MARTBeliefMDPAction(Va,2*pi/180,-2*pi/180),
+#         # MARTBeliefMDPAction(Va,2*pi/180,0.0),
+#         # MARTBeliefMDPAction(Va,2*pi/180,2*pi/180)
+#     )
+#     return action_set
+# end
+
+function POMDPs.actions(mdp::MARTBeliefMDP,s)
+    Va = 20.0
+    (;uav) = s
+    θ = uav[5]
+    δθ = 0.1*pi/180
+    δψ = 2*pi/180
+    max_θ = pi/36
+    # println("ACtion Start")
+    # println("UAV : $uav")
+
+    if(isapprox(uav[5],max_θ))
+        # println("ACtion End1")
+        return SVector{6,MARTBeliefMDPAction}(
+            MARTBeliefMDPAction(Va,-δψ,-δθ),
+            MARTBeliefMDPAction(Va,-δψ,0.0),
+            MARTBeliefMDPAction(Va,0.0,-δθ),
+            MARTBeliefMDPAction(Va,0.0,0.0),
+            MARTBeliefMDPAction(Va,δψ,-δθ),
+            MARTBeliefMDPAction(Va,δψ,0.0)
+        )
+    elseif(isapprox(uav[5],2π-max_θ))
+        # println("ACtion End2")
+        return SVector{6,MARTBeliefMDPAction}(
+            MARTBeliefMDPAction(Va,-δψ,0.0),
+            MARTBeliefMDPAction(Va,-δψ,δθ),
+            MARTBeliefMDPAction(Va,0.0,0.0),
+            MARTBeliefMDPAction(Va,0.0,δθ),
+            MARTBeliefMDPAction(Va,δψ,0.0),
+            MARTBeliefMDPAction(Va,δψ,δθ)
+        )
+    # if(uav[5] < pi/6 || isaarox() uav[5] > 11*pi/6)
+    else 
+        #=
+        The way the problem is structured, if the code reaches here, then
+        (uav[5] < max_θ || uav[5] > 2π-max_θ) is always true
+        =#
+        # println("ACtion End3")
+        return SVector{9,MARTBeliefMDPAction}(
+            MARTBeliefMDPAction(Va,-δψ,-δθ),
+            MARTBeliefMDPAction(Va,-δψ,0.0),
+            MARTBeliefMDPAction(Va,-δψ,δθ),
+            MARTBeliefMDPAction(Va,0.0,-δθ),
+            MARTBeliefMDPAction(Va,0.0,0.0),
+            MARTBeliefMDPAction(Va,0.0,δθ),
+            MARTBeliefMDPAction(Va,δψ,-δθ),
+            MARTBeliefMDPAction(Va,δψ,0.0),
+            MARTBeliefMDPAction(Va,δψ,δθ)
+        )
+    end            
 end
 
 POMDPs.discount(m::MARTBeliefMDP) = 0.98
