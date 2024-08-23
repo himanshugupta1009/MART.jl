@@ -42,6 +42,10 @@ end
 #     return new_state
 # end
 
+function wrap_between_0_and_2π(theta)
+    return mod(theta,2*pi)
+end
+
 
 function run_experiment_let_it_fly(sim,start_state)
 

@@ -1,6 +1,7 @@
 include("simulator.jl")
 include("generate_fake_data.jl")
 include("weather_data.jl")
+include("generate_synthetic_WRF_data.jl")
 include("belief_mdp.jl")
 include("visualize_UAV_path.jl")
 using LazySets
@@ -33,10 +34,14 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
     belief_history = Vector{Pair{Float64,SVector{num_models,Float64}}}()
 
     #Define Belief MDP
+    # mart_mdp_weather_functions = WeatherModelFunctions(weather_functions.wind,no_noise,
+    #                                 weather_functions.temperature,weather_functions.pressure,
+    #                                 weather_functions.observation)
+    mart_mdp_weather_functions = weather_functions      
     mart_mdp = MARTBeliefMDP(
                 env,
                 weather_models,
-                weather_functions,
+                mart_mdp_weather_functions,
                 t,
                 num_models,
                 );
@@ -44,13 +49,13 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
     #Initialize MCTS Solver and Planner
     rollout_obj = SLRollout(1)
     mcts_solver = MCTSSolver(
-                    n_iterations=1000,
                     depth=num_steps,
                     exploration_constant=1.0,
                     # estimate_value = 0.0,
                     estimate_value = RolloutEstimator(rollout_obj),
                     rng = mcts_rng,
                     enable_tree_vis = true,
+                    n_iterations=100,
                     max_time=Inf,
                     );
     planner = solve(mcts_solver,mart_mdp);
@@ -83,6 +88,9 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
     curr_belief = initial_belief
     curr_uav_action = initial_uav_action
 
+    (;base_DMRs,num_DMRs) = weather_models.DMRs
+
+
     #Run the experiment
     total_reward = 0.0
     for i in 1:num_steps
@@ -94,23 +102,49 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
             println("********************************************************")
             println("Iteration Number ", i ," out of ",num_steps)
             println("Current UAV State : ", curr_uav_state)
+            println("Current UAV State: ", (round(curr_uav_state[1],digits=2),round(curr_uav_state[2],digits=2),
+                                    round(curr_uav_state[3],digits=2),round(curr_uav_state[4]*180/pi,digits=2),
+                                    round(curr_uav_state[5]*180/pi,digits=2))
+                    )
             println("Current Belief is : ", curr_belief)
-            println("Simulating with action ", curr_uav_action," for Time \
-                                Interval ", time_interval)
+            println("Simulating with action ", (curr_uav_action[1],round(curr_uav_action[2]*180/pi,digits=3),
+                                                round(curr_uav_action[3]*180/pi,digits=3))," for Time \
+                                                Interval ", time_interval)
         end
 
         #Simulate the UAV
         new_state_list = aircraft_simulate(aircraft_dynamics,curr_uav_state,
                                 time_interval,(CTR,sim.wind,no_noise),t)
+        # println("AHHHH : ", new_state_list[end])
         process_noise = sim.noise(next_time,process_noise_rng)
         next_uav_state = add_noise(new_state_list[end], process_noise)
-        println("True State : $(new_state_list[end])\n Noise: $process_noise\n New State: $next_uav_state")
+        next_uav_state = typeof(start_state)(next_uav_state[1],next_uav_state[2],next_uav_state[3],
+                            wrap_between_0_and_2π(next_uav_state[4]),wrap_between_0_and_2π(next_uav_state[5]))
+
+        println("True New State: ", (round(new_state_list[end][1],digits=2),round(new_state_list[end][2],digits=2),
+                                round(new_state_list[end][3],digits=2),round(new_state_list[end][4]*180/pi,digits=2),
+                                round(new_state_list[end][5]*180/pi,digits=2)),
+                "; Transition Noise: ", process_noise, 
+                "\nNew State: ", (round(next_uav_state[1],digits=2),round(next_uav_state[2],digits=2),
+                                round(next_uav_state[3],digits=2),round(next_uav_state[4]*180/pi,digits=2),
+                                round(next_uav_state[5]*180/pi,digits=2))
+                )
+
+        for i in 1:num_DMRs
+            μ = base_DMRs[i].μ
+            dist = sqrt( (next_uav_state[1]-μ[1])^2 + (next_uav_state[2]-μ[2])^2 + (next_uav_state[3]-μ[3])^2 )
+            if(dist<=300.0)
+                println("######################## Reached the good observation region ########################")
+                println("######################## Position is $next_uav_state ########################")
+                println("######################## Belief is $curr_belief ########################")
+            end    
+        end
 
         #Sample an observation from the environment
         sampled_observation = sim.get_observation(next_uav_state,next_time)
         observation_noise = sample_observation_noise(next_uav_state,env,observation_noise_rng)
         observation = sampled_observation + observation_noise
-        println("True O: $(sampled_observation[6:7]); Noise: $(observation_noise[6:7]); New O: $(observation[6:7])")
+        println("True O: $(sampled_observation[6:7]); Observation Noise: $(observation_noise[6:7]); New O: $(observation[6:7])")
 
         #Update the Belief
         next_belief = update_belief(curr_belief,curr_uav_state,CTR,observation,time_interval,
@@ -132,7 +166,7 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
             if(uav_policy_type == :mcts)  #MCTS
                 mcts_solver = MCTSSolver(
                     n_iterations=100,
-                    depth=num_steps-i,
+                    depth=num_steps,
                     exploration_constant=1.0,
                     # estimate_value = 0.0,
                     estimate_value = RolloutEstimator(rollout_obj),
@@ -199,6 +233,9 @@ dm = [1,2,3,4,5]
 nm = length(dm)
 ns = 6
 weather_models = WeatherModels(dm,ns);
+
+nm=8
+weather_models = SyntheticWRFData(M=nm,num_DMRs=8);
 noise_mag = 2500.0
 noise_covar = SMatrix{3,3}(noise_mag*[
         1.0 0 0;
@@ -208,6 +245,7 @@ noise_covar = SMatrix{3,3}(noise_mag*[
 function noise_func(Q,t,rng)
     N = size(Q,1)
     noise = sqrt(Q)*randn(rng,N)
+    return SVector(noise[1],noise[2],0.0)
     return SVector(noise)
 end
 PNG = ProcessNoiseGenerator(noise_func,noise_covar)
@@ -215,17 +253,17 @@ weather_functions = WeatherModelFunctions(get_wind,PNG,get_T,get_P,get_observati
 x = rand(50_000.0:150_000.0)
 y = rand(50_000.0:150_000.0)
 z = rand(2_000.0:3_000.0)
-start_state = SVector(x,y,z,pi/2,0.0)
-start_state = SVector(5_000.0,5_000.0,1800.0,pi/6,0.0);
+start_state = SVector(x,y,z,0.0,0.0)
+start_state = SVector(5_000.0,5_000.0,1800.0,0.0,0.0);
 control_func(X,t) = SVector(10.0,0.0,0.0);
-true_model = 7;
+true_model = 4;
 wind_func(X,t) = get_wind(weather_models,true_model,X,t);
 obs_func(X,t) = get_observation(weather_models,true_model,X,t);
 sim_noise_func(t,rng) = noise_func(PNG.covar_matrix,t,rng);
 # sim_noise_func(t,rng) = no_noise(t,rng);
 sim_details = SimulationDetails(control_func,wind_func,sim_noise_func,obs_func,
-                            10.0,600.0);
-env = get_experiment_environment(0);
+                            10.0,1000.0);
+env = get_experiment_environment(0,hnr_sigma_p=10.0,hnr_sigma_t=5.0);
 s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,nm,:sl); visualize_simulation_belief(b,true_model,1,length(b))
 
 
