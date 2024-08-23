@@ -628,6 +628,11 @@ function visualize_simulation_belief(b,true_model_num,start_index,end_index)
     time_step = b[start_index+1][1] - b[start_index][1]
     num_models = length(b[1][2])
     x_axis = collect( (start_index-1)*time_step:time_step:((end_index-1)*time_step) )
+    
+    max_y_val = maximum([maximum(b[i][2]) for i in start_index:end_index])
+    partition_val = (max_y_val-0.0)/10.0
+    label_y_axis = collect(0.0:partition_val:max_y_val+0.1)
+    # label_y_axis = collect(0.0:0.1:1.0)
 
     snapshot = plot(
         # aspect_ratio=:equal,
@@ -640,7 +645,7 @@ function visualize_simulation_belief(b,true_model_num,start_index,end_index)
         gridalpha=0.0,
         xticks=x_axis,
         tickfontsize=4,
-        yticks=collect(0.0:0.1:1.0),
+        yticks=label_y_axis,
         xlabel="Time (s)",
         ylabel="Probability Value",
         title="Belief over all the models with time",
