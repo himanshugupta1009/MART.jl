@@ -234,8 +234,8 @@ nm = length(dm)
 ns = 6
 weather_models = WeatherModels(dm,ns);
 
-nm=8
-weather_models = SyntheticWRFData(M=nm,num_DMRs=8);
+nm=36
+weather_models = SyntheticWRFData(M=nm,num_DMRs=8,desired_base_models=SVector(25));
 noise_mag = 2500.0
 noise_covar = SMatrix{3,3}(noise_mag*[
         1.0 0 0;
@@ -245,7 +245,7 @@ noise_covar = SMatrix{3,3}(noise_mag*[
 function noise_func(Q,t,rng)
     N = size(Q,1)
     noise = sqrt(Q)*randn(rng,N)
-    return SVector(noise[1],noise[2],0.0)
+    # return SVector(noise[1],noise[2],0.0)
     return SVector(noise)
 end
 PNG = ProcessNoiseGenerator(noise_func,noise_covar)
@@ -254,7 +254,7 @@ x = rand(50_000.0:150_000.0)
 y = rand(50_000.0:150_000.0)
 z = rand(2_000.0:3_000.0)
 start_state = SVector(x,y,z,0.0,0.0)
-start_state = SVector(5_000.0,5_000.0,1800.0,0.0,0.0);
+start_state = SVector(5_000.0,5_000.0,400.0,pi/2,0.0);
 control_func(X,t) = SVector(10.0,0.0,0.0);
 true_model = 4;
 wind_func(X,t) = get_wind(weather_models,true_model,X,t);
@@ -263,7 +263,7 @@ sim_noise_func(t,rng) = noise_func(PNG.covar_matrix,t,rng);
 # sim_noise_func(t,rng) = no_noise(t,rng);
 sim_details = SimulationDetails(control_func,wind_func,sim_noise_func,obs_func,
                             10.0,1000.0);
-env = get_experiment_environment(0,hnr_sigma_p=10.0,hnr_sigma_t=5.0);
+env = get_experiment_environment(0,hnr_sigma_p=10.0,hnr_sigma_t=3.0);
 s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,nm,:sl); visualize_simulation_belief(b,true_model,1,length(b))
 
 

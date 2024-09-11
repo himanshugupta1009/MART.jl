@@ -69,11 +69,11 @@ function calculate_reward(m,bmdp_s,a,bmdp_sp)
     for i in 1:num_DMRs
         μ = base_DMRs[i].μ
         dist = sqrt( (uav[1]-μ[1])^2 + (uav[2]-μ[2])^2 + (uav[3]-μ[3])^2 )
-        if(dist<=300.0)
-            println("######################## Reached the good observation region ########################")
-            println("######################## Position is $uav ########################")
-            println("######################## Belief is $(bmdp_sp.belief) ########################")
-        end    
+        # if(dist<=600.0) #600.0 because σ for every DMR is 200.0 
+        #     println("######################## Reached within 3σ of a good observation region ########################")
+        #     println("######################## Position is $uav ########################")
+        #     println("######################## Belief is $(bmdp_sp.belief) ########################")
+        # end    
     end
     return -r
 end
