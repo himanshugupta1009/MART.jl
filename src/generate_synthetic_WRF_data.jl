@@ -27,8 +27,8 @@ function get_offset(DMRs,X)
 
     for i in 1:num_DMRs
         # offset += pdf(model_DMRs[M][i],SVector(X[1],X[2],X[3]))*covar_magnitude*0.1
-        # offset += pdf(base_DMRs[i],SVector(X[1],X[2],X[3]))*covar_magnitude #For 3d DMRs
-        offset += pdf(base_DMRs[i],SVector(X[1],X[2]))*covar_magnitude #For 2d DMRs
+        offset += pdf(base_DMRs[i],SVector(X[1],X[2],X[3]))*1e9 #For 3d DMRs
+        # offset += pdf(base_DMRs[i],SVector(X[1],X[2]))*covar_magnitude #For 2d DMRs
     end
     return offset
 end
@@ -192,8 +192,8 @@ function SyntheticWRFData(;M=8,num_DMRs=3,base_model=nothing,
                         )
     
     num_models = M
-    pos_size = 2
-    mag = 1e6
+    pos_size = 3
+    covar_magnitude = 4e4
 
     #Define Different Measurement Regions
     # base_DMRs = Array{Tuple{SVector{pos_size,Float64},SMatrix{pos_size,pos_size,Float64}},1}(undef,num_DMRs)
@@ -201,26 +201,33 @@ function SyntheticWRFData(;M=8,num_DMRs=3,base_model=nothing,
     for i in 1:num_DMRs
         mean_x = 5000+rand(rng,5000:7000)
         mean_y = 5000+rand(rng,6000:12000)
-        mean_z = rand(rng,100:1000)
+        mean_z = rand(rng,200:800)
         #=
         For 2d DMRs
-        =#
         gaussian_mean = SVector(mean_x,mean_y)
-        gaussian_covar = 0.01*mag*SMatrix{pos_size,pos_size,Float64}(I)
+        gaussian_covar = covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)
+        =#
         #=
         For 3d DMRs
-        gaussian_mean = SVector(mean_x,mean_y,mean_z)
-        gaussian_covar = 0.01*mag*SMatrix{pos_size,pos_size,Float64}(I)
         =#
+        gaussian_mean = SVector(mean_x,mean_y,mean_z)
+        gaussian_covar = covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)
         base_DMRs[i] = MvNormal(gaussian_mean,gaussian_covar)
     end
     num_DMRs = 6
-    base_DMRs = [MvNormal(SVector(10000,6000),0.01*mag*SMatrix{pos_size,pos_size,Float64}(I)),
-                MvNormal(SVector(10000,8000),0.01*mag*SMatrix{pos_size,pos_size,Float64}(I)),
-                MvNormal(SVector(10000,10000),0.01*mag*SMatrix{pos_size,pos_size,Float64}(I)),
-                MvNormal(SVector(10000,12000),0.01*mag*SMatrix{pos_size,pos_size,Float64}(I)),
-                MvNormal(SVector(10000,14000),0.01*mag*SMatrix{pos_size,pos_size,Float64}(I)),
-                MvNormal(SVector(10000,4000),0.01*mag*SMatrix{pos_size,pos_size,Float64}(I)),
+    # base_DMRs = [MvNormal(SVector(10000,6000),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+    #             MvNormal(SVector(10000,8000),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+    #             MvNormal(SVector(10000,10000),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+    #             MvNormal(SVector(10000,12000),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+    #             MvNormal(SVector(10000,14000),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+    #             MvNormal(SVector(10000,4000),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+    #             ]
+    base_DMRs = [MvNormal(SVector(10000,6000,400),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,8000,600),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,10000,800),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,12000,200),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,14000,500),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,4000,700),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
                 ]
 
     models_DMRs = Array{Dict{Int,MvNormal},1}(undef,num_models)
@@ -228,8 +235,8 @@ function SyntheticWRFData(;M=8,num_DMRs=3,base_model=nothing,
         model_i_DMRs = Dict{Int,MvNormal}()
         for j in 1:num_DMRs
             DMR = base_DMRs[j]
-            μ = DMR.μ + SVector(10*i,10*i)  #For 2d DMRs
-            # μ = DMR.μ + SVector(10*i,10*i,10*i) #For 3d DMRs
+            # μ = DMR.μ + SVector(10*i,10*i)  #For 2d DMRs
+            μ = DMR.μ + SVector(10*i,10*i,10*i) #For 3d DMRs
             σ = DMR.Σ
             gaussian_model = MvNormal(μ,σ)
             model_i_DMRs[j] = gaussian_model
@@ -237,14 +244,14 @@ function SyntheticWRFData(;M=8,num_DMRs=3,base_model=nothing,
         models_DMRs[i] = model_i_DMRs
     end
 
-    DMRs = DifferentMearsurementRegions(num_DMRs,mag,base_DMRs,models_DMRs)
+    DMRs = DifferentMearsurementRegions(num_DMRs,covar_magnitude,base_DMRs,models_DMRs)
 
     max_x = max_y = max_z = 10000.0
     wind_noise_covar = 30000*SMatrix{pos_size,pos_size,Float64}(I)
     wind_gaussians = Vector{MvNormal}(undef,num_models)
     for i in 1:num_models
-        # μ = SVector(floor(rand(rng)*max_x),floor(rand(rng)*max_y),floor(rand(rng)*max_z)) #For 3d wind
-        μ = SVector(floor(rand(rng)*max_x),floor(rand(rng)*max_y)) #For 2d wind
+        μ = SVector(floor(rand(rng)*max_x),floor(rand(rng)*max_y),floor(rand(rng)*max_z)) #For 3d wind
+        # μ = SVector(floor(rand(rng)*max_x),floor(rand(rng)*max_y)) #For 2d wind
         σ = wind_noise_covar
         gaussian_model = MvNormal(μ,σ)
         wind_gaussians[i] = gaussian_model
@@ -258,4 +265,92 @@ function SyntheticWRFData(;M=8,num_DMRs=3,base_model=nothing,
     end
 
     return SyntheticWRFData(num_models,base_model_index,base_weather_model,DMRs,wind_gaussians)
+end
+
+
+function set_DMRs!(weather_models,rng=MersenneTwister(7))
+
+    (;num_models,DMRs) = weather_models
+    (;num_DMRs,base_DMRs,model_DMRs,covar_magnitude) = DMRs
+    pos_size = length(base_DMRs[1].μ)
+
+    for i in 1:num_DMRs
+        mean_x = 5000+rand(rng,5000:7000)
+        mean_y = 5000+rand(rng,6000:12000)
+        mean_z = rand(rng,100:1000)
+        #=
+        For 2d DMRs
+        gaussian_mean = SVector(mean_x,mean_y)
+        gaussian_covar = covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)
+        =#
+        #=
+        For 3d DMRs
+        =#
+        gaussian_mean = SVector(mean_x,mean_y,mean_z)
+        gaussian_covar = covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)
+        base_DMRs[i] = MvNormal(gaussian_mean,gaussian_covar)
+    end
+
+    for i in 1:num_models
+        model_i_DMRs = Dict{Int,MvNormal}()
+        for j in 1:num_DMRs
+            DMR = base_DMRs[j]
+            # μ = DMR.μ + SVector(10*i,10*i)  #For 2d DMRs
+            μ = DMR.μ + SVector(10*i,10*i,10*i) #For 3d DMRs
+            σ = DMR.Σ
+            gaussian_model = MvNormal(μ,σ)
+            model_i_DMRs[j] = gaussian_model
+        end
+        model_DMRs[i] = model_i_DMRs
+    end
+
+end
+
+
+function set_test_DMRs!(weather_models,search_space_size,rng=MersenneTwister(11))
+
+    (;DMRs) = weather_models
+    (;num_DMRs,base_DMRs,model_DMRs,covar_magnitude) = DMRs
+
+
+    @assert search_space_size == 2 || search_space_size == 3 "Search space size should be 2 or 3"
+
+    if(search_space_size == 2)
+        new_num_DMRs = 6
+        new_base_DMRs = [MvNormal(SVector(10000,6000),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,8000),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,10000),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,12000),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,14000),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,4000),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                ]
+    elseif(search_space_size == 3)
+        new_num_DMRs = 6
+        new_base_DMRs = [MvNormal(SVector(10000,6000,400),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,8000,600),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,10000,800),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,12000,200),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,14000,500),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                MvNormal(SVector(10000,4000,700),covar_magnitude*SMatrix{pos_size,pos_size,Float64}(I)),
+                ]
+    end
+
+    l = min(num_DMRs,new_num_DMRs)
+
+    for i in 1:l
+        base_DMRs[i] = new_base_DMRs[i]
+    end
+
+    for i in 1:num_models
+        model_i_DMRs = Dict{Int,MvNormal}()
+        for j in 1:l
+            DMR = base_DMRs[j]
+            μ = DMR.μ + SVector(10*i,10*i,10*i) #For 3d DMRs
+            σ = DMR.Σ
+            gaussian_model = MvNormal(μ,σ)
+            model_i_DMRs[j] = gaussian_model
+        end
+        models_DMRs[i] = model_i_DMRs
+    end
+
 end
