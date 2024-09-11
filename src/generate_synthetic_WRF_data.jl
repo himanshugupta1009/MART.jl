@@ -188,7 +188,8 @@ function SyntheticWRFData(;M=8,num_DMRs=3,base_model=nothing,
                         base_model_index=nothing,
                         num_time_steps=24,
                         desired_base_models=SVector(7),
-                        rng=MersenneTwister(77)
+                        rng=MersenneTwister(77),
+                        data_folder="/media/himanshu/DATA/dataset/"
                         )
     
     num_models = M
@@ -258,7 +259,7 @@ function SyntheticWRFData(;M=8,num_DMRs=3,base_model=nothing,
     end    
 
     if(base_model==nothing)
-        base_weather_model = WeatherModels(desired_base_models,num_time_steps);
+        base_weather_model = WeatherModels(desired_base_models,num_time_steps,data_folder);
         base_model_index = 1
     else
         base_weather_model = base_model

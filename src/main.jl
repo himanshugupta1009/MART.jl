@@ -235,7 +235,8 @@ ns = 6
 weather_models = WeatherModels(dm,ns);
 
 nm=36
-weather_models = SyntheticWRFData(M=nm,num_DMRs=8,desired_base_models=SVector(25));
+weather_models = SyntheticWRFData(M=nm,num_DMRs=8,desired_base_models=SVector(7));
+weather_models = SyntheticWRFData(M=nm,num_DMRs=8,desired_base_models=SVector(7),data_folder="/media/himanshu_storage/MART/dataset/");
 noise_mag = 2500.0
 noise_covar = SMatrix{3,3}(noise_mag*[
         1.0 0 0;
