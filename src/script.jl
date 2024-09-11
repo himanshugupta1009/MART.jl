@@ -152,7 +152,7 @@ c,histogram
 
 ############### Run Straight Line UAV Policy ###############
 
-num_experiments = 1000
+num_experiments = 100
 b_arrays = Array{Any,1}(undef,num_experiments)
 for j in 1:num_experiments
     println("Running Experiment ",j)
@@ -161,7 +161,9 @@ for j in 1:num_experiments
     y = rand(50_000.0:150_000.0)
     z = rand(2_000.0:3_000.0)
     start_state = SVector(x,y,z,pi/2,0.0)
-    s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,:random);
+    start_state = SVector(5_000.0,5_000.0,400.0,pi/2,0.0);
+    set_DMRs!(weather_models, MersenneTwister())
+    s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,nm,:mcts);
     b_arrays[j] = (j=>b)
 end
 
@@ -240,5 +242,25 @@ end
 #=
 
 bar_plot([0.1:0.1:1.0...], histogram)
+
+=#
+
+
+#=
+
+num_experiments = 100
+b_arrays = Array{Any,1}(undef,num_experiments)
+Threads.@threads for i in 1:num_experiments
+    println("Running Experiment ",j)
+    # s,o,a,b = run_experiment(sim_details,start_state,:sl);
+    x = rand(50_000.0:150_000.0)
+    y = rand(50_000.0:150_000.0)
+    z = rand(2_000.0:3_000.0)
+    start_state = SVector(x,y,z,pi/2,0.0)
+    start_state = SVector(1_000.0,1_000.0,400.0,pi/2,0.0);
+    set_DMRs!(weather_models, MersenneTwister())
+    s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,nm,:mcts);
+    b_arrays[j] = (j=>b)
+end
 
 =#
