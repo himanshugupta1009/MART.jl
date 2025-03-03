@@ -628,6 +628,7 @@ function visualize_simulation_belief(b,true_model_num,start_index,end_index)
     time_step = b[start_index+1][1] - b[start_index][1]
     num_models = length(b[1][2])
     x_axis = collect( (start_index-1)*time_step:time_step:((end_index-1)*time_step) )
+    x_axis_tick_points = collect(0:200:1800)
     
     max_y_val = maximum([maximum(b[i][2]) for i in start_index:end_index])
     partition_val = (max_y_val-0.0)/10.0
@@ -636,30 +637,36 @@ function visualize_simulation_belief(b,true_model_num,start_index,end_index)
 
     snapshot = plot(
         # aspect_ratio=:equal,
-        size=(800,800),
-        dpi = 100,
-        legend=true,
-        gridlinewidth=2.0,
+        size=(1300,500),
+        dpi = 1000,
+        # legend=:top,
+        legend=false,
+        grid=false,
+        gridlinewidth=0.5,
+        gridalpha=0.1,
         # gridstyle=:dash,
         axis=true,
-        gridalpha=0.0,
-        xticks=x_axis,
-        tickfontsize=4,
-        yticks=label_y_axis,
-        xlabel="Time (s)",
-        ylabel="Probability Value",
-        title="Belief over all the models with time",
+        xticks=x_axis_tick_points,
+        xtickfontsize=21,
+        # tickfontsize=4,
+        # yticks=label_y_axis,
+        yticks=0.0:0.2:1.0,
+        ytickfontsize=23,
+        xlabel="\n",
+        # ylabel="Probability Value",
+        # title="Belief over all the models with time",
         )
 
     for m in 1:num_models
         y_axis = [b[i][2][m] for i in 1:num_timesteps]
         if(m == true_model_num)
-            plot!(snapshot,x_axis,y_axis,label="Model $m",color=:black,linewidth=3.0)
+            plot!(snapshot,x_axis,y_axis,label="Model $m",color=:black,linewidth=5.0)
         else
-            plot!(snapshot,x_axis,y_axis,label="Model $m")
+            plot!(snapshot,x_axis,y_axis,label="Model $m",linewidth=2.0)
         end
     end
     display(snapshot)
+    return snapshot
 end
 
 
