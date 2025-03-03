@@ -71,7 +71,7 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
         initial_uav_action, info = action_info(planner, initial_mdp_state);
         # inchrome(D3Tree(info[:tree]))
     elseif(uav_policy_type == :random)  #Random
-        initial_uav_action = rand(POMDPs.actions(mart_mdp))
+        initial_uav_action = rand(POMDPs.actions(mart_mdp,initial_mdp_state))
     elseif(uav_policy_type == :sl) #Straight Line
         initial_uav_action = MARTBeliefMDPAction(straight_line_Va,0.0,0.0)
     else
@@ -177,7 +177,7 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
                 planner = solve(mcts_solver,mart_mdp);
                 next_uav_action, info = action_info(planner, bmdp_state);
             elseif(uav_policy_type == :random)  #Random
-                next_uav_action = rand(POMDPs.actions(mart_mdp))
+                next_uav_action = rand(POMDPs.actions(mart_mdp,bmdp_state))
             elseif(uav_policy_type == :sl) #Straight Line
                 next_uav_action = MARTBeliefMDPAction(straight_line_Va,0.0,0.0)
             else
@@ -236,12 +236,15 @@ weather_models = WeatherModels(dm,ns);
 
 nm=36
 weather_models = SyntheticWRFData(M=nm,num_DMRs=8,desired_base_models=SVector(7));
-weather_models = SyntheticWRFData(M=nm,num_DMRs=8,desired_base_models=SVector(7),data_folder="/media/himanshu_storage/MART/dataset/");
-noise_mag = 2500.0
+# weather_models = SyntheticWRFData(M=nm,num_DMRs=8,
+#                             desired_base_models=SVector(26),
+#                             num_time_steps=14,
+#                             data_folder="/media/himanshu_storage/MART/dataset/");
+noise_mag = 1600.0
 noise_covar = SMatrix{3,3}(noise_mag*[
         1.0 0 0;
-        0 2/3 0;
-        0 0 1/3;
+        0 4/9 0;
+        0 0 1/9;
         ])
 function noise_func(Q,t,rng)
     N = size(Q,1)
@@ -255,7 +258,7 @@ x = rand(50_000.0:150_000.0)
 y = rand(50_000.0:150_000.0)
 z = rand(2_000.0:3_000.0)
 start_state = SVector(x,y,z,0.0,0.0)
-start_state = SVector(5_000.0,5_000.0,400.0,pi/2,0.0);
+start_state = SVector(1_000.0,1_000.0,1_000.0,pi/2,0.0);
 control_func(X,t) = SVector(10.0,0.0,0.0);
 true_model = 4;
 wind_func(X,t) = get_wind(weather_models,true_model,X,t);
@@ -263,7 +266,7 @@ obs_func(X,t) = get_observation(weather_models,true_model,X,t);
 sim_noise_func(t,rng) = noise_func(PNG.covar_matrix,t,rng);
 # sim_noise_func(t,rng) = no_noise(t,rng);
 sim_details = SimulationDetails(control_func,wind_func,sim_noise_func,obs_func,
-                            10.0,1000.0);
+                            10.0,1800.0);
 env = get_experiment_environment(0,hnr_sigma_p=10.0,hnr_sigma_t=3.0);
 s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,nm,:sl); visualize_simulation_belief(b,true_model,1,length(b))
 
