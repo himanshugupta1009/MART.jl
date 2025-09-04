@@ -43,6 +43,28 @@ function aircraft_simulate(dynamics::Function, initial_state, time_interval, ext
     # return aircraft_states
 end
 
+@inline function wrap_angle(angle)
+    return atan(sin(angle), cos(angle))  # maps to [-π, π]
+end
+
+function wrap_state!(integrator)
+    integrator.u = SVector(
+        integrator.u[1],
+        integrator.u[2],
+        integrator.u[3],
+        wrap_angle(integrator.u[4]),
+        wrap_angle(integrator.u[5])
+    )
+end
+
+function aircraft_simulate2(dynamics::Function, initial_state, time_interval, extra_parameters, save_at_value=0.1)
+
+    prob = DE.ODEProblem(dynamics,initial_state,time_interval,extra_parameters)
+    cb = DE.DiscreteCallback((u,t,integrator)->true, wrap_state!)
+    sol = DE.solve(prob, callback=cb, saveat=save_at_value)
+    return sol.u
+end
+
 #=
 true_model_num = 3
 control_func(u,t) = SVector(10.0,0.0,0.0)
@@ -64,38 +86,45 @@ hist = aircraft_simulate(aircraft_dynamics,SVector(100_000,100_000,1800,pi/6,0.0
 =#
 
 
-function waypoint_controller(state::SVector{5,Float64}, t, target, params)
+function waypoint_controller_inertial(state::SVector{5,Float64}, t, target, aircraft_params)
 
-    # --- Unpack state ---
+    #Unpack desired variables
     x, y, z, chi_a, γ_a = state
+    (; Va_nominal, Va_max, Va_margin, chi_dot_max, γ_dot_max, 
+                            k_chi, k_γ) = aircraft_params
 
-    # --- Desired direction vector ---
+    #Compute the desired direction vector
     dx, dy, dz = target[1] - x, target[2] - y, target[3] - z
     dist = sqrt(dx^2 + dy^2 + dz^2) + 1e-6  # avoid /0
 
-    # Desired course and flight path angles
+    #Desired course and flight path angles
     chi_a_des   = atan(dy, dx)
     gamma_a_des = atan(dz, sqrt(dx^2 + dy^2))
 
-    # --- Errors ---
+    #Errors
     e_chi   = atan(sin(chi_a_des - chi_a), cos(chi_a_des - chi_a)) # wrap to [-π,π]
     e_gamma = gamma_a_des - gamma_a
 
-    # --- Control laws (proportional) ---
-    chi_dot   = params[:k_chi]   * e_chi
-    gamma_dot = params[:k_gamma] * e_gamma
-
-    # Saturations
-    chi_dot   = clamp(chi_dot, -params[:chi_dot_max], params[:chi_dot_max])
-    gamma_dot = clamp(gamma_dot, -params[:gamma_dot_max], params[:gamma_dot_max])
-
-    Va_cmd = params[:Va_des]
+    #Control law
+    Va_cmd = Va_nominal
+    chi_dot   = k_chi * e_chi
+    chi_dot   = clamp(chi_dot, -chi_dot_max, chi_dot_max)
+    gamma_dot = k_γ * e_gamma
+    gamma_dot = clamp(gamma_dot, -gamma_dot_max, gamma_dot_max)
 
     return SVector(Va_cmd, chi_dot, gamma_dot)
 end
+#=
+true_model_num = 3
+control_func(u,t) = SVector(20.0,pi/180,2*pi/180)
+wind_func(X,t) = SVector(5.0,5.0,5.0)
+noise_func(t) = SVector(0.0,0.0,0.0,0.0,0.0)
+hist = aircraft_simulate(aircraft_dynamics,SVector(100_000,100_000,1800,355/360*2*pi,0.0),
+                (0.0,10.0),(control_func,wind_func,noise_func))
 
+=#
 
-function aircraft_controller(state::SVector{5,Float64},
+function waypoint_controller_air_relative(state::SVector{5,Float64},
                               t::Float64,
                               target::SVector{3,Float64},
                               params::AircraftParameters,
