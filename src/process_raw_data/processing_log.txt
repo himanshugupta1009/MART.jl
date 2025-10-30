@@ -1,0 +1,1236 @@
+[2025-10-13 16:11:04] START: /cm1out_000082.nc
+[2025-10-13 16:11:21] START: /cm1out_000082.nc
+[2025-10-13 16:11:22] ERROR: Failed to submit transfer for /cm1out_000082.nc
+[2025-10-13 16:11:22] START: /cm1out_000083.nc
+[2025-10-13 16:11:23] Submitted transfer (task_id=8ddfa41c-a881-11f0-8532-0e092d85c59b). Waiting...
+[2025-10-13 16:15:47] Processing with Julia: cm1out_000083.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000083.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000083.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000083.nc
+[2025-10-13 16:16:39] DONE: cm1out_000083.nc (raw deleted)
+[2025-10-13 16:16:39] START: /cm1out_000084.nc
+[2025-10-13 16:16:40] Submitted transfer (task_id=4af20170-a882-11f0-9991-0e092d85c59b). Waiting...
+[2025-10-13 16:19:26] Processing with Julia: cm1out_000084.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000084.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000084.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000084.nc
+[2025-10-13 16:20:16] DONE: cm1out_000084.nc (raw deleted)
+[2025-10-13 16:20:16] START: /cm1out_000085.nc
+[2025-10-13 16:20:17] Submitted transfer (task_id=cc346337-a882-11f0-9b95-0affdd0cd947). Waiting...
+[2025-10-13 16:22:59] Processing with Julia: cm1out_000085.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000085.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000085.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000085.nc
+[2025-10-13 16:23:49] DONE: cm1out_000085.nc (raw deleted)
+[2025-10-13 16:23:49] START: /cm1out_000086.nc
+[2025-10-13 16:23:51] Submitted transfer (task_id=4b7c74af-a883-11f0-905f-0e092d85c59b). Waiting...
+[2025-10-13 16:26:32] Processing with Julia: cm1out_000086.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000086.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000086.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000086.nc
+[2025-10-13 16:27:21] DONE: cm1out_000086.nc (raw deleted)
+[2025-10-13 16:27:21] START: /cm1out_000087.nc
+[2025-10-13 16:27:22] Submitted transfer (task_id=c96f0e43-a883-11f0-bd15-0e092d85c59b). Waiting...
+[2025-10-13 16:30:04] Processing with Julia: cm1out_000087.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000087.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000087.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000087.nc
+[2025-10-13 16:30:54] DONE: cm1out_000087.nc (raw deleted)
+[2025-10-13 16:30:54] START: /cm1out_000088.nc
+[2025-10-13 16:30:55] Submitted transfer (task_id=482ec27c-a884-11f0-8999-027493648695). Waiting...
+[2025-10-13 16:33:37] Processing with Julia: cm1out_000088.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000088.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000088.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000088.nc
+[2025-10-13 16:34:27] DONE: cm1out_000088.nc (raw deleted)
+[2025-10-13 16:34:27] START: /cm1out_000089.nc
+[2025-10-13 16:34:28] Submitted transfer (task_id=c7666de9-a884-11f0-af0f-0e092d85c59b). Waiting...
+[2025-10-13 16:37:10] Processing with Julia: cm1out_000089.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000089.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000089.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000089.nc
+[2025-10-13 16:38:00] DONE: cm1out_000089.nc (raw deleted)
+[2025-10-13 16:38:00] START: /cm1out_000090.nc
+[2025-10-13 16:38:02] Submitted transfer (task_id=46a8c32c-a885-11f0-98bb-0e092d85c59b). Waiting...
+[2025-10-13 16:40:46] Processing with Julia: cm1out_000090.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000090.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000090.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000090.nc
+[2025-10-13 16:41:35] DONE: cm1out_000090.nc (raw deleted)
+[2025-10-13 16:41:35] START: /cm1out_000091.nc
+[2025-10-13 16:41:37] Submitted transfer (task_id=c6d482d0-a885-11f0-9f84-027493648695). Waiting...
+[2025-10-13 16:44:20] Processing with Julia: cm1out_000091.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000091.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000091.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000091.nc
+[2025-10-13 16:45:09] DONE: cm1out_000091.nc (raw deleted)
+[2025-10-13 16:45:09] START: /cm1out_000092.nc
+[2025-10-13 16:45:11] Submitted transfer (task_id=466b4516-a886-11f0-95e8-0affdd0cd947). Waiting...
+[2025-10-13 16:47:52] Processing with Julia: cm1out_000092.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000092.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000092.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000092.nc
+[2025-10-13 16:48:42] DONE: cm1out_000092.nc (raw deleted)
+[2025-10-13 16:48:42] START: /cm1out_000093.nc
+[2025-10-13 16:48:43] Submitted transfer (task_id=c4fa74d6-a886-11f0-ad6b-0e092d85c59b). Waiting...
+[2025-10-13 16:51:26] Processing with Julia: cm1out_000093.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000093.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000093.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000093.nc
+[2025-10-13 16:52:15] DONE: cm1out_000093.nc (raw deleted)
+[2025-10-13 16:52:15] START: /cm1out_000094.nc
+[2025-10-13 16:52:16] Submitted transfer (task_id=441a3dc5-a887-11f0-8522-0e092d85c59b). Waiting...
+[2025-10-13 16:54:59] Processing with Julia: cm1out_000094.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000094.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000094.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000094.nc
+[2025-10-13 16:55:50] DONE: cm1out_000094.nc (raw deleted)
+[2025-10-13 16:55:50] START: /cm1out_000095.nc
+[2025-10-13 16:55:51] Submitted transfer (task_id=c3e460f0-a887-11f0-9c31-0e092d85c59b). Waiting...
+[2025-10-13 16:58:35] Processing with Julia: cm1out_000095.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000095.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000095.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000095.nc
+[2025-10-13 16:59:24] DONE: cm1out_000095.nc (raw deleted)
+[2025-10-13 16:59:24] START: /cm1out_000096.nc
+[2025-10-13 16:59:26] Submitted transfer (task_id=4406234a-a888-11f0-a0c6-0e092d85c59b). Waiting...
+[2025-10-13 17:02:13] Processing with Julia: cm1out_000096.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000096.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000096.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000096.nc
+[2025-10-13 17:03:01] DONE: cm1out_000096.nc (raw deleted)
+[2025-10-13 17:03:01] START: /cm1out_000097.nc
+[2025-10-13 17:03:03] Submitted transfer (task_id=c5409f1b-a888-11f0-ad36-0affdd0cd947). Waiting...
+[2025-10-13 17:05:48] Processing with Julia: cm1out_000097.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000097.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000097.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000097.nc
+[2025-10-13 17:06:36] DONE: cm1out_000097.nc (raw deleted)
+[2025-10-13 17:06:36] START: /cm1out_000098.nc
+[2025-10-13 17:06:37] Submitted transfer (task_id=455b2397-a889-11f0-82ba-027493648695). Waiting...
+[2025-10-13 17:09:20] Processing with Julia: cm1out_000098.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000098.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000098.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000098.nc
+[2025-10-13 17:10:08] DONE: cm1out_000098.nc (raw deleted)
+[2025-10-13 17:10:08] START: /cm1out_000099.nc
+[2025-10-13 17:10:09] Submitted transfer (task_id=c36ab3da-a889-11f0-9185-0e092d85c59b). Waiting...
+[2025-10-13 17:12:52] Processing with Julia: cm1out_000099.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000099.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000099.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000099.nc
+[2025-10-13 17:13:42] DONE: cm1out_000099.nc (raw deleted)
+[2025-10-13 17:13:42] START: /cm1out_000100.nc
+[2025-10-13 17:13:43] Submitted transfer (task_id=42ee071c-a88a-11f0-8507-027493648695). Waiting...
+[2025-10-13 17:16:27] Processing with Julia: cm1out_000100.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000100.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000100.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000100.nc
+[2025-10-13 17:17:18] DONE: cm1out_000100.nc (raw deleted)
+[2025-10-13 17:17:18] START: /cm1out_000101.nc
+[2025-10-13 17:17:19] Submitted transfer (task_id=c3bda1fc-a88a-11f0-b56d-0e092d85c59b). Waiting...
+[2025-10-13 17:20:02] Processing with Julia: cm1out_000101.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000101.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000101.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000101.nc
+[2025-10-13 17:20:23] DONE: cm1out_000101.nc (raw deleted)
+[2025-10-13 17:20:23] START: /cm1out_000102.nc
+[2025-10-13 17:20:24] Submitted transfer (task_id=323a77a1-a88b-11f0-9e47-027493648695). Waiting...
+[2025-10-13 17:23:06] Processing with Julia: cm1out_000102.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000102.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000102.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000102.nc
+[2025-10-13 17:23:27] DONE: cm1out_000102.nc (raw deleted)
+[2025-10-13 17:23:27] START: /cm1out_000103.nc
+[2025-10-13 17:23:29] Submitted transfer (task_id=a00ff1a4-a88b-11f0-92e8-0affdd0cd947). Waiting...
+[2025-10-13 17:26:12] Processing with Julia: cm1out_000103.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000103.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000103.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000103.nc
+[2025-10-13 17:26:34] DONE: cm1out_000103.nc (raw deleted)
+[2025-10-13 17:26:34] START: /cm1out_000104.nc
+[2025-10-13 17:26:35] Submitted transfer (task_id=0efd96b5-a88c-11f0-a92c-0e092d85c59b). Waiting...
+[2025-10-13 17:29:22] Processing with Julia: cm1out_000104.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000104.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000104.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000104.nc
+[2025-10-13 17:29:43] DONE: cm1out_000104.nc (raw deleted)
+[2025-10-13 17:29:43] START: /cm1out_000105.nc
+[2025-10-13 17:29:44] Submitted transfer (task_id=7ff95be3-a88c-11f0-bf5c-0affdd0cd947). Waiting...
+[2025-10-13 17:32:32] Processing with Julia: cm1out_000105.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000105.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000105.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000105.nc
+[2025-10-13 17:32:53] DONE: cm1out_000105.nc (raw deleted)
+[2025-10-13 17:32:53] START: /cm1out_000106.nc
+[2025-10-13 17:32:54] Submitted transfer (task_id=f1554163-a88c-11f0-954e-0affdd0cd947). Waiting...
+[2025-10-13 17:35:38] Processing with Julia: cm1out_000106.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000106.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000106.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000106.nc
+[2025-10-13 17:36:00] DONE: cm1out_000106.nc (raw deleted)
+[2025-10-13 17:36:00] START: /cm1out_000107.nc
+[2025-10-13 17:36:01] Submitted transfer (task_id=609b1c95-a88d-11f0-92a5-0affdd0cd947). Waiting...
+[2025-10-13 17:38:47] Processing with Julia: cm1out_000107.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000107.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000107.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000107.nc
+[2025-10-13 17:39:08] DONE: cm1out_000107.nc (raw deleted)
+[2025-10-13 17:39:08] START: /cm1out_000108.nc
+[2025-10-13 17:39:09] Submitted transfer (task_id=d072323b-a88d-11f0-b492-027493648695). Waiting...
+[2025-10-13 17:41:51] Processing with Julia: cm1out_000108.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000108.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000108.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000108.nc
+[2025-10-13 17:42:13] DONE: cm1out_000108.nc (raw deleted)
+[2025-10-13 17:42:13] START: /cm1out_000109.nc
+[2025-10-13 17:42:14] Submitted transfer (task_id=3ea3ccfa-a88e-11f0-9039-0e092d85c59b). Waiting...
+[2025-10-13 17:44:56] Processing with Julia: cm1out_000109.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000109.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000109.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000109.nc
+[2025-10-13 17:45:18] DONE: cm1out_000109.nc (raw deleted)
+[2025-10-13 17:45:18] START: /cm1out_000110.nc
+[2025-10-13 17:45:19] Submitted transfer (task_id=acf6631d-a88e-11f0-8300-0affdd0cd947). Waiting...
+[2025-10-13 17:48:04] Processing with Julia: cm1out_000110.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000110.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000110.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000110.nc
+[2025-10-13 17:48:25] DONE: cm1out_000110.nc (raw deleted)
+[2025-10-13 17:48:25] START: /cm1out_000111.nc
+[2025-10-13 17:48:26] Submitted transfer (task_id=1c6c6484-a88f-11f0-b871-0affdd0cd947). Waiting...
+[2025-10-13 17:51:09] Processing with Julia: cm1out_000111.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000111.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000111.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000111.nc
+[2025-10-13 17:51:30] DONE: cm1out_000111.nc (raw deleted)
+[2025-10-13 17:51:30] START: /cm1out_000112.nc
+[2025-10-13 17:51:31] Submitted transfer (task_id=8ac1e084-a88f-11f0-a5aa-027493648695). Waiting...
+[2025-10-13 17:54:14] Processing with Julia: cm1out_000112.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000112.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000112.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000112.nc
+[2025-10-13 17:54:35] DONE: cm1out_000112.nc (raw deleted)
+[2025-10-13 17:54:35] START: /cm1out_000113.nc
+[2025-10-13 17:54:36] Submitted transfer (task_id=f8f5ee01-a88f-11f0-b18c-0affdd0cd947). Waiting...
+[2025-10-13 17:57:20] Processing with Julia: cm1out_000113.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000113.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000113.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000113.nc
+[2025-10-13 17:57:42] DONE: cm1out_000113.nc (raw deleted)
+[2025-10-13 17:57:42] START: /cm1out_000114.nc
+[2025-10-13 17:57:44] Submitted transfer (task_id=68eb54e3-a890-11f0-a6d4-0e092d85c59b). Waiting...
+[2025-10-13 18:00:27] Processing with Julia: cm1out_000114.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000114.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000114.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000114.nc
+[2025-10-13 18:00:49] DONE: cm1out_000114.nc (raw deleted)
+[2025-10-13 18:00:49] START: /cm1out_000115.nc
+[2025-10-13 18:00:50] Submitted transfer (task_id=d7fdebfb-a890-11f0-92e5-0affdd0cd947). Waiting...
+[2025-10-13 18:03:35] Processing with Julia: cm1out_000115.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000115.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000115.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000115.nc
+[2025-10-13 18:03:57] DONE: cm1out_000115.nc (raw deleted)
+[2025-10-13 18:03:57] START: /cm1out_000116.nc
+[2025-10-13 18:03:58] Submitted transfer (task_id=4804e5df-a891-11f0-99d6-0affdd0cd947). Waiting...
+[2025-10-13 18:06:43] Processing with Julia: cm1out_000116.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000116.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000116.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000116.nc
+[2025-10-13 18:07:04] DONE: cm1out_000116.nc (raw deleted)
+[2025-10-13 18:07:04] START: /cm1out_000117.nc
+[2025-10-13 18:07:05] Submitted transfer (task_id=b795dc0b-a891-11f0-8bbc-0affdd0cd947). Waiting...
+[2025-10-13 18:09:50] Processing with Julia: cm1out_000117.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000117.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000117.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000117.nc
+[2025-10-13 18:10:11] DONE: cm1out_000117.nc (raw deleted)
+[2025-10-13 18:10:11] START: /cm1out_000118.nc
+[2025-10-13 18:10:12] Submitted transfer (task_id=26d07445-a892-11f0-9ebe-0affdd0cd947). Waiting...
+[2025-10-13 18:12:55] Processing with Julia: cm1out_000118.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000118.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000118.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000118.nc
+[2025-10-13 18:13:16] DONE: cm1out_000118.nc (raw deleted)
+[2025-10-13 18:13:16] START: /cm1out_000119.nc
+[2025-10-13 18:13:17] Submitted transfer (task_id=9509005b-a892-11f0-9399-0affdd0cd947). Waiting...
+[2025-10-13 18:16:02] Processing with Julia: cm1out_000119.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000119.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000119.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000119.nc
+[2025-10-13 18:16:24] DONE: cm1out_000119.nc (raw deleted)
+[2025-10-13 18:16:24] START: /cm1out_000120.nc
+[2025-10-13 18:16:25] Submitted transfer (task_id=0580b0f2-a893-11f0-b80b-0affdd0cd947). Waiting...
+[2025-10-13 18:19:09] Processing with Julia: cm1out_000120.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000120.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000120.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000120.nc
+[2025-10-13 18:19:30] DONE: cm1out_000120.nc (raw deleted)
+[2025-10-13 18:19:30] START: /cm1out_000121.nc
+[2025-10-13 18:19:31] Submitted transfer (task_id=7465908c-a893-11f0-a3a5-027493648695). Waiting...
+[2025-10-13 18:22:16] Processing with Julia: cm1out_000121.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000121.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000121.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000121.nc
+[2025-10-13 18:22:37] DONE: cm1out_000121.nc (raw deleted)
+[2025-10-13 18:22:37] START: /cm1out_000122.nc
+[2025-10-13 18:22:38] Submitted transfer (task_id=e3b4c574-a893-11f0-a086-027493648695). Waiting...
+[2025-10-13 18:25:27] Processing with Julia: cm1out_000122.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000122.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000122.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000122.nc
+[2025-10-13 18:25:47] DONE: cm1out_000122.nc (raw deleted)
+[2025-10-13 18:25:47] START: /cm1out_000123.nc
+[2025-10-13 18:25:50] Submitted transfer (task_id=55515576-a894-11f0-9614-0e092d85c59b). Waiting...
+[2025-10-13 18:28:38] Processing with Julia: cm1out_000123.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000123.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000123.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000123.nc
+[2025-10-13 18:28:59] DONE: cm1out_000123.nc (raw deleted)
+[2025-10-13 18:28:59] START: /cm1out_000124.nc
+[2025-10-13 18:29:00] Submitted transfer (task_id=c72bbe5c-a894-11f0-8758-027493648695). Waiting...
+[2025-10-13 18:31:46] Processing with Julia: cm1out_000124.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000124.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000124.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000124.nc
+[2025-10-13 18:32:07] DONE: cm1out_000124.nc (raw deleted)
+[2025-10-13 18:32:07] START: /cm1out_000125.nc
+[2025-10-13 18:32:08] Submitted transfer (task_id=37757065-a895-11f0-b12b-0affdd0cd947). Waiting...
+[2025-10-13 18:34:50] Processing with Julia: cm1out_000125.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000125.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000125.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000125.nc
+[2025-10-13 18:35:11] DONE: cm1out_000125.nc (raw deleted)
+[2025-10-13 18:35:11] START: /cm1out_000126.nc
+[2025-10-13 18:35:12] Submitted transfer (task_id=a50e8a28-a895-11f0-a923-027493648695). Waiting...
+[2025-10-13 18:37:59] Processing with Julia: cm1out_000126.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000126.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000126.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000126.nc
+[2025-10-13 18:38:20] DONE: cm1out_000126.nc (raw deleted)
+[2025-10-13 18:38:20] START: /cm1out_000127.nc
+[2025-10-13 18:38:21] Submitted transfer (task_id=15a01222-a896-11f0-b637-0e092d85c59b). Waiting...
+[2025-10-13 18:41:10] Processing with Julia: cm1out_000127.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000127.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000127.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000127.nc
+[2025-10-13 18:41:32] DONE: cm1out_000127.nc (raw deleted)
+[2025-10-13 18:41:32] START: /cm1out_000128.nc
+[2025-10-13 18:41:33] Submitted transfer (task_id=885ba553-a896-11f0-ab4c-0affdd0cd947). Waiting...
+[2025-10-13 18:44:20] Processing with Julia: cm1out_000128.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000128.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000128.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000128.nc
+[2025-10-13 18:44:40] DONE: cm1out_000128.nc (raw deleted)
+[2025-10-13 18:44:40] START: /cm1out_000129.nc
+[2025-10-13 18:44:42] Submitted transfer (task_id=f8892f65-a896-11f0-980d-027493648695). Waiting...
+[2025-10-13 18:47:25] Processing with Julia: cm1out_000129.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000129.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000129.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000129.nc
+[2025-10-13 18:47:47] DONE: cm1out_000129.nc (raw deleted)
+[2025-10-13 18:47:47] START: /cm1out_000130.nc
+[2025-10-13 18:47:48] Submitted transfer (task_id=678e66f6-a897-11f0-9413-0e092d85c59b). Waiting...
+[2025-10-13 18:50:31] Processing with Julia: cm1out_000130.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000130.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000130.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000130.nc
+[2025-10-13 18:50:52] DONE: cm1out_000130.nc (raw deleted)
+[2025-10-13 18:50:52] START: /cm1out_000131.nc
+[2025-10-13 18:50:53] Submitted transfer (task_id=d5cee86a-a897-11f0-be6a-027493648695). Waiting...
+[2025-10-13 18:53:37] Processing with Julia: cm1out_000131.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000131.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000131.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000131.nc
+[2025-10-13 18:53:57] DONE: cm1out_000131.nc (raw deleted)
+[2025-10-13 18:53:57] START: /cm1out_000132.nc
+[2025-10-13 18:53:58] Submitted transfer (task_id=446c5552-a898-11f0-8af9-0affdd0cd947). Waiting...
+[2025-10-13 18:56:40] Processing with Julia: cm1out_000132.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000132.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000132.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000132.nc
+[2025-10-13 18:57:00] DONE: cm1out_000132.nc (raw deleted)
+[2025-10-13 18:57:00] START: /cm1out_000133.nc
+[2025-10-13 18:57:01] Submitted transfer (task_id=b183cf59-a898-11f0-99d3-0affdd0cd947). Waiting...
+[2025-10-13 18:59:43] Processing with Julia: cm1out_000133.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000133.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000133.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000133.nc
+[2025-10-13 19:00:05] DONE: cm1out_000133.nc (raw deleted)
+[2025-10-13 19:00:05] START: /cm1out_000134.nc
+[2025-10-13 19:00:07] Submitted transfer (task_id=1faf9359-a899-11f0-a811-027493648695). Waiting...
+[2025-10-13 19:02:52] Processing with Julia: cm1out_000134.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000134.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000134.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000134.nc
+[2025-10-13 19:03:14] DONE: cm1out_000134.nc (raw deleted)
+[2025-10-13 19:03:14] START: /cm1out_000135.nc
+[2025-10-13 19:03:16] Submitted transfer (task_id=90b3b0e9-a899-11f0-a35d-027493648695). Waiting...
+[2025-10-13 19:06:00] Processing with Julia: cm1out_000135.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000135.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000135.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000135.nc
+[2025-10-13 19:06:20] DONE: cm1out_000135.nc (raw deleted)
+[2025-10-13 19:06:20] START: /cm1out_000136.nc
+[2025-10-13 19:06:22] Submitted transfer (task_id=ff60437b-a899-11f0-a2a4-0affdd0cd947). Waiting...
+[2025-10-13 19:09:05] Processing with Julia: cm1out_000136.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000136.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000136.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000136.nc
+[2025-10-13 19:09:25] DONE: cm1out_000136.nc (raw deleted)
+[2025-10-13 19:09:25] START: /cm1out_000137.nc
+[2025-10-13 19:09:26] Submitted transfer (task_id=6d85d4f4-a89a-11f0-b254-0affdd0cd947). Waiting...
+[2025-10-13 19:12:12] Processing with Julia: cm1out_000137.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000137.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000137.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000137.nc
+[2025-10-13 19:12:32] DONE: cm1out_000137.nc (raw deleted)
+[2025-10-13 19:12:32] START: /cm1out_000138.nc
+[2025-10-13 19:12:33] Submitted transfer (task_id=dccbc581-a89a-11f0-b067-0affdd0cd947). Waiting...
+[2025-10-13 19:15:20] Processing with Julia: cm1out_000138.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000138.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000138.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000138.nc
+[2025-10-13 19:15:40] DONE: cm1out_000138.nc (raw deleted)
+[2025-10-13 19:15:40] START: /cm1out_000139.nc
+[2025-10-13 19:15:41] Submitted transfer (task_id=4cd2a143-a89b-11f0-9a34-0affdd0cd947). Waiting...
+[2025-10-13 19:18:26] Processing with Julia: cm1out_000139.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000139.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000139.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000139.nc
+[2025-10-13 19:18:46] DONE: cm1out_000139.nc (raw deleted)
+[2025-10-13 19:18:46] START: /cm1out_000140.nc
+[2025-10-13 19:18:48] Submitted transfer (task_id=bc2850f4-a89b-11f0-9e19-027493648695). Waiting...
+[2025-10-13 19:21:39] Processing with Julia: cm1out_000140.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000140.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000140.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000140.nc
+[2025-10-13 19:21:59] DONE: cm1out_000140.nc (raw deleted)
+[2025-10-13 19:21:59] START: /cm1out_000141.nc
+[2025-10-13 19:22:00] Submitted transfer (task_id=2eda7978-a89c-11f0-a959-027493648695). Waiting...
+[2025-10-13 19:24:42] Processing with Julia: cm1out_000141.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000141.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000141.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000141.nc
+[2025-10-13 19:25:03] DONE: cm1out_000141.nc (raw deleted)
+[2025-10-13 19:25:03] START: /cm1out_000142.nc
+[2025-10-13 19:25:04] Submitted transfer (task_id=9c43d24d-a89c-11f0-871f-0affdd0cd947). Waiting...
+[2025-10-13 19:27:49] Processing with Julia: cm1out_000142.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000142.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000142.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000142.nc
+[2025-10-13 19:28:09] DONE: cm1out_000142.nc (raw deleted)
+[2025-10-13 19:28:09] START: /cm1out_000143.nc
+[2025-10-13 19:28:10] Submitted transfer (task_id=0b70240f-a89d-11f0-9173-0affdd0cd947). Waiting...
+[2025-10-13 19:30:55] Processing with Julia: cm1out_000143.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000143.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000143.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000143.nc
+[2025-10-13 19:31:15] DONE: cm1out_000143.nc (raw deleted)
+[2025-10-13 19:31:15] START: /cm1out_000144.nc
+[2025-10-13 19:31:17] Submitted transfer (task_id=7a9c2bd9-a89d-11f0-bbe0-0affdd0cd947). Waiting...
+[2025-10-13 19:34:00] Processing with Julia: cm1out_000144.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000144.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000144.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000144.nc
+[2025-10-13 19:34:20] DONE: cm1out_000144.nc (raw deleted)
+[2025-10-13 19:34:20] START: /cm1out_000145.nc
+[2025-10-13 19:34:21] Submitted transfer (task_id=e89c701b-a89d-11f0-84c2-0affdd0cd947). Waiting...
+[2025-10-13 19:37:08] Processing with Julia: cm1out_000145.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000145.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000145.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000145.nc
+[2025-10-13 19:37:28] DONE: cm1out_000145.nc (raw deleted)
+[2025-10-13 19:37:28] START: /cm1out_000146.nc
+[2025-10-13 19:37:29] Submitted transfer (task_id=585f1e14-a89e-11f0-8e27-0e092d85c59b). Waiting...
+[2025-10-13 19:40:15] Processing with Julia: cm1out_000146.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000146.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000146.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000146.nc
+[2025-10-13 19:40:35] DONE: cm1out_000146.nc (raw deleted)
+[2025-10-13 19:40:35] START: /cm1out_000147.nc
+[2025-10-13 19:40:36] Submitted transfer (task_id=c805838f-a89e-11f0-9b09-027493648695). Waiting...
+[2025-10-13 19:43:19] Processing with Julia: cm1out_000147.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000147.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000147.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000147.nc
+[2025-10-13 19:43:40] DONE: cm1out_000147.nc (raw deleted)
+[2025-10-13 19:43:40] START: /cm1out_000148.nc
+[2025-10-13 19:43:41] Submitted transfer (task_id=361d8ea7-a89f-11f0-8bdd-0affdd0cd947). Waiting...
+[2025-10-13 19:46:24] Processing with Julia: cm1out_000148.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000148.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000148.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000148.nc
+[2025-10-13 19:46:44] DONE: cm1out_000148.nc (raw deleted)
+[2025-10-13 19:46:44] START: /cm1out_000149.nc
+[2025-10-13 19:46:45] Submitted transfer (task_id=a3e2f07a-a89f-11f0-a561-027493648695). Waiting...
+[2025-10-13 19:49:28] Processing with Julia: cm1out_000149.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000149.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000149.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000149.nc
+[2025-10-13 19:49:48] DONE: cm1out_000149.nc (raw deleted)
+[2025-10-13 19:49:48] START: /cm1out_000150.nc
+[2025-10-13 19:49:50] Submitted transfer (task_id=11f6edcd-a8a0-11f0-9123-0e092d85c59b). Waiting...
+[2025-10-13 19:52:34] Processing with Julia: cm1out_000150.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000150.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000150.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000150.nc
+[2025-10-13 19:52:54] DONE: cm1out_000150.nc (raw deleted)
+[2025-10-13 19:52:54] START: /cm1out_000151.nc
+[2025-10-13 19:52:55] Submitted transfer (task_id=809f9982-a8a0-11f0-b4fc-027493648695). Waiting...
+[2025-10-13 19:55:39] Processing with Julia: cm1out_000151.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000151.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000151.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000151.nc
+[2025-10-13 19:56:00] DONE: cm1out_000151.nc (raw deleted)
+[2025-10-13 19:56:00] START: /cm1out_000152.nc
+[2025-10-13 19:56:01] Submitted transfer (task_id=ef3a5da6-a8a0-11f0-9330-027493648695). Waiting...
+[2025-10-13 19:58:48] Processing with Julia: cm1out_000152.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000152.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000152.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000152.nc
+[2025-10-13 19:59:08] DONE: cm1out_000152.nc (raw deleted)
+[2025-10-13 19:59:08] START: /cm1out_000153.nc
+[2025-10-13 19:59:09] Submitted transfer (task_id=5f79324e-a8a1-11f0-bd9e-0e092d85c59b). Waiting...
+[2025-10-13 20:01:55] Processing with Julia: cm1out_000153.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000153.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000153.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000153.nc
+[2025-10-13 20:02:16] DONE: cm1out_000153.nc (raw deleted)
+[2025-10-13 20:02:16] START: /cm1out_000154.nc
+[2025-10-13 20:02:17] Submitted transfer (task_id=cf9c3cb1-a8a1-11f0-85b1-027493648695). Waiting...
+[2025-10-13 20:05:04] Processing with Julia: cm1out_000154.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000154.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000154.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000154.nc
+[2025-10-13 20:05:24] DONE: cm1out_000154.nc (raw deleted)
+[2025-10-13 20:05:24] START: /cm1out_000155.nc
+[2025-10-13 20:05:25] Submitted transfer (task_id=3f906221-a8a2-11f0-ac72-027493648695). Waiting...
+[2025-10-13 20:08:10] Processing with Julia: cm1out_000155.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000155.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000155.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000155.nc
+[2025-10-13 20:08:30] DONE: cm1out_000155.nc (raw deleted)
+[2025-10-13 20:08:30] START: /cm1out_000156.nc
+[2025-10-13 20:08:31] Submitted transfer (task_id=ae6efaf9-a8a2-11f0-8ac9-027493648695). Waiting...
+[2025-10-13 20:11:16] Processing with Julia: cm1out_000156.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000156.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000156.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000156.nc
+[2025-10-13 20:11:36] DONE: cm1out_000156.nc (raw deleted)
+[2025-10-13 20:11:36] START: /cm1out_000157.nc
+[2025-10-13 20:11:37] Submitted transfer (task_id=1d54605b-a8a3-11f0-b180-0affdd0cd947). Waiting...
+[2025-10-13 20:14:20] Processing with Julia: cm1out_000157.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000157.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000157.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000157.nc
+[2025-10-13 20:14:40] DONE: cm1out_000157.nc (raw deleted)
+[2025-10-13 20:14:40] START: /cm1out_000158.nc
+[2025-10-13 20:14:41] Submitted transfer (task_id=8b01a94f-a8a3-11f0-9871-027493648695). Waiting...
+[2025-10-13 20:17:25] Processing with Julia: cm1out_000158.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000158.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000158.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000158.nc
+[2025-10-13 20:17:45] DONE: cm1out_000158.nc (raw deleted)
+[2025-10-13 20:17:45] START: /cm1out_000159.nc
+[2025-10-13 20:17:46] Submitted transfer (task_id=f914ef9a-a8a3-11f0-a105-027493648695). Waiting...
+[2025-10-13 20:20:31] Processing with Julia: cm1out_000159.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000159.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000159.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000159.nc
+[2025-10-13 20:20:52] DONE: cm1out_000159.nc (raw deleted)
+[2025-10-13 20:20:52] START: /cm1out_000160.nc
+[2025-10-13 20:20:53] Submitted transfer (task_id=68762c11-a8a4-11f0-a041-027493648695). Waiting...
+[2025-10-13 20:23:38] Processing with Julia: cm1out_000160.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000160.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000160.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000160.nc
+[2025-10-13 20:23:58] DONE: cm1out_000160.nc (raw deleted)
+[2025-10-13 20:23:58] START: /cm1out_000161.nc
+[2025-10-13 20:23:59] Submitted transfer (task_id=d79d1b0b-a8a4-11f0-9ec0-0affdd0cd947). Waiting...
+[2025-10-13 20:26:44] Processing with Julia: cm1out_000161.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000161.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000161.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000161.nc
+[2025-10-13 20:27:05] DONE: cm1out_000161.nc (raw deleted)
+[2025-10-13 20:27:05] START: /cm1out_000162.nc
+[2025-10-13 20:27:06] Submitted transfer (task_id=46ed8330-a8a5-11f0-a18c-027493648695). Waiting...
+[2025-10-13 20:29:56] Processing with Julia: cm1out_000162.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000162.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000162.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000162.nc
+[2025-10-13 20:30:16] DONE: cm1out_000162.nc (raw deleted)
+[2025-10-13 20:30:17] START: /cm1out_000163.nc
+[2025-10-13 20:30:18] Submitted transfer (task_id=b93a00c2-a8a5-11f0-911b-027493648695). Waiting...
+[2025-10-13 20:33:05] Processing with Julia: cm1out_000163.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000163.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000163.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000163.nc
+[2025-10-13 20:33:25] DONE: cm1out_000163.nc (raw deleted)
+[2025-10-13 20:33:25] START: /cm1out_000164.nc
+[2025-10-13 20:33:27] Submitted transfer (task_id=29c1001b-a8a6-11f0-a57e-0affdd0cd947). Waiting...
+[2025-10-13 20:36:10] Processing with Julia: cm1out_000164.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000164.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000164.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000164.nc
+[2025-10-13 20:36:30] DONE: cm1out_000164.nc (raw deleted)
+[2025-10-13 20:36:30] START: /cm1out_000165.nc
+[2025-10-13 20:36:32] Submitted transfer (task_id=97ef565c-a8a6-11f0-ba02-0e092d85c59b). Waiting...
+[2025-10-13 20:39:15] Processing with Julia: cm1out_000165.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000165.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000165.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000165.nc
+[2025-10-13 20:39:35] DONE: cm1out_000165.nc (raw deleted)
+[2025-10-13 20:39:36] START: /cm1out_000166.nc
+[2025-10-13 20:39:37] Submitted transfer (task_id=0655846f-a8a7-11f0-905d-027493648695). Waiting...
+[2025-10-13 20:42:25] Processing with Julia: cm1out_000166.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000166.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000166.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000166.nc
+[2025-10-13 20:42:45] DONE: cm1out_000166.nc (raw deleted)
+[2025-10-13 20:42:45] START: /cm1out_000167.nc
+[2025-10-13 20:42:47] Submitted transfer (task_id=778c2b22-a8a7-11f0-bf94-0affdd0cd947). Waiting...
+[2025-10-13 20:45:34] Processing with Julia: cm1out_000167.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000167.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000167.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000167.nc
+[2025-10-13 20:45:54] DONE: cm1out_000167.nc (raw deleted)
+[2025-10-13 20:45:54] START: /cm1out_000168.nc
+[2025-10-13 20:45:55] Submitted transfer (task_id=e7faec73-a8a7-11f0-b732-027493648695). Waiting...
+[2025-10-13 20:48:42] Processing with Julia: cm1out_000168.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000168.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000168.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000168.nc
+[2025-10-13 20:49:03] DONE: cm1out_000168.nc (raw deleted)
+[2025-10-13 20:49:03] START: /cm1out_000169.nc
+[2025-10-13 20:49:04] Submitted transfer (task_id=584569d3-a8a8-11f0-87c1-0e092d85c59b). Waiting...
+[2025-10-13 20:51:50] Processing with Julia: cm1out_000169.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000169.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000169.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000169.nc
+[2025-10-13 20:52:10] DONE: cm1out_000169.nc (raw deleted)
+[2025-10-13 20:52:10] START: /cm1out_000170.nc
+[2025-10-13 20:52:11] Submitted transfer (task_id=c8269db2-a8a8-11f0-85f2-0e092d85c59b). Waiting...
+[2025-10-13 20:54:58] Processing with Julia: cm1out_000170.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000170.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000170.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000170.nc
+[2025-10-13 20:55:18] DONE: cm1out_000170.nc (raw deleted)
+[2025-10-13 20:55:18] START: /cm1out_000171.nc
+[2025-10-13 20:55:19] Submitted transfer (task_id=38128682-a8a9-11f0-80e0-0affdd0cd947). Waiting...
+[2025-10-13 20:58:04] Processing with Julia: cm1out_000171.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000171.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000171.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000171.nc
+[2025-10-13 20:58:24] DONE: cm1out_000171.nc (raw deleted)
+[2025-10-13 20:58:24] START: /cm1out_000172.nc
+[2025-10-13 20:58:25] Submitted transfer (task_id=a7274819-a8a9-11f0-8be5-0e092d85c59b). Waiting...
+[2025-10-13 21:01:10] Processing with Julia: cm1out_000172.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000172.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000172.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000172.nc
+[2025-10-13 21:01:31] DONE: cm1out_000172.nc (raw deleted)
+[2025-10-13 21:01:31] START: /cm1out_000173.nc
+[2025-10-13 21:01:32] Submitted transfer (task_id=1626fc11-a8aa-11f0-980a-0e092d85c59b). Waiting...
+[2025-10-13 21:04:15] Processing with Julia: cm1out_000173.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000173.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000173.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000173.nc
+[2025-10-13 21:04:35] DONE: cm1out_000173.nc (raw deleted)
+[2025-10-13 21:04:35] START: /cm1out_000174.nc
+[2025-10-13 21:04:36] Submitted transfer (task_id=843bf312-a8aa-11f0-b47b-0e092d85c59b). Waiting...
+[2025-10-13 21:07:17] Processing with Julia: cm1out_000174.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000174.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000174.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000174.nc
+[2025-10-13 21:07:37] DONE: cm1out_000174.nc (raw deleted)
+[2025-10-13 21:07:37] START: /cm1out_000175.nc
+[2025-10-13 21:07:39] Submitted transfer (task_id=f0eb4131-a8aa-11f0-9f68-0e092d85c59b). Waiting...
+[2025-10-13 21:10:24] Processing with Julia: cm1out_000175.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000175.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000175.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000175.nc
+[2025-10-13 21:10:45] DONE: cm1out_000175.nc (raw deleted)
+[2025-10-13 21:10:45] START: /cm1out_000176.nc
+[2025-10-13 21:10:46] Submitted transfer (task_id=6088b504-a8ab-11f0-bcca-0affdd0cd947). Waiting...
+[2025-10-13 21:13:33] Processing with Julia: cm1out_000176.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000176.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000176.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000176.nc
+[2025-10-13 21:13:53] DONE: cm1out_000176.nc (raw deleted)
+[2025-10-13 21:13:53] START: /cm1out_000177.nc
+[2025-10-13 21:13:54] Submitted transfer (task_id=d0a2afef-a8ab-11f0-8869-0affdd0cd947). Waiting...
+[2025-10-13 21:16:40] Processing with Julia: cm1out_000177.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000177.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000177.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000177.nc
+[2025-10-13 21:17:00] DONE: cm1out_000177.nc (raw deleted)
+[2025-10-13 21:17:00] START: /cm1out_000178.nc
+[2025-10-13 21:17:01] Submitted transfer (task_id=4015f392-a8ac-11f0-909f-027493648695). Waiting...
+[2025-10-13 21:19:44] Processing with Julia: cm1out_000178.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000178.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000178.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000178.nc
+[2025-10-13 21:20:04] DONE: cm1out_000178.nc (raw deleted)
+[2025-10-13 21:20:04] START: /cm1out_000179.nc
+[2025-10-13 21:20:05] Submitted transfer (task_id=adfdaab2-a8ac-11f0-94a5-0e092d85c59b). Waiting...
+[2025-10-13 21:22:52] Processing with Julia: cm1out_000179.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000179.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000179.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000179.nc
+[2025-10-13 21:23:12] DONE: cm1out_000179.nc (raw deleted)
+[2025-10-13 21:23:12] START: /cm1out_000180.nc
+[2025-10-13 21:23:13] Submitted transfer (task_id=1dd47cad-a8ad-11f0-b609-027493648695). Waiting...
+[2025-10-13 21:25:57] Processing with Julia: cm1out_000180.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000180.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000180.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000180.nc
+[2025-10-13 21:26:17] DONE: cm1out_000180.nc (raw deleted)
+[2025-10-13 21:26:17] START: /cm1out_000181.nc
+[2025-10-13 21:26:18] Submitted transfer (task_id=8be2b4dc-a8ad-11f0-9670-0e092d85c59b). Waiting...
+[2025-10-13 21:29:03] Processing with Julia: cm1out_000181.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000181.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000181.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000181.nc
+[2025-10-13 21:29:23] DONE: cm1out_000181.nc (raw deleted)
+[2025-10-13 21:29:23] START: /cm1out_000182.nc
+[2025-10-13 21:29:24] Submitted transfer (task_id=faf7621c-a8ad-11f0-ba83-0e092d85c59b). Waiting...
+[2025-10-13 21:32:08] Processing with Julia: cm1out_000182.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000182.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000182.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000182.nc
+[2025-10-13 21:32:28] DONE: cm1out_000182.nc (raw deleted)
+[2025-10-13 21:32:28] START: /cm1out_000183.nc
+[2025-10-13 21:32:29] Submitted transfer (task_id=69671bd3-a8ae-11f0-8147-0affdd0cd947). Waiting...
+[2025-10-13 21:35:14] Processing with Julia: cm1out_000183.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000183.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000183.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000183.nc
+[2025-10-13 21:35:34] DONE: cm1out_000183.nc (raw deleted)
+[2025-10-13 21:35:34] START: /cm1out_000184.nc
+[2025-10-13 21:35:35] Submitted transfer (task_id=d814ad69-a8ae-11f0-a17a-0affdd0cd947). Waiting...
+[2025-10-13 21:38:19] Processing with Julia: cm1out_000184.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000184.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000184.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000184.nc
+[2025-10-13 21:38:39] DONE: cm1out_000184.nc (raw deleted)
+[2025-10-13 21:38:40] START: /cm1out_000185.nc
+[2025-10-13 21:38:41] Submitted transfer (task_id=46c722fe-a8af-11f0-96d0-027493648695). Waiting...
+[2025-10-13 21:41:24] Processing with Julia: cm1out_000185.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000185.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000185.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000185.nc
+[2025-10-13 21:41:44] DONE: cm1out_000185.nc (raw deleted)
+[2025-10-13 21:41:44] START: /cm1out_000186.nc
+[2025-10-13 21:41:45] Submitted transfer (task_id=b4b12e83-a8af-11f0-b417-027493648695). Waiting...
+[2025-10-13 21:44:33] Processing with Julia: cm1out_000186.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000186.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000186.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000186.nc
+[2025-10-13 21:44:53] DONE: cm1out_000186.nc (raw deleted)
+[2025-10-13 21:44:53] START: /cm1out_000187.nc
+[2025-10-13 21:44:54] Submitted transfer (task_id=2581edb6-a8b0-11f0-b269-0affdd0cd947). Waiting...
+[2025-10-13 21:47:41] Processing with Julia: cm1out_000187.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000187.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000187.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000187.nc
+[2025-10-13 21:48:02] DONE: cm1out_000187.nc (raw deleted)
+[2025-10-13 21:48:02] START: /cm1out_000188.nc
+[2025-10-13 21:48:03] Submitted transfer (task_id=95ce20c7-a8b0-11f0-9504-0affdd0cd947). Waiting...
+[2025-10-13 21:50:47] Processing with Julia: cm1out_000188.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000188.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000188.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000188.nc
+[2025-10-13 21:51:08] DONE: cm1out_000188.nc (raw deleted)
+[2025-10-13 21:51:08] START: /cm1out_000189.nc
+[2025-10-13 21:51:09] Submitted transfer (task_id=04b22416-a8b1-11f0-9bb3-027493648695). Waiting...
+[2025-10-13 21:53:52] Processing with Julia: cm1out_000189.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000189.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000189.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000189.nc
+[2025-10-13 21:54:13] DONE: cm1out_000189.nc (raw deleted)
+[2025-10-13 21:54:13] START: /cm1out_000190.nc
+[2025-10-13 21:54:14] Submitted transfer (task_id=72eb0e26-a8b1-11f0-970a-0e092d85c59b). Waiting...
+[2025-10-13 21:57:02] Processing with Julia: cm1out_000190.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000190.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000190.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000190.nc
+[2025-10-13 21:57:22] DONE: cm1out_000190.nc (raw deleted)
+[2025-10-13 21:57:22] START: /cm1out_000191.nc
+[2025-10-13 21:57:23] Submitted transfer (task_id=e3faa36c-a8b1-11f0-8792-0affdd0cd947). Waiting...
+[2025-10-13 22:00:07] Processing with Julia: cm1out_000191.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000191.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000191.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000191.nc
+[2025-10-13 22:00:27] DONE: cm1out_000191.nc (raw deleted)
+[2025-10-13 22:00:27] START: /cm1out_000192.nc
+[2025-10-13 22:00:28] Submitted transfer (task_id=5215343d-a8b2-11f0-ab3c-0e092d85c59b). Waiting...
+[2025-10-13 22:03:12] Processing with Julia: cm1out_000192.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000192.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000192.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000192.nc
+[2025-10-13 22:03:32] DONE: cm1out_000192.nc (raw deleted)
+[2025-10-13 22:03:32] START: /cm1out_000193.nc
+[2025-10-13 22:03:34] Submitted transfer (task_id=c09338fc-a8b2-11f0-a73f-0affdd0cd947). Waiting...
+[2025-10-13 22:06:15] Processing with Julia: cm1out_000193.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000193.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000193.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000193.nc
+[2025-10-13 22:06:36] DONE: cm1out_000193.nc (raw deleted)
+[2025-10-13 22:06:36] START: /cm1out_000194.nc
+[2025-10-13 22:06:37] Submitted transfer (task_id=2def6c14-a8b3-11f0-9078-027493648695). Waiting...
+[2025-10-13 22:09:22] Processing with Julia: cm1out_000194.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000194.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000194.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000194.nc
+[2025-10-13 22:09:42] DONE: cm1out_000194.nc (raw deleted)
+[2025-10-13 22:09:42] START: /cm1out_000195.nc
+[2025-10-13 22:09:43] Submitted transfer (task_id=9d0b17d8-a8b3-11f0-aae1-0e092d85c59b). Waiting...
+[2025-10-13 22:12:27] Processing with Julia: cm1out_000195.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000195.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000195.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000195.nc
+[2025-10-13 22:12:47] DONE: cm1out_000195.nc (raw deleted)
+[2025-10-13 22:12:47] START: /cm1out_000196.nc
+[2025-10-13 22:12:48] Submitted transfer (task_id=0b3def75-a8b4-11f0-a33b-0e092d85c59b). Waiting...
+[2025-10-13 22:15:35] Processing with Julia: cm1out_000196.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000196.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000196.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000196.nc
+[2025-10-13 22:15:55] DONE: cm1out_000196.nc (raw deleted)
+[2025-10-13 22:15:55] START: /cm1out_000197.nc
+[2025-10-13 22:15:56] Submitted transfer (task_id=7b3ca47d-a8b4-11f0-943d-027493648695). Waiting...
+[2025-10-13 22:18:42] Processing with Julia: cm1out_000197.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000197.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000197.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000197.nc
+[2025-10-13 22:19:03] DONE: cm1out_000197.nc (raw deleted)
+[2025-10-13 22:19:03] START: /cm1out_000198.nc
+[2025-10-13 22:19:04] Submitted transfer (task_id=eb0ad31d-a8b4-11f0-98ee-027493648695). Waiting...
+[2025-10-13 22:21:49] Processing with Julia: cm1out_000198.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000198.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000198.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000198.nc
+[2025-10-13 22:22:10] DONE: cm1out_000198.nc (raw deleted)
+[2025-10-13 22:22:10] START: /cm1out_000199.nc
+[2025-10-13 22:22:11] Submitted transfer (task_id=5a8c47e1-a8b5-11f0-b932-0affdd0cd947). Waiting...
+[2025-10-13 22:24:57] Processing with Julia: cm1out_000199.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000199.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000199.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000199.nc
+[2025-10-13 22:25:17] DONE: cm1out_000199.nc (raw deleted)
+[2025-10-13 22:25:17] START: /cm1out_000200.nc
+[2025-10-13 22:25:18] Submitted transfer (task_id=ca406264-a8b5-11f0-ae90-027493648695). Waiting...
+[2025-10-13 22:28:05] Processing with Julia: cm1out_000200.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000200.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000200.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000200.nc
+[2025-10-13 22:28:25] DONE: cm1out_000200.nc (raw deleted)
+[2025-10-13 22:28:25] START: /cm1out_000201.nc
+[2025-10-13 22:28:26] Submitted transfer (task_id=3a5524b0-a8b6-11f0-bb19-0affdd0cd947). Waiting...
+[2025-10-13 22:31:15] Processing with Julia: cm1out_000201.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000201.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000201.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000201.nc
+[2025-10-13 22:31:35] DONE: cm1out_000201.nc (raw deleted)
+[2025-10-13 22:31:35] START: /cm1out_000202.nc
+[2025-10-13 22:31:36] Submitted transfer (task_id=aba461bd-a8b6-11f0-b3eb-027493648695). Waiting...
+[2025-10-13 22:34:24] Processing with Julia: cm1out_000202.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000202.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000202.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000202.nc
+[2025-10-13 22:34:44] DONE: cm1out_000202.nc (raw deleted)
+[2025-10-13 22:34:44] START: /cm1out_000203.nc
+[2025-10-13 22:34:45] Submitted transfer (task_id=1c1e89fc-a8b7-11f0-a4b8-0e092d85c59b). Waiting...
+[2025-10-13 22:37:29] Processing with Julia: cm1out_000203.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000203.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000203.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000203.nc
+[2025-10-13 22:37:49] DONE: cm1out_000203.nc (raw deleted)
+[2025-10-13 22:37:49] START: /cm1out_000204.nc
+[2025-10-13 22:37:51] Submitted transfer (task_id=8ab637b6-a8b7-11f0-b828-0affdd0cd947). Waiting...
+[2025-10-13 22:40:35] Processing with Julia: cm1out_000204.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000204.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000204.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000204.nc
+[2025-10-13 22:40:56] DONE: cm1out_000204.nc (raw deleted)
+[2025-10-14 14:34:56] START: /cm1out_000082.nc
+[2025-10-14 14:34:58] Submitted transfer (task_id=3fc0eca8-a93d-11f0-b960-0e092d85c59b). Waiting...
+[2025-10-14 14:37:39] Processing with Julia: cm1out_000082.nc
+  Activating project at `~/Documents/Research/MART.jl`
+Output From Julia Code
+Input file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000082.nc
+Output folder: /media/storage/himanshu_storage/MART/Processed_CM1/
+Processing file: /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000082.nc
+Finished processing /home/himanshu/Documents/Research/MART.jl/dataset//cm1out_000082.nc
+[2025-10-14 14:38:33] DONE: cm1out_000082.nc (raw deleted)
+[2025-10-24 22:10:19] START: /cm1out_000082.nc
+[2025-10-24 22:10:21] Submitted transfer (task_id=85dce7c0-b158-11f0-adc5-027493648695). Waiting...
+[2025-10-24 22:38:38] ERROR: Transfer failed for /cm1out_000082.nc (task 85dce7c0-b158-11f0-adc5-027493648695, status=ACTIVE)
