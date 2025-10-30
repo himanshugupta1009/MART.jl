@@ -46,15 +46,12 @@ struct WeatherModels{N}
     models::Array{WeatherModelData,1}
 end
 
-function WeatherModels(desired_models,num_timesteps,data_folder="/media/himanshu/DATA/dataset/")
+function WeatherModels(desired_models,num_timesteps,
+            data_folder="/media/himanshu/DATA/dataset/";
+            num_x_points = 300, num_y_points = 300, num_z_points = 50,
+            x_width = 3000.0, y_width = 3000.0, t_width=300.0)
 
     num_models = length(desired_models)
-    num_x_points = 300
-    num_y_points = 300
-    num_z_points = 50
-    x_width = 3000.0
-    y_width = 3000.0
-    t_width = 300.0
     scalar_grid = RectangleGrid(0.5:1:num_x_points-0.5,0.5:1:num_y_points-0.5,0.5:1:num_z_points-0.5)
     scalar_value_keys = Symbol[:P,:T]
     U_grid = RectangleGrid(0:num_x_points,0.5:1:num_y_points-0.5,0.5:1:num_z_points-0.5)
@@ -66,14 +63,14 @@ function WeatherModels(desired_models,num_timesteps,data_folder="/media/himanshu
     relevant_keys = String["U","V","W","Z","P","T","R"]
     data = WeatherModelData[]
     for m in desired_models
-        # file_name = "./dataset/model_"*string(m)*".h5"
-        filename = "/media/himanshu/DATA/dataset/model_$m.h5"
-        filename = data_folder*"model_$m.h5"
+        filename = data_folder*"model_prediction_$m.nc"
         file_obj = HDF5.h5open(filename, "r")
         # model_data = HDF5.read(file_obj, relevant_keys...)
         # wm_data = WeatherModelData([relevant_key_data[:,:,:,1:num_timesteps] for relevant_key_data in model_data]...)
         U,V,W,Z,P,T,R = HDF5.read(file_obj, relevant_keys...)
-        wm_data = WeatherModelData(U[:,:,:,1:num_timesteps],V[:,:,:,1:num_timesteps],W[:,:,:,1:num_timesteps],
+        wm_data = WeatherModelData(U[:,:,:,1:num_timesteps],
+                                    V[:,:,:,1:num_timesteps],
+                                    W[:,:,:,1:num_timesteps],
                                     Z[:,:,:,1:num_timesteps],
                                     P[:,:,:,1:num_timesteps],
                                     T[:,:,:,1:num_timesteps],
