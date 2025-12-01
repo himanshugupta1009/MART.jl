@@ -187,7 +187,7 @@ end
     return y1 + (y2 - y1)*(val - x1)/(x2 - x1)
 end
 
-
+#Verify if this is correct because similar code gave errors in get_vector_value
 function get_scalar_value(nature_run::NatureRun{N,P},
                           xyz_point, t, ::Val{S}) where {N,P,S}
                           
@@ -272,24 +272,31 @@ function get_vector_value(nature_run::NatureRun{N,P},
     @assert S == :U || S == :V || S == :W
 
     (;t_width, nature_run_data_structs) = nature_run
-    @assert Int(t) isa Int "Only Integer Values for t are allowed"
-    @assert Int(t_width) isa Int "Only Integer Values for t_width are allowed in Nature run"
+    # @assert Int(t) isa Int "Only Integer Values for t are allowed"
+    # @assert Int(t_width) isa Int "Only Integer Values for t_width are allowed in Nature run"
 
     # xyz_point = convert_xyz_pos_to_grid_point(nature_run, x, y, z)
     # xyz_point = SVector{3,Float64}(x,y,z)
     grid = get_grid(nature_run, Val(S))
     
-    q, r = divrem(Int(t), Int(t_width))
-    if r == 0
+    tw = Int(t_width)          # assume your snapshots are at 0, tw, 2tw, ...
+    t_float = float(t)
+    # Use floor to map continuous t to an integer grid index
+    t_int = floor(Int, t_float)
+
+    q, r = divrem(t_int,tw)
+    lower = q*tw
+    upper = (q+1)*tw
+    if r == 0 && t_float ≈ t_int
         # exact timestamp
-        lower = t
+        # lower = t
         data = nature_run_data_structs[lower]
         arr  = vectorfield(data, Val(S))              # ::Array{Float32,3}
         v    = interpolate(grid, arr, xyz_point)::Float64
         return v
     else
-        lower = q*t_width
-        upper = (q+1)*t_width
+        # lower = q*t_width
+        # upper = (q+1)*t_width
         # println("Interpolating between time steps $lower and $upper for t=$t")
 
         dataL = nature_run_data_structs[lower]
@@ -349,12 +356,11 @@ JET.@report_opt get_vector_value(cm1_nature_run,
 =#
 
 
-get_U(nr::NatureRun{N,P},X,t) where {N,P} = get_vector_value(nr,X,t,:U)
-get_V(nr::NatureRun{N,P},X,t) where {N,P} = get_vector_value(nr,X,t,:V)
-get_W(nr::NatureRun{N,P},X,t) where {N,P} = get_vector_value(nr,X,t,:W)
-get_T(nr::NatureRun{N,P},X,t) where {N,P} = get_scalar_value(nr,X,t,:T)
-get_P(nr::NatureRun{N,P},X,t) where {N,P} = get_scalar_value(nr,X,t,:P)
-
+get_U(nr::NatureRun{N,P},X,t) where {N,P} = get_vector_value(nr,view(X,1:3),t,:U)
+get_V(nr::NatureRun{N,P},X,t) where {N,P} = get_vector_value(nr,view(X,1:3),t,:V)
+get_W(nr::NatureRun{N,P},X,t) where {N,P} = get_vector_value(nr,view(X,1:3),t,:W)
+get_T(nr::NatureRun{N,P},X,t) where {N,P} = get_scalar_value(nr,view(X,1:3),t,:T)
+get_P(nr::NatureRun{N,P},X,t) where {N,P} = get_scalar_value(nr,view(X,1:3),t,:P)
 
 function get_wind(nr::NatureRun{N,P},X,t) where {N,P}
     U = get_U(nr,X,t)
@@ -418,16 +424,16 @@ function adjust_nature_run_data_struct!(nr::NatureRun{N,P}, curr_time;
     filename_prefix="/media/storage/himanshu_storage/MART/Processed_CM1/cm1_output_"
                     ) where {N,P}
 
-    fk = first(keys(nr.nature_run_data_structs))
-    lk = last(keys(nr.nature_run_data_structs))
+    fk, _ = first(nr.nature_run_data_structs)
+    lk, _ = last(nr.nature_run_data_structs)
 
-    if curr_time + t_width > lk
+    if curr_time + 2*t_width > lk
         add_new_nature_run_data_struct!(nr,
             t_width=t_width,
             exp_start_time_seconds=exp_start_time_seconds,
             filename_prefix=filename_prefix)
+        println("Added new NatureRunDataStructPTS for time $(lk + t_width)")
     end
-    
 end
 
 

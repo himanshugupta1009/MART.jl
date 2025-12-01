@@ -1,18 +1,21 @@
 include("simulator.jl")
-include("generate_fake_data.jl")
+# include("generate_fake_data.jl")
 include("weather_data.jl")
+include("nature_run.jl")
 include("generate_synthetic_WRF_data.jl")
 include("belief_mdp.jl")
-include("visualize_UAV_path.jl")
+# include("visualize_UAV_path.jl")
 using LazySets
 
-function run_experiment(sim,env,start_state,weather_models,weather_functions,
-                            num_models,
-                            uav_policy_type=:mcts,
-                            process_noise_rng=MersenneTwister(), #70
-                            observation_noise_rng=MersenneTwister(), #111
-                            mcts_rng=MersenneTwister(69)
-                            )
+function run_experiment(sim,env,start_state,
+                        true_atmosphere,
+                        weather_models,weather_functions,
+                        num_models,
+                        uav_policy_type=:mcts,
+                        process_noise_rng=MersenneTwister(), #70
+                        observation_noise_rng=MersenneTwister(), #111
+                        mcts_rng=MersenneTwister(69)
+                        )
 
     T = sim.total_time
     t = sim.time_step
@@ -88,7 +91,7 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
     curr_belief = initial_belief
     curr_uav_action = initial_uav_action
 
-    (;base_DMRs,num_DMRs) = weather_models.DMRs
+    # (;base_DMRs,num_DMRs) = weather_models.DMRs
 
 
     #Run the experiment
@@ -96,6 +99,7 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
     for i in 1:num_steps
         time_interval = ((i-1)*t,i*t)
         next_time = time_interval[2]
+        adjust_nature_run_data_struct!(true_atmosphere,next_time)
         CTR(X,t) = curr_uav_action
 
         if(print_logs)
@@ -130,15 +134,15 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
                                 round(next_uav_state[5]*180/pi,digits=2))
                 )
 
-        for i in 1:num_DMRs
-            μ = base_DMRs[i].μ
-            dist = sqrt( (next_uav_state[1]-μ[1])^2 + (next_uav_state[2]-μ[2])^2 + (next_uav_state[3]-μ[3])^2 )
-            if(dist<=300.0)
-                println("######################## Reached the good observation region ########################")
-                println("######################## Position is $next_uav_state ########################")
-                println("######################## Belief is $curr_belief ########################")
-            end    
-        end
+        # for i in 1:num_DMRs
+        #     μ = base_DMRs[i].μ
+        #     dist = sqrt( (next_uav_state[1]-μ[1])^2 + (next_uav_state[2]-μ[2])^2 + (next_uav_state[3]-μ[3])^2 )
+        #     if(dist<=300.0)
+        #         println("######################## Reached the good observation region ########################")
+        #         println("######################## Position is $next_uav_state ########################")
+        #         println("######################## Belief is $curr_belief ########################")
+        #     end    
+        # end
 
         #Sample an observation from the environment
         sampled_observation = sim.get_observation(next_uav_state,next_time)
