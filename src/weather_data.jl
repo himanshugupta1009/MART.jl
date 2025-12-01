@@ -1,6 +1,7 @@
 import HDF5
 using GridInterpolations
 using StaticArrays
+import Plots
 
 
 #=
@@ -349,6 +350,55 @@ struct ProcessNoiseGenerator{R,T}
     noise::R
     covar_matrix::T
 end
+
+"""
+    plot_scalar_volume(weather_models, model_num, t_index; field=:T, stride=4,
+                       color=:turbo, opacity=0.20)
+
+Create a Plots.jl 3D scatter rendering of a scalar field (`:T` for temperature
+or `:P` for pressure) for a given ensemble member and time index. Uses a stride
+to thin the grid so plotting stays responsive.
+"""
+function plot_scalar_volume(weather_models::WeatherModels, model_num::Int, t_index::Int;
+                            field::Symbol = :T,
+                            stride::Int = 4,
+                            color = :turbo,
+                            opacity::Float64 = 0.20)
+    @assert field in (:T, :P) "field must be :T (temperature) or :P (pressure)"
+    (; num_x_points, num_y_points, num_z_points, num_timesteps, x_width, y_width, models) = weather_models
+    @assert 1 <= model_num <= length(models) "model_num out of bounds"
+    t_idx = clamp(t_index, 1, num_timesteps)
+    model_data = models[model_num]
+
+    values = @views getfield(model_data, field)[:, :, :, t_idx]
+    z_levels = @views model_data.Z[:, :, :, t_idx]
+    z_mid = @views (z_levels[:, :, 1:end-1] .+ z_levels[:, :, 2:end]) ./ 2
+    @assert size(values, 3) == size(z_mid, 3) "Z grid does not match scalar grid depth"
+
+    xs = ((0:num_x_points-1) .+ 0.5) .* x_width
+    ys = ((0:num_y_points-1) .+ 0.5) .* y_width
+    xgrid = repeat(reshape(xs, :, 1, 1), 1, num_y_points, num_z_points)
+    ygrid = repeat(reshape(ys, 1, :, 1), num_x_points, 1, num_z_points)
+
+    stride = max(stride, 1)
+    x_slice = @view xgrid[1:stride:end, 1:stride:end, 1:stride:end]
+    y_slice = @view ygrid[1:stride:end, 1:stride:end, 1:stride:end]
+    z_slice = @view z_mid[1:stride:end, 1:stride:end, 1:stride:end]
+    v_slice = @view values[1:stride:end, 1:stride:end, 1:stride:end]
+
+    plt = Plots.scatter3d(vec(x_slice), vec(y_slice), vec(z_slice);
+                          marker_z = vec(v_slice),
+                          c = color, ms = 3, ma = opacity,
+                          xlabel = "x (m)", ylabel = "y (m)", zlabel = "z (m)",
+                          title = "$(field == :T ? "Temperature" : "Pressure") | model $model_num | t=$t_idx",
+                          legend = false)
+    return plt
+end
+
+plot_temperature_volume(weather_models, model_num, t_index; kwargs...) =
+    plot_scalar_volume(weather_models, model_num, t_index; field = :T, kwargs...)
+plot_pressure_volume(weather_models, model_num, t_index; kwargs...) =
+    plot_scalar_volume(weather_models, model_num, t_index; field = :P, kwargs...)
 
 #=
 noise_mag = 1600.0
