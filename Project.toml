@@ -30,6 +30,7 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
+D3Trees = "0.3.6"
 julia = "1"
 
 [extras]
