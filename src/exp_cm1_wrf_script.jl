@@ -122,6 +122,42 @@ savefig(plt_T, "./exp_cm1_wrf_temperature_volume.png")
 plt_P = plot_pressure_volume(weather_models, 1, 3; stride=6, color=:blue, opacity=0.5)
 savefig(plt_P, "./exp_cm1_wrf_pressure_volume.png")
 
+
+using Plots
+
+plt_T_diff = plot_temperature_diff_volume(weather_models, 1, 2, 3; stride=4, color=:RdBu, opacity=0.3)
+savefig(plt_T_diff, "./temperature_diff_model1_minus_model2.png")
+
+plt_P_diff = plot_pressure_diff_volume(weather_models, 1, 2, 3; stride=4, color=:RdBu, opacity=0.3)
+savefig(plt_P_diff, "./pressure_diff_model1_minus_model2.png")
+
+
+res = find_r_cell_above_threshold(weather_models; min_t_index=8, threshold=1e-2)
+if res !== nothing
+    x, y, t, vals = res
+    @show x y t vals
+else
+    println("No grid cell found meeting the criteria")
+end
+
+
+x, y, t, vals = res  # from find_r_cell_above_threshold(...)
+println("Ensemble R values: ", vals)
+
+
+r_cm1 = nature_run_r_at_point_from_source(cm1_nature_run,
+                                          "/media/storage/himanshu_storage/MART/Processed_CM1/",
+                                          x, y, t;
+                                          exp_start_time_seconds=1800.0)
+println("CM1 R at that point/time: ", r_cm1)
+
+
+
+_, _, _, vals = res  # from find_r_cell_above_threshold
+plt, times, means, sigmas = expected_rain_from_fixed_vals(b, vals; actual_value = r_cm1)
+savefig(plt, "expected_rain_over_time.png")
+
+
 using PlotlyJS
 # plt = plot_temperature_volume_plotly(weather_models, 1, 3; stride=4, colorscale="Turbo", opacity=0.18)
 save_scalar_volume_plotly_html(weather_models, 1, 3, "exp_cm1_wrf_temperature_volume_plotly.html"; field=:T)
