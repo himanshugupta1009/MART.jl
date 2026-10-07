@@ -700,8 +700,8 @@ plot_pressure_volume_plotly(weather_models, model_num, t_index; kwargs...) =
     plot_scalar_volume_plotly(weather_models, model_num, t_index; field = :P, kwargs...)
 
 
-using PlotlyJS
-using PlotlyBase
+import PlotlyJS
+import PlotlyBase
 
 function save_scalar_volume_plotly_html(weather_models::WeatherModels,
                                         model_num::Int, t_index::Int,

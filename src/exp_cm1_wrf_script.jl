@@ -158,6 +158,6 @@ plt, times, means, sigmas = expected_rain_from_fixed_vals(b, vals; actual_value 
 savefig(plt, "expected_rain_over_time.png")
 
 
-using PlotlyJS
+import PlotlyJS
 # plt = plot_temperature_volume_plotly(weather_models, 1, 3; stride=4, colorscale="Turbo", opacity=0.18)
 save_scalar_volume_plotly_html(weather_models, 1, 3, "exp_cm1_wrf_temperature_volume_plotly.html"; field=:T)
