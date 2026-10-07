@@ -1,6 +1,7 @@
 include("src/nature_run.jl")
 include("src/weather_data.jl")
 include("src/main.jl")
+using Plots
 
 num_ensemble_members = 18
 dm = collect(1:num_ensemble_members)
@@ -115,7 +116,6 @@ end
 visualize_simulation_belief(b,length(b)+10,1,length(b))
 
 
-using Plots
 plt_T = plot_temperature_volume(weather_models, 1, 3; stride=6, color=:turbo, opacity=0.2)
 savefig(plt_T, "./exp_cm1_wrf_temperature_volume.png")
 
@@ -123,7 +123,6 @@ plt_P = plot_pressure_volume(weather_models, 1, 3; stride=6, color=:blue, opacit
 savefig(plt_P, "./exp_cm1_wrf_pressure_volume.png")
 
 
-using Plots
 
 plt_T_diff = plot_temperature_diff_volume(weather_models, 1, 2, 3; stride=4, color=:RdBu, opacity=0.3)
 savefig(plt_T_diff, "./temperature_diff_model1_minus_model2.png")
