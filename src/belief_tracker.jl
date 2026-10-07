@@ -7,10 +7,16 @@ New Format of functions with WRF data
 
 function transition_likelihood(weather_functions,observed_position,propogated_position)
     # println("$propogated_position $observed_position")
-    covar_matrix = weather_functions.process_noise.covar_matrix
-    dist = MvNormal(propogated_position,covar_matrix)
-    likelihood = pdf(dist,observed_position)
-    # return 1.0
+    (;env_type,process_noise) = weather_functions
+    covar_matrix = process_noise.covar_matrix
+    if env_type == :two_d
+        dist = MvNormal(view(propogated_position,1:2),covar_matrix)
+        likelihood = pdf(dist,view(observed_position,1:2))
+    elseif env_type == :three_d
+        dist = MvNormal(propogated_position,covar_matrix)
+        likelihood = pdf(dist,observed_position)
+    end
+    return 1.0
     return likelihood
 end
 
@@ -81,7 +87,7 @@ function update_belief(curr_belief,curr_state,current_control,new_observation,ti
                     new_observation[6],observed_pos,time_interval[2])
         l_pres = pressure_likelihood(env,weather_models,weather_functions,M,
                     new_observation[7],observed_pos,time_interval[2])
-        b1[M] = l_temp*l_pres*l_pos*curr_belief[M]
+        b1[M] = l_temp*l_pres*l_pos*curr_belief[M] + 1e-15
         # println(M , " ", l_pos, " ", l_temp, " ", l_pres, " ", l_temp*l_pres*l_pos, " ", l_temp*l_pres*l_pos*curr_belief[M])
     end
     # println("New unnormalized Belief is $b1[M]")
@@ -146,7 +152,7 @@ function update_belief(bup,b0,s0,o,time_interval)
         l_temp = temperature_likelihood(bup.dvg,m,o[6],o[1:5],time_interval[2])
         l_pres = pressure_likelihood(bup.dvg,m,o[7],o[1:5],time_interval[2])
         # println(m , " ", s1[2], " ", l_pos, " ", l_temp, " ", l_pres)
-        b1[m] = l_temp*l_pres*l_pos*b0[m]
+        b1[m] = l_temp*l_pres*l_pos*b0[m] + 1e-15
         # push!(b1, l_temp*l_pres*l_pos*b0[m])
     end
 

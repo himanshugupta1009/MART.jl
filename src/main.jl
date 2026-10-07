@@ -1,18 +1,21 @@
 include("simulator.jl")
 include("generate_fake_data.jl")
 include("weather_data.jl")
-include("generate_synthetic_WRF_data.jl")
+include("generate_synthetic_WRF_data_new.jl")
 include("belief_mdp.jl")
 include("visualize_UAV_path.jl")
 using LazySets
 
-function run_experiment(sim,env,start_state,weather_models,weather_functions,
-                            num_models,
-                            uav_policy_type=:mcts,
-                            process_noise_rng=MersenneTwister(), #70
-                            observation_noise_rng=MersenneTwister(), #111
-                            mcts_rng=MersenneTwister(69)
-                            )
+function run_experiment(sim,env,start_state,
+                        weather_models,weather_functions,
+                        num_models,
+                        uav_policy_type=:mcts,
+                        process_noise_rng=MersenneTwister(), #70
+                        observation_noise_rng=MersenneTwister(), #111
+                        mcts_rng=MersenneTwister(69),
+                        aircraft_params=raaven_parameters(),
+                        print_logs=true,
+                        )
 
     T = sim.total_time
     t = sim.time_step
@@ -20,11 +23,10 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
     num_steps = Int(T/t)
     # num_models = weather_models.num_models
     start_time = 0.0
-    print_logs = true
-    straight_line_Va = 20.0 
-    # process_noise_rng = MersenneTwister()
-    # observation_noise_rng = MersenneTwister()
-    # mcts_rng = MersenneTwister()
+    total_reward = 0.0
+    (;Va_nominal) = aircraft_params
+    env_type = weather_functions.env_type
+
 
     #Relevant Values to be stored
     state_history = Vector{Pair{Float64,typeof(start_state)}}()
@@ -73,7 +75,7 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
     elseif(uav_policy_type == :random)  #Random
         initial_uav_action = rand(POMDPs.actions(mart_mdp,initial_mdp_state))
     elseif(uav_policy_type == :sl) #Straight Line
-        initial_uav_action = MARTBeliefMDPAction(straight_line_Va,0.0,0.0)
+        initial_uav_action = MARTBeliefMDPAction(Va_nominal,0.0,0.0)
     else
         error("Invalid UAV Policy")
     end    
@@ -92,11 +94,10 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
 
 
     #Run the experiment
-    total_reward = 0.0
     for i in 1:num_steps
         time_interval = ((i-1)*t,i*t)
         next_time = time_interval[2]
-        CTR(X,t) = curr_uav_action
+        CTR(X,t,w) = curr_uav_action
 
         if(print_logs)
             println("********************************************************")
@@ -132,7 +133,12 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
 
         for i in 1:num_DMRs
             μ = base_DMRs[i].μ
-            dist = sqrt( (next_uav_state[1]-μ[1])^2 + (next_uav_state[2]-μ[2])^2 + (next_uav_state[3]-μ[3])^2 )
+            if env_type == :two_d
+                dist = sqrt( (next_uav_state[1]-μ[1])^2 + (next_uav_state[2]-μ[2])^2 )
+            elseif env_type == :three_d
+                dist = sqrt( (next_uav_state[1]-μ[1])^2 + (next_uav_state[2]-μ[2])^2 + 
+                                (next_uav_state[3]-μ[3])^2 )
+            end
             if(dist<=300.0)
                 println("######################## Reached the good observation region ########################")
                 println("######################## Position is $next_uav_state ########################")
@@ -179,7 +185,7 @@ function run_experiment(sim,env,start_state,weather_models,weather_functions,
             elseif(uav_policy_type == :random)  #Random
                 next_uav_action = rand(POMDPs.actions(mart_mdp,bmdp_state))
             elseif(uav_policy_type == :sl) #Straight Line
-                next_uav_action = MARTBeliefMDPAction(straight_line_Va,0.0,0.0)
+                next_uav_action = MARTBeliefMDPAction(Va_nominal,0.0,0.0)
             else
                 error("Invalid UAV Policy")
             end   
@@ -268,7 +274,9 @@ sim_noise_func(t,rng) = noise_func(PNG.covar_matrix,t,rng);
 sim_details = SimulationDetails(control_func,wind_func,sim_noise_func,obs_func,
                             10.0,1800.0);
 env = get_experiment_environment(0,hnr_sigma_p=10.0,hnr_sigma_t=3.0);
-s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,weather_functions,nm,:sl); visualize_simulation_belief(b,true_model,1,length(b))
+s,a,o,b = run_experiment(sim_details,env,start_state,weather_models,
+                        weather_functions,nm,:sl); 
+visualize_simulation_belief(b,true_model,1,length(b))
 
 
 pp = PlottingParams(env,DVG)

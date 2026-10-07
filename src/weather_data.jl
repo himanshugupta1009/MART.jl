@@ -66,9 +66,7 @@ function WeatherModels(desired_models,num_timesteps,data_folder="/media/himanshu
     relevant_keys = String["U","V","W","Z","P","T","R"]
     data = WeatherModelData[]
     for m in desired_models
-        # file_name = "./dataset/model_"*string(m)*".h5"
-        filename = "/media/himanshu/DATA/dataset/model_$m.h5"
-        filename = data_folder*"model_$m.h5"
+        filename = data_folder*"model_prediction_$m.nc"
         file_obj = HDF5.h5open(filename, "r")
         # model_data = HDF5.read(file_obj, relevant_keys...)
         # wm_data = WeatherModelData([relevant_key_data[:,:,:,1:num_timesteps] for relevant_key_data in model_data]...)
@@ -101,7 +99,7 @@ function WeatherModels(desired_models,num_timesteps,data_folder="/media/himanshu
                         )
 end
 #=
-wm = WeatherModels([1,2,3,4,5,6,7],6);
+wm = WeatherModels([1,2,3],3,"/media/himanshu/DATA/Processed_WRF_Ensemble_Adam/");
 
 Base.summarysize(wm)
 Base.summarysize(wm.models)
@@ -341,6 +339,7 @@ function get_observation(weather_models,M,X,t)
 end
 
 struct WeatherModelFunctions{A,B,C,D,E}
+    env_type::Symbol
     wind::A
     process_noise::B
     temperature::C

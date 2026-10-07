@@ -91,7 +91,7 @@ function POMDPs.gen(m::MARTBeliefMDP,s,a,rng)
     sampled_model = rand(rng,dist)
     mwf(X,t) = weather_functions.wind(weather_models,sampled_model,X,t)
     mof(X,t) = weather_functions.observation(weather_models,sampled_model,X,t)
-    CTR(X,t) = a
+    CTR(X,t,w) = a
 
     new_state_list = aircraft_simulate(aircraft_dynamics,curr_uav_state,
                             time_interval,(CTR,mwf,no_noise),Δt)

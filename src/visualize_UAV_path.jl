@@ -635,7 +635,7 @@ function visualize_simulation_belief(b,true_model_num,start_index,end_index)
     label_y_axis = collect(0.0:partition_val:max_y_val+0.1)
     # label_y_axis = collect(0.0:0.1:1.0)
 
-    snapshot = plot(
+    snapshot = Plots.plot(
         # aspect_ratio=:equal,
         size=(1300,500),
         dpi = 1000,
@@ -660,9 +660,9 @@ function visualize_simulation_belief(b,true_model_num,start_index,end_index)
     for m in 1:num_models
         y_axis = [b[i][2][m] for i in 1:num_timesteps]
         if(m == true_model_num)
-            plot!(snapshot,x_axis,y_axis,label="Model $m",color=:black,linewidth=5.0)
+            Plots.plot!(snapshot,x_axis,y_axis,label="Model $m",color=:black,linewidth=5.0)
         else
-            plot!(snapshot,x_axis,y_axis,label="Model $m",linewidth=2.0)
+            Plots.plot!(snapshot,x_axis,y_axis,label="Model $m",linewidth=2.0)
         end
     end
     display(snapshot)

@@ -8,8 +8,8 @@ struct PlottingParams
     axis::Bool
     gridalpha::Float64
     uav_edge_length::Float64
-    boundary::Shape
-    ROI::Array{Shape,1}
+    boundary::Plots.Shape
+    ROI::Array{Plots.Shape,1}
     DVG::DummyValuesGenerator
 end
 
@@ -75,7 +75,7 @@ function draw_equilateral_triangle(midpoint,edge_length)
     x = SVector{4,Float64}(point[1] for point in points)
     y = SVector{4,Float64}(point[2] for point in points)
     #Plot the Triangle
-    plot(x, y, seriestype = :shape, fillalpha = 0.5, aspect_ratio=:equal, legend=false)
+    Plots.plot(x, y, seriestype = :shape, fillalpha = 0.5, aspect_ratio=:equal, legend=false)
     return x,y
 end
 
@@ -103,14 +103,14 @@ function draw_equilateral_triangle(midpoint,angle,edge_length)
     x = SVector{4,Float64}(point[1] for point in points)
     y = SVector{4,Float64}(point[2] for point in points)
     #Plot the Triangle
-    plot(x, y, seriestype = :shape, fillalpha = 0.5, aspect_ratio=:equal, legend=false)
+    Plots.plot(x, y, seriestype = :shape, fillalpha = 0.5, aspect_ratio=:equal, legend=false)
     # return x,y
 end
 
 
 function draw_triangle_edges(midpoint,angle,edge_length)
     point_A,point_B,point_C = get_equilateral_triangle(midpoint,angle,edge_length)
-    snapshot = plot(
+    snapshot = Plots.plot(
             dpi = 100,
             legend=true,
             gridlinewidth=2.0,
@@ -127,8 +127,8 @@ function draw_triangle_edges(midpoint,angle,edge_length)
     edge_AB_y = SVector(point_A[2],point_B[2])
     edge_AC_x = SVector(point_A[1],point_C[1])
     edge_AC_y = SVector(point_A[2],point_C[2])
-    plot!(snapshot,edge_AB_x,edge_AB_y,label="AB",linewidth=4,color=:blue)
-    plot!(snapshot,edge_AC_x,edge_AC_y,label="AC",linewidth=4,color=:blue)
+    Plots.plot!(snapshot,edge_AB_x,edge_AB_y,label="AB",linewidth=4,color=:blue)
+    Plots.plot!(snapshot,edge_AC_x,edge_AC_y,label="AC",linewidth=4,color=:blue)
     display(snapshot)
     return snapshot
 end

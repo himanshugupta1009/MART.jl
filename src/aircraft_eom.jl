@@ -18,8 +18,8 @@ end
 function aircraft_dynamics(u,p,t)
 
     aircraft_state = u              # [x,y,z,chi_a,γ_a]
-    control_inputs = p[1](u,t)      # Control - [Va,chi_a_dot,γ_a_dot]
     wind_inertial = p[2](u,t)       # Wind - [wx,wy,wz]
+    control_inputs = p[1](u,t,wind_inertial)      # Control - [Va,chi_a_dot,γ_a_dot]
     # noise = p[3](t)                 # Noise - [nx,ny,nz,nchi_a,nγ_a]
     noise = SVector(0.0,0.0,0.0,0.0,0.0)
     x_dot = AircraftEOM(aircraft_state,control_inputs,wind_inertial,noise)
@@ -43,6 +43,27 @@ function aircraft_simulate(dynamics::Function, initial_state, time_interval, ext
     # return aircraft_states
 end
 
+#=
+true_model_num = 3
+control_func(x,t,w) = SVector(10.0,0.0,0.0)
+wind_func(x,t) = SVector(0.0,0.0,0.0)
+wind_func(X,t) = fake_wind(DWG,true_model_num,X,t)
+noise_func(t) = SVector(0.0,0.0,0.0,0.0,0.0)
+hist = aircraft_simulate(aircraft_dynamics,SVector(100,100,1800,pi/6,0.0),
+                (0.0,5.0),(control_func,wind_func,noise_func))
+
+
+weather_models = WeatherModels(7,6)
+true_model_num = 3
+control_func(x,t,w) = SVector(20.0,0.0,2*pi/180)
+wind_func(x,t) = get_wind(weather_models,true_model_num,x,t)
+noise_func(t) = SVector(0.0,0.0,0.0,0.0,0.0)
+hist = aircraft_simulate(aircraft_dynamics,SVector(100_000,100_000,1800,pi/6,0.0),
+                (0.0,10.0),(control_func,wind_func,noise_func))
+
+=#
+
+
 @inline function wrap_angle(angle)
     return atan(sin(angle), cos(angle))  # maps to [-π, π]
 end
@@ -65,28 +86,29 @@ function aircraft_simulate2(dynamics::Function, initial_state, time_interval, ex
     return sol.u
 end
 
-#=
-true_model_num = 3
-control_func(u,t) = SVector(10.0,0.0,0.0)
-wind_func(u,t) = SVector(0.0,0.0,0.0)
-wind_func(X,t) = fake_wind(DWG,true_model_num,X,t)
-noise_func(t) = SVector(0.0,0.0,0.0,0.0,0.0)
-hist = aircraft_simulate(aircraft_dynamics,SVector(100,100,1800,pi/6,0.0),
-                (0.0,5.0),(control_func,wind_func,noise_func))
+function get_Va_vector(state, Va)
+    chi_a, γ_a = state[4], state[5]
+    return SVector(
+        Va * cos(chi_a) * cos(γ_a),
+        Va * sin(chi_a) * cos(γ_a),
+        Va * sin(γ_a)
+    )
+end
 
+function raaven_parameters()
+    return AircraftParameters(
+        true,      # Va_fixed
+        20.0,       # Va_nominal
+        30.0,       # Va_max
+        5.0,        # Va_margin
+        deg2rad(30),# chi_dot_max
+        deg2rad(15),# γ_dot_max
+        1.0,        # k_chi
+        1.0         # k_γ
+    )
+end
 
-weather_models = WeatherModels(7,6)
-true_model_num = 3
-control_func(u,t) = SVector(20.0,0.0,2*pi/180)
-wind_func(X,t) = get_wind(weather_models,true_model_num,X,t)
-noise_func(t) = SVector(0.0,0.0,0.0,0.0,0.0)
-hist = aircraft_simulate(aircraft_dynamics,SVector(100_000,100_000,1800,pi/6,0.0),
-                (0.0,10.0),(control_func,wind_func,noise_func))
-
-=#
-
-
-function waypoint_controller_inertial(state::SVector{5,Float64}, t, target, aircraft_params)
+function waypoint_controller_inertial(state, t, wind, target, aircraft_params)
 
     #Unpack desired variables
     x, y, z, chi_a, γ_a = state
@@ -95,32 +117,40 @@ function waypoint_controller_inertial(state::SVector{5,Float64}, t, target, airc
 
     #Compute the desired direction vector
     dx, dy, dz = target[1] - x, target[2] - y, target[3] - z
-    dist = sqrt(dx^2 + dy^2 + dz^2) + 1e-6  # avoid /0
 
     #Desired course and flight path angles
-    chi_a_des   = atan(dy, dx)
-    gamma_a_des = atan(dz, sqrt(dx^2 + dy^2))
+    chi_e_des   = atan(dy, dx)
+    gamma_e_des = atan(dz, sqrt(dx^2 + dy^2))
+
+    Va_vector = get_Va_vector(state, Va_nominal)
+    W_vector = wind     #SVector{3,Float64}
+    Ve_vector = Va_vector + W_vector  #Inertial velocity vector
+    #Actual course and flight path angles
+    chi_e = atan(Ve_vector[2], Ve_vector[1])
+    gamma_e = atan(Ve_vector[3], sqrt(Ve_vector[1]^2 + Ve_vector[2]^2))
 
     #Errors
-    e_chi   = atan(sin(chi_a_des - chi_a), cos(chi_a_des - chi_a)) # wrap to [-π,π]
-    e_gamma = gamma_a_des - gamma_a
+    e_chi = atan(sin(chi_e_des - chi_e), cos(chi_e_des - chi_e)) # wrap to [-π,π]
+    e_gamma = gamma_e_des - gamma_e
 
     #Control law
     Va_cmd = Va_nominal
     chi_dot   = k_chi * e_chi
     chi_dot   = clamp(chi_dot, -chi_dot_max, chi_dot_max)
     gamma_dot = k_γ * e_gamma
-    gamma_dot = clamp(gamma_dot, -gamma_dot_max, gamma_dot_max)
+    gamma_dot = clamp(gamma_dot, -γ_dot_max, γ_dot_max)
 
     return SVector(Va_cmd, chi_dot, gamma_dot)
 end
 #=
 true_model_num = 3
-control_func(u,t) = SVector(20.0,pi/180,2*pi/180)
-wind_func(X,t) = SVector(5.0,5.0,5.0)
+target = SVector(110_000.0,110_000.0,1900.0)
+raaven_params = raaven_parameters()
+control_func(x,t,w) = waypoint_controller_inertial(x,t,w,target,raaven_params)
+wind_func(x,t) = SVector(5.0,5.0,5.0)
 noise_func(t) = SVector(0.0,0.0,0.0,0.0,0.0)
 hist = aircraft_simulate(aircraft_dynamics,SVector(100_000,100_000,1800,355/360*2*pi,0.0),
-                (0.0,10.0),(control_func,wind_func,noise_func))
+                (0.0,1000.0),(control_func,wind_func,noise_func))
 
 =#
 

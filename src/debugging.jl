@@ -294,3 +294,55 @@ plot_probability(X,dvg,num_samples_array,MersenneTwister(17))
 num_samples_array = SVector(1:1:100...)
 seed = rand(UInt32); plot_probability(X,dvg,num_samples_array,MersenneTwister(seed))
 =#
+
+
+
+
+"""
+Compute the maximum wind magnitude inside the environment
+across space and time.
+"""
+function max_wind_in_env_over_time(env, wind_func;
+                                   tspan=(0.0, 1800.0),
+                                   step_space=500.0,
+                                   step_time=100.0)
+
+    # Unpack environment bounds
+    (xmin, xmax) = env.x_range
+    (ymin, ymax) = env.y_range
+    (zmin, zmax) = env.z_range
+
+    max_wind = 0.0
+    max_loc = nothing
+    max_time = nothing
+
+    for t in tspan[1]:step_time:tspan[2]
+        for x in xmin:step_space:xmax,
+            y in ymin:step_space:ymax,
+            z in zmin:step_space:zmax
+
+            X = SVector(x,y,z,0.0,0.0)  # state [x,y,z,χ,γ]
+            w = wind_func(X,t)
+            wmag = norm(w)
+
+            if wmag > max_wind
+                max_wind = wmag
+                max_loc = (x,y,z)
+                max_time = t
+            end
+        end
+    end
+
+    return max_wind, max_loc, max_time
+end
+#=
+max_wind, loc, t = max_wind_in_env_over_time(env, wind_func;
+                                             tspan=(0.0, 1800.0),
+                                             step_space=500.0,
+                                             step_time=60.0)
+println("Max wind = $max_wind m/s at location $loc and time $t")
+
+=#
+
+
+
