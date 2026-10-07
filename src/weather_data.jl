@@ -390,7 +390,7 @@ function plot_scalar_volume(weather_models::WeatherModels, model_num::Int, t_ind
     plt = Plots.scatter3d(vec(x_slice), vec(y_slice), vec(z_slice);
                           marker_z = vec(v_slice),
                           colorbar = true,
-                          palette = color,
+                          c = color,
                           clims = (vmin, vmax),
                           ms = 3, ma = opacity, markerstrokewidth = 0,
                           xlabel = "x (m)", ylabel = "y (m)", zlabel = "z (m)",
@@ -449,7 +449,7 @@ function plot_scalar_diff_volume(weather_models::WeatherModels, model_a::Int, mo
     plt = Plots.scatter3d(vec(x_slice), vec(y_slice), vec(z_slice);
                           marker_z = vec(v_slice),
                           colorbar = true,
-                          palette = color,
+                          c = color,
                           clims = cl,
                           ms = 3, ma = opacity, markerstrokewidth = 0,
                           xlabel = "x (m)", ylabel = "y (m)", zlabel = "z (m)",
@@ -624,7 +624,7 @@ function plot_model_vs_nature_scalar(weather_models::WeatherModels,
     p_nature = Plots.scatter3d(vec(x_slice), vec(y_slice), vec(z_slice);
                                marker_z = vec(v_slice),
                                colorbar = true,
-                               palette = color_nature,
+                               c = color_nature,
                                clims = (vmin, vmax),
                                ms = 3, ma = opacity, markerstrokewidth = 0,
                                xlabel = "x (m)", ylabel = "y (m)", zlabel = "z (m)",
