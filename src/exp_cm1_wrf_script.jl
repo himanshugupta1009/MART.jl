@@ -52,7 +52,7 @@ sim_noise_func(t,rng) = noise_func(PNG.covar_matrix,t,rng);
 
 
 sim_details = SimulationDetails(control_func,wind_func,sim_noise_func,obs_func,
-                            10.0,1800.0);
+                            10.0,180.0);
 env = get_experiment_environment(0,hnr_sigma_p=10.0,hnr_sigma_t=3.0);
 
 s,a,o,b = run_experiment(sim_details,env,start_state,
@@ -121,3 +121,7 @@ savefig(plt_T, "./exp_cm1_wrf_temperature_volume.png")
 
 plt_P = plot_pressure_volume(weather_models, 1, 3; stride=6, color=:blue, opacity=0.5)
 savefig(plt_P, "./exp_cm1_wrf_pressure_volume.png")
+
+using PlotlyJS
+# plt = plot_temperature_volume_plotly(weather_models, 1, 3; stride=4, colorscale="Turbo", opacity=0.18)
+save_scalar_volume_plotly_html(weather_models, 1, 3, "exp_cm1_wrf_temperature_volume_plotly.html"; field=:T)

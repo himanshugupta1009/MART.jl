@@ -400,6 +400,108 @@ plot_temperature_volume(weather_models, model_num, t_index; kwargs...) =
 plot_pressure_volume(weather_models, model_num, t_index; kwargs...) =
     plot_scalar_volume(weather_models, model_num, t_index; field = :P, kwargs...)
 
+
+"""
+    plot_scalar_volume_plotly(weather_models, model_num, t_index; field=:T, stride=4,
+                              surface_count=10, colorscale="Turbo", opacity=0.18)
+
+Plot a 3D volume using PlotlyJS. Same semantics as `plot_scalar_volume`, but
+uses Plotly’s `volume` trace for smoother rendering.
+"""
+function plot_scalar_volume_plotly(weather_models::WeatherModels, model_num::Int, t_index::Int;
+                                   field::Symbol = :T,
+                                   stride::Int = 4,
+                                   surface_count::Int = 10,
+                                   colorscale::AbstractString = "Turbo",
+                                   opacity::Float64 = 0.18)
+    @assert field in (:T, :P) "field must be :T (temperature) or :P (pressure)"
+    (; num_x_points, num_y_points, num_z_points, num_timesteps, x_width, y_width, models) = weather_models
+    @assert 1 <= model_num <= length(models) "model_num out of bounds"
+    t_idx = clamp(t_index, 1, num_timesteps)
+    model_data = models[model_num]
+
+    values = @views getfield(model_data, field)[:, :, :, t_idx]
+    z_levels = @views model_data.Z[:, :, :, t_idx]
+    z_mid = @views (z_levels[:, :, 1:end-1] .+ z_levels[:, :, 2:end]) ./ 2
+    @assert size(values, 3) == size(z_mid, 3) "Z grid does not match scalar grid depth"
+
+    xs = ((0:num_x_points-1) .+ 0.5) .* x_width
+    ys = ((0:num_y_points-1) .+ 0.5) .* y_width
+    xgrid = repeat(reshape(xs, :, 1, 1), 1, num_y_points, num_z_points)
+    ygrid = repeat(reshape(ys, 1, :, 1), num_x_points, 1, num_z_points)
+
+    stride = max(stride, 1)
+    x_slice = @view xgrid[1:stride:end, 1:stride:end, 1:stride:end]
+    y_slice = @view ygrid[1:stride:end, 1:stride:end, 1:stride:end]
+    z_slice = @view z_mid[1:stride:end, 1:stride:end, 1:stride:end]
+    v_slice = @view values[1:stride:end, 1:stride:end, 1:stride:end]
+    vmin, vmax = extrema(v_slice)
+
+    trace = PlotlyJS.volume(
+        x = vec(x_slice),
+        y = vec(y_slice),
+        z = vec(z_slice),
+        value = vec(v_slice),
+        colorscale = colorscale,
+        opacity = opacity,
+        surface_count = surface_count,
+        isomin = vmin,
+        isomax = vmax,
+    )
+
+    layout = PlotlyJS.Layout(
+        title = "$(field == :T ? "Temperature" : "Pressure") volume | model $model_num | t=$t_idx",
+        scene = PlotlyJS.attr(
+            xaxis = PlotlyJS.attr(title = "x (m)"),
+            yaxis = PlotlyJS.attr(title = "y (m)"),
+            zaxis = PlotlyJS.attr(title = "z (m)")
+        ),
+    )
+
+    return PlotlyJS.Plot(trace, layout)
+end
+
+plot_temperature_volume_plotly(weather_models, model_num, t_index; kwargs...) =
+    plot_scalar_volume_plotly(weather_models, model_num, t_index; field = :T, kwargs...)
+plot_pressure_volume_plotly(weather_models, model_num, t_index; kwargs...) =
+    plot_scalar_volume_plotly(weather_models, model_num, t_index; field = :P, kwargs...)
+
+
+using PlotlyJS
+using PlotlyBase
+
+function save_scalar_volume_plotly_html(weather_models::WeatherModels,
+                                        model_num::Int, t_index::Int,
+                                        filename::AbstractString;
+                                        field::Symbol = :T,
+                                        stride::Int = 4,
+                                        surface_count::Int = 10,
+                                        colorscale::AbstractString = "Turbo",
+                                        opacity::Float64 = 0.18)
+
+    plt = plot_scalar_volume_plotly(weather_models, model_num, t_index;
+                                    field = field,
+                                    stride = stride,
+                                    surface_count = surface_count,
+                                    colorscale = colorscale,
+                                    opacity = opacity)
+
+    # Write custom HTML output
+    open(filename, "w") do io
+        PlotlyBase.to_html(
+            io,
+            plt,                     # IMPORTANT: use the *underlying* PlotlyBase plot
+            include_plotlyjs = "cdn",
+            full_html = true
+        )
+    end
+
+    println("Saved HTML volume plot to: $filename")
+    return filename
+end
+
+
+
 #=
 noise_mag = 1600.0
 noise_covar = SMatrix{3,3}(noise_mag*[
