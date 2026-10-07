@@ -119,7 +119,7 @@ visualize_simulation_belief(b,length(b)+10,1,length(b))
 plt_T = plot_temperature_volume(weather_models, 1, 3; stride=6, color=:turbo, opacity=0.2)
 savefig(plt_T, "./exp_cm1_wrf_temperature_volume.png")
 
-plt_P = plot_pressure_volume(weather_models, 1, 3; stride=6, color=:blue, opacity=0.5)
+plt_P = plot_pressure_volume(weather_models, 1, 3; stride=6, color=:blues, opacity=0.5)
 savefig(plt_P, "./exp_cm1_wrf_pressure_volume.png")
 
 
