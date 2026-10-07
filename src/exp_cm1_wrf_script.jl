@@ -52,7 +52,7 @@ sim_noise_func(t,rng) = noise_func(PNG.covar_matrix,t,rng);
 
 
 sim_details = SimulationDetails(control_func,wind_func,sim_noise_func,obs_func,
-                            10.0,180.0);
+                            10.0,1800.0);
 env = get_experiment_environment(0,hnr_sigma_p=10.0,hnr_sigma_t=3.0);
 
 s,a,o,b = run_experiment(sim_details,env,start_state,
