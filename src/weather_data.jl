@@ -386,9 +386,13 @@ function plot_scalar_volume(weather_models::WeatherModels, model_num::Int, t_ind
     z_slice = @view z_mid[1:stride:end, 1:stride:end, 1:stride:end]
     v_slice = @view values[1:stride:end, 1:stride:end, 1:stride:end]
 
+    vmin, vmax = extrema(v_slice)
     plt = Plots.scatter3d(vec(x_slice), vec(y_slice), vec(z_slice);
                           marker_z = vec(v_slice),
-                          c = color, ms = 3, ma = opacity,
+                          colorbar = true,
+                          palette = color,
+                          clims = (vmin, vmax),
+                          ms = 3, ma = opacity, markerstrokewidth = 0,
                           xlabel = "x (m)", ylabel = "y (m)", zlabel = "z (m)",
                           title = "$(field == :T ? "Temperature" : "Pressure") | model $model_num | t=$t_idx",
                           legend = false)
@@ -399,6 +403,302 @@ plot_temperature_volume(weather_models, model_num, t_index; kwargs...) =
     plot_scalar_volume(weather_models, model_num, t_index; field = :T, kwargs...)
 plot_pressure_volume(weather_models, model_num, t_index; kwargs...) =
     plot_scalar_volume(weather_models, model_num, t_index; field = :P, kwargs...)
+
+"""
+    plot_scalar_diff_volume(weather_models, model_a, model_b, t_index;
+                            field=:T, stride=4, color=:RdBu, opacity=0.3)
+
+Plot the difference between two ensemble members for a scalar field (:T or :P)
+at a given time. Uses a diverging palette and symmetric color limits to highlight
+positive/negative deviations.
+"""
+function plot_scalar_diff_volume(weather_models::WeatherModels, model_a::Int, model_b::Int, t_index::Int;
+                                 field::Symbol = :T,
+                                 stride::Int = 4,
+                                 color = :RdBu,
+                                 opacity::Float64 = 0.3)
+    @assert field in (:T, :P) "field must be :T (temperature) or :P (pressure)"
+    (; num_x_points, num_y_points, num_z_points, num_timesteps, x_width, y_width, models) = weather_models
+    @assert 1 <= model_a <= length(models) && 1 <= model_b <= length(models) "model indices out of bounds"
+    t_idx = clamp(t_index, 1, num_timesteps)
+    data_a = models[model_a]
+    data_b = models[model_b]
+
+    vals_a = @views getfield(data_a, field)[:, :, :, t_idx]
+    vals_b = @views getfield(data_b, field)[:, :, :, t_idx]
+    diff_vals = vals_a .- vals_b
+
+    z_levels = @views data_a.Z[:, :, :, t_idx]  # assume matched grids
+    z_mid = @views (z_levels[:, :, 1:end-1] .+ z_levels[:, :, 2:end]) ./ 2
+    @assert size(diff_vals, 3) == size(z_mid, 3) "Z grid does not match scalar grid depth"
+
+    xs = ((0:num_x_points-1) .+ 0.5) .* x_width
+    ys = ((0:num_y_points-1) .+ 0.5) .* y_width
+    xgrid = repeat(reshape(xs, :, 1, 1), 1, num_y_points, num_z_points)
+    ygrid = repeat(reshape(ys, 1, :, 1), num_x_points, 1, num_z_points)
+
+    stride = max(stride, 1)
+    x_slice = @view xgrid[1:stride:end, 1:stride:end, 1:stride:end]
+    y_slice = @view ygrid[1:stride:end, 1:stride:end, 1:stride:end]
+    z_slice = @view z_mid[1:stride:end, 1:stride:end, 1:stride:end]
+    v_slice = @view diff_vals[1:stride:end, 1:stride:end, 1:stride:end]
+
+    maxabs = maximum(abs, v_slice)
+    cl = maxabs == 0 ? (-1.0, 1.0) : (-maxabs, maxabs)
+
+    plt = Plots.scatter3d(vec(x_slice), vec(y_slice), vec(z_slice);
+                          marker_z = vec(v_slice),
+                          colorbar = true,
+                          palette = color,
+                          clims = cl,
+                          ms = 3, ma = opacity, markerstrokewidth = 0,
+                          xlabel = "x (m)", ylabel = "y (m)", zlabel = "z (m)",
+                          title = "$(field == :T ? "Temperature" : "Pressure") diff (model $model_a - model $model_b) | t=$t_idx",
+                          legend = false)
+    return plt
+end
+
+plot_temperature_diff_volume(weather_models, model_a, model_b, t_index; kwargs...) =
+    plot_scalar_diff_volume(weather_models, model_a, model_b, t_index; field = :T, kwargs...)
+plot_pressure_diff_volume(weather_models, model_a, model_b, t_index; kwargs...) =
+    plot_scalar_diff_volume(weather_models, model_a, model_b, t_index; field = :P, kwargs...)
+
+"""
+    rain_at_point_all_models(weather_models, x, y, t)
+
+Return the rain/precipitation values `R[x,y,t_index]` for every ensemble member.
+`x`/`y` are in meters; `t` in seconds. Uses nearest grid cell based on
+`x_width`, `y_width`, and `t_width`.
+"""
+function rain_at_point_all_models(weather_models::WeatherModels, x::Real, y::Real, t::Real)
+    (; num_x_points, num_y_points, num_timesteps, x_width, y_width, t_width, models) = weather_models
+    xi = clamp(get_grid_index(x, x_width), 1, num_x_points)
+    yi = clamp(get_grid_index(y, y_width), 1, num_y_points)
+    ti = clamp(get_grid_index(t, t_width), 1, num_timesteps)
+    return [models[m].R[xi, yi, ti] for m in 1:length(models)]
+end
+
+"""
+    find_nonzero_r_cell(weather_models; t_index=nothing)
+
+Search for a grid cell (x,y,t) where R is nonzero across all ensemble members.
+If `t_index` is provided, search only that timestep; otherwise scan all.
+Returns `(x, y, t, values)` in physical units (meters, seconds) or `nothing`
+if no such cell exists.
+"""
+function find_nonzero_r_cell(weather_models::WeatherModels; t_index=nothing)
+    (; num_x_points, num_y_points, num_timesteps, x_width, y_width, t_width, models) = weather_models
+    if t_index === nothing
+        t_range = 1:num_timesteps
+    else
+        ti = clamp(t_index, 1, num_timesteps)
+        t_range = ti:ti
+    end
+    for ti in t_range, xi in 1:num_x_points, yi in 1:num_y_points
+        vals = @views [models[m].R[xi, yi, ti] for m in 1:length(models)]
+        all_nonzero = all(!iszero(v) for v in vals)
+        if all_nonzero
+            x = ((xi - 1) + 0.5) * x_width
+            y = ((yi - 1) + 0.5) * y_width
+            t = (ti - 1) * t_width
+            return (x, y, t, vals)
+        end
+    end
+    return nothing
+end
+
+"""
+    find_r_cell_above_threshold(weather_models; min_t_index=1, threshold=1e-3)
+
+Search for a grid cell (x,y,t) with rain values greater than `threshold` for
+every ensemble member. Starts searching at `min_t_index` (1-based time index).
+Returns `(x, y, t, values)` in physical units or `nothing` if none found.
+"""
+function find_r_cell_above_threshold(weather_models::WeatherModels;
+                                     min_t_index::Int = 1,
+                                     threshold::Real = 1e-3)
+    (; num_x_points, num_y_points, num_timesteps, x_width, y_width, t_width, models) = weather_models
+    t_start = clamp(min_t_index, 1, num_timesteps)
+    for ti in t_start:num_timesteps, xi in 1:num_x_points, yi in 1:num_y_points
+        vals = @views [models[m].R[xi, yi, ti] for m in 1:length(models)]
+        all_above = all(v -> v > threshold, vals)
+        if all_above
+            x = ((xi - 1) + 0.5) * x_width
+            y = ((yi - 1) + 0.5) * y_width
+            t = (ti - 1) * t_width
+            return (x, y, t, vals)
+        end
+    end
+    return nothing
+end
+
+
+"""
+    expected_rain_from_fixed_vals(belief_history, vals; t_offset=0.0, actual_value=nothing)
+
+Given a belief history (time=>belief pairs from `run_experiment`) and a fixed
+vector of rain values `vals` (one per model, e.g., from
+`find_r_cell_above_threshold`), compute/plot the belief-weighted expectation
+over time. Also plots ±3σ bounds from the discrete distribution. If
+`actual_value` is provided, also plot a horizontal reference line. Returns the
+plot plus the raw (times, means, sigmas).
+"""
+function expected_rain_from_fixed_vals(belief_history, vals;
+                                       t_offset::Real = 0.0,
+                                       actual_value = nothing)
+    times = Float64[]
+    means = Float64[]
+    sigmas = Float64[]
+    for (t, b) in belief_history
+        push!(times, t + t_offset)
+        μ = sum(b .* vals)
+        push!(means, μ)
+        # variance for discrete distribution: E[x^2] - (E[x])^2
+        σ = sqrt(max(0.0, sum(b .* (vals .^ 2)) - μ^2))
+        push!(sigmas, σ)
+    end
+
+    plt = Plots.plot(times, means;
+                     ribbon = 3 .* sigmas,
+                     fillalpha = 0.15,
+                     xlabel = "Time (s)",
+                     ylabel = "Rain (fixed cell/time)",
+                     title = "Belief-weighted rain over experiment",
+                     lw = 2,
+                     marker = :auto,
+                     label = "Expected ±3σ")
+    if actual_value !== nothing
+        Plots.plot!(plt, times, fill(actual_value, length(times));
+                    lw = 2, ls = :dash, color = :black, label = "CM1 (actual)")
+    end
+    return plt, times, means, sigmas
+end
+
+"""
+    plot_model_vs_nature_scalar(weather_models, nature_run, model_num, t_index;
+                                field=:T, stride_model=4, stride_nature=4,
+                                color_model=:turbo, color_nature=:viridis,
+                                opacity=0.25)
+
+Plot side-by-side scatter volumes: one ensemble member and the CM1 nature run,
+for the same scalar field (:T or :P) and time index. Colorbars show magnitudes
+independently for each panel.
+"""
+function plot_model_vs_nature_scalar(weather_models::WeatherModels,
+                                     nature_run,
+                                     model_num::Int,
+                                     t_index::Int;
+                                     field::Symbol = :T,
+                                     stride_model::Int = 4,
+                                     stride_nature::Int = 4,
+                                     color_model = :turbo,
+                                     color_nature = :viridis,
+                                     opacity::Float64 = 0.25)
+    @assert field in (:T, :P) "field must be :T or :P"
+
+    p_model = plot_scalar_volume(weather_models, model_num, t_index;
+                                 field = field,
+                                 stride = stride_model,
+                                 color = color_model,
+                                 opacity = opacity)
+
+    times = sort!(collect(keys(nature_run.nature_run_data_structs)))
+    @assert 1 <= t_index <= length(times) "t_index out of bounds for nature run"
+    nr_data = nature_run.nature_run_data_structs[times[t_index]]
+    vals = getfield(nr_data, field)
+
+    xs = nature_run.X_mid
+    ys = nature_run.Y_mid
+    zs = nature_run.Z_mid
+    xgrid = repeat(reshape(xs, :, 1, 1), 1, length(ys), length(zs))
+    ygrid = repeat(reshape(ys, 1, :, 1), length(xs), 1, length(zs))
+    zgrid = repeat(reshape(zs, 1, 1, :), length(xs), length(ys), 1)
+
+    stride_nature = max(stride_nature, 1)
+    x_slice = @view xgrid[1:stride_nature:end, 1:stride_nature:end, 1:stride_nature:end]
+    y_slice = @view ygrid[1:stride_nature:end, 1:stride_nature:end, 1:stride_nature:end]
+    z_slice = @view zgrid[1:stride_nature:end, 1:stride_nature:end, 1:stride_nature:end]
+    v_slice = @view vals[1:stride_nature:end, 1:stride_nature:end, 1:stride_nature:end]
+
+    vmin, vmax = extrema(v_slice)
+    p_nature = Plots.scatter3d(vec(x_slice), vec(y_slice), vec(z_slice);
+                               marker_z = vec(v_slice),
+                               colorbar = true,
+                               palette = color_nature,
+                               clims = (vmin, vmax),
+                               ms = 3, ma = opacity, markerstrokewidth = 0,
+                               xlabel = "x (m)", ylabel = "y (m)", zlabel = "z (m)",
+                               title = "CM1 $(field == :T ? "Temperature" : "Pressure") | t=$t_index",
+                               legend = false)
+
+    return Plots.plot(p_model, p_nature; layout = (1, 2), size = (1400, 600))
+end
+
+"""
+    plot_scalar_volume_plotly(weather_models, model_num, t_index; field=:T, stride=4,
+                              surface_count=10, colorscale="Turbo", opacity=0.18)
+
+Plot a 3D volume using PlotlyJS. Same semantics as `plot_scalar_volume`, but
+uses Plotly’s `volume` trace for smoother rendering.
+"""
+function plot_scalar_volume_plotly(weather_models::WeatherModels, model_num::Int, t_index::Int;
+                                   field::Symbol = :T,
+                                   stride::Int = 4,
+                                   surface_count::Int = 10,
+                                   colorscale::AbstractString = "Turbo",
+                                   opacity::Float64 = 0.18)
+    @assert field in (:T, :P) "field must be :T (temperature) or :P (pressure)"
+    (; num_x_points, num_y_points, num_z_points, num_timesteps, x_width, y_width, models) = weather_models
+    @assert 1 <= model_num <= length(models) "model_num out of bounds"
+    t_idx = clamp(t_index, 1, num_timesteps)
+    model_data = models[model_num]
+
+    values = @views getfield(model_data, field)[:, :, :, t_idx]
+    z_levels = @views model_data.Z[:, :, :, t_idx]
+    z_mid = @views (z_levels[:, :, 1:end-1] .+ z_levels[:, :, 2:end]) ./ 2
+    @assert size(values, 3) == size(z_mid, 3) "Z grid does not match scalar grid depth"
+
+    xs = ((0:num_x_points-1) .+ 0.5) .* x_width
+    ys = ((0:num_y_points-1) .+ 0.5) .* y_width
+    xgrid = repeat(reshape(xs, :, 1, 1), 1, num_y_points, num_z_points)
+    ygrid = repeat(reshape(ys, 1, :, 1), num_x_points, 1, num_z_points)
+
+    stride = max(stride, 1)
+    x_slice = @view xgrid[1:stride:end, 1:stride:end, 1:stride:end]
+    y_slice = @view ygrid[1:stride:end, 1:stride:end, 1:stride:end]
+    z_slice = @view z_mid[1:stride:end, 1:stride:end, 1:stride:end]
+    v_slice = @view values[1:stride:end, 1:stride:end, 1:stride:end]
+    vmin, vmax = extrema(v_slice)
+
+    trace = PlotlyJS.volume(
+        x = vec(x_slice),
+        y = vec(y_slice),
+        z = vec(z_slice),
+        value = vec(v_slice),
+        colorscale = colorscale,
+        opacity = opacity,
+        surface_count = surface_count,
+        isomin = vmin,
+        isomax = vmax,
+    )
+
+    layout = PlotlyJS.Layout(
+        title = "$(field == :T ? "Temperature" : "Pressure") volume | model $model_num | t=$t_idx",
+        scene = PlotlyJS.attr(
+            xaxis = PlotlyJS.attr(title = "x (m)"),
+            yaxis = PlotlyJS.attr(title = "y (m)"),
+            zaxis = PlotlyJS.attr(title = "z (m)")
+        ),
+    )
+
+    return PlotlyJS.Plot(trace, layout)
+end
+
+plot_temperature_volume_plotly(weather_models, model_num, t_index; kwargs...) =
+    plot_scalar_volume_plotly(weather_models, model_num, t_index; field = :T, kwargs...)
+plot_pressure_volume_plotly(weather_models, model_num, t_index; kwargs...) =
+    plot_scalar_volume_plotly(weather_models, model_num, t_index; field = :P, kwargs...)
+
 
 #=
 noise_mag = 1600.0

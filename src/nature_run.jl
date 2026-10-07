@@ -436,6 +436,75 @@ function adjust_nature_run_data_struct!(nr::NatureRun{N,P}, curr_time;
     end
 end
 
+"""
+    nature_run_r_value(nature_run, x, y, t)
+
+Return the rain/precipitation value from the CM1 nature run at the nearest
+horizontal grid point to physical coordinates (x,y) at time `t` seconds from
+experiment start. Uses the currently loaded `nature_run_data_structs`; no z
+dimension is required for R.
+"""
+function nature_run_r_value(nature_run::NatureRun, x::Real, y::Real, t::Real)
+    (; X_mid, Y_mid, t_width, nature_run_data_structs) = nature_run
+
+    # Map x,y to nearest mid-point indices without assuming exact spacing
+    xi = clamp(searchsortedfirst(X_mid, x), 1, length(X_mid))
+    if xi < length(X_mid) && abs(x - X_mid[xi+1]) < abs(x - X_mid[xi])
+        xi += 1
+    end
+    yi = clamp(searchsortedfirst(Y_mid, y), 1, length(Y_mid))
+    if yi < length(Y_mid) && abs(y - Y_mid[yi+1]) < abs(y - Y_mid[yi])
+        yi += 1
+    end
+
+    # Map time to closest available nature-run slice
+    keys_sorted = sort!(collect(keys(nature_run_data_structs)))
+    ti = clamp(Int(round(t / t_width)) + 1, 1, length(keys_sorted))
+    data = nature_run_data_structs[keys_sorted[ti]]
+    return data.R[xi, yi]
+end
+
+"""
+    nature_run_r_at_point_from_source(nature_run, data_folder, x, y, t;
+                                      exp_start_time_seconds=1800.0)
+
+Load the CM1 file closest to time `t` (seconds since experiment start)
+directly and return the rain value at the nearest (x,y) grid cell. This does
+not depend on any cached nature_run_data_structs.
+"""
+function nature_run_r_at_point_from_source(nature_run,
+                                           data_folder::AbstractString,
+                                           x::Real,
+                                           y::Real,
+                                           t::Real;
+                                           exp_start_time_seconds::Real = 1800.0)
+    (; scalar_grid, t_width) = nature_run
+    t_idx = max(1, Int(round(t / t_width)) + 1)  # choose nearest available slice
+    file_time = Int(exp_start_time_seconds + (t_idx - 1) * t_width)
+    filename = joinpath(data_folder, "cm1_output_$(file_time).nc")
+    print("Loading rain data from file: $filename\n")
+    file_obj = HDF5.h5open(filename, "r")
+    # X_mid = HDF5.read(file_obj, "X_mid")
+    # Y_mid = HDF5.read(file_obj, "Y_mid")
+    R = HDF5.read(file_obj, "R")
+    # xi = clamp(searchsortedfirst(X_mid, x), 1, length(X_mid))
+    # if xi < length(X_mid) && abs(x - X_mid[xi+1]) < abs(x - X_mid[xi])
+    #     xi += 1
+    # end
+    xi = Int(x/nature_run.x_grid_width)
+    # yi = clamp(searchsortedfirst(Y_mid, y), 1, length(Y_mid))
+    # if yi < length(Y_mid) && abs(y - Y_mid[yi+1]) < abs(y - Y_mid[yi])
+    #     yi += 1
+    # end
+    yi = Int(y/nature_run.y_grid_width)
+
+
+    println("Nearest grid point indices: (xi, yi) = ($xi, $yi)\n")
+    val = R[xi, yi]
+    HDF5.close(file_obj)
+    return val
+end
+
 
 
 #=

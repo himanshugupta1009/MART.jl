@@ -78,6 +78,7 @@ function extract_relevant_data(;
         Z_midpoint_grid[:,:,:,i] = (Z_grid[:,:,1:50,i] .+ Z_grid[:,:,2:51,i]) / 2.0
         P_grid[:,:,:,i] = P .+ PB
         T_grid[:,:,:,i] = (T .+ 300.0) .* ( (P_grid[:,:,:,i]./100_000.0).^weird_exponential_num )
+        #Add RAINSH as well (but it should probably be 0 - Shawn)
         R_grid[:,:,i] = RAINC .+ RAINNC
         HDF5.close(f)
     end
